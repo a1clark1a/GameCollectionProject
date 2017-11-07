@@ -1,8 +1,9 @@
 #pragma once
 #include <SFML\Audio.hpp>
 #include "Window.h"
-#include "GameObject.h"
+#include "GameObjects.h"
 #include <vector>
+
 
 //TODO Create a base class game engine to be used to derive other game engines specifically for each game
 
@@ -14,43 +15,35 @@ class Game
 	//REMINDER Members in this section become public to derived classes
 	//REMINDER Main User Interface
 public:
-	Game();												//Constructor to Game
-	virtual ~Game();									//virtual Destructor
+	//REMINDER  When an a derived object is created its base class Constructor gets called first then followed by the derived constructor
+	Game(const std::string winTitle, const sf::Vector2u winSize);												// Constructor to Game
+	//REMINDER When an a derived object is destroyed derived object destructor gets called first then followed by base destructor
+	virtual ~Game();									// virtual Destructor
 
 	//Virtual Functions
 	virtual void Update() = 0;							// Pure Virtual Function to be redefined in each respective derived classes
-	virtual void Render();								//Virtual Function to clear, draw and display 
-	virtual void AddObject(GameObjects * object) = 0;  //Pure Virtual Function to be redefined in each respective derived class
-	virtual void SetScore(int scoreVal);               //Function to add Score(Redefined to set specific score variable based on game(to be drawn by DrawText())
-	virtual void DrawText();						   //Function to draw the score text, level text, ammo count etc on window(be called in Render())
-	
+	virtual void Render() = 0;							// Pure Virtual Function to clear, draw and display 
+	virtual void AddObject(GameObjects * object) = 0;   // Pure Virtual Function to be redefined in each respective derived class
+	virtual void SetScore(int scoreVal);				// Function to add Score( maybe redefined to set specific score variable based on game(to be drawn by DrawText())
+	virtual void DrawText() = 0;						// Pure Virtual Function to draw the score text, level text, ammo count etc on window(be called in Render())
+	virtual void DrawBackground() = 0;					// Pure Virtual Function to draw the background(be called in Render())
+	virtual void DrawObjects() = 0;						// Pure Virtual Function to draw game objects(be called in Render())
 
-	
-	//Main Functions
-
-
-	//Virtual Helper Functions
-	virtual Window* GetWindow() { return m_window; }
+		//Virtual Helper Functions
+	virtual Window* GetWindow() { return &m_window; }
 	
 	//REMINDER Members in this section are public ONLY INSIDE a derived class otherwise PRIVATE
 protected:
 
-	Window * m_window;								// Create a Window object to be accessed by derived classes to be able to draw object in window
-	std::vector<GameObjects*> m_gameObjects;		// Create a vector container of pointers to a gameobject. 
-	sf::Font m_mainFont;
-						//Score variables for each Game
-	//TODO make into a container to hold multiple values of each games scores for different replays
-	int m_spaceShooterScore = 0;
-	int m_asteroidScore = 0;						
-	int m_tetrisScore = 0;
-	int m_pongScore = 0;
-						//Highscore variables for each Game
-	int m_spaceShooterHighScore = 0;
-	int m_asteroidHighScore = 0;						
-	int m_tetrisHighScore = 0;
-	int m_pongHighScore = 0;
+	// Create a Window object to be accessed by derived classes to be able to draw object in window
+	Window m_window;									// Use values passed in constructor of a created derived object of Game class to initialize window member variables
+	std::vector<GameObjects*> m_gameObjects;			// Create a vector container of pointers to a gameobject. 
+	sf::Font m_mainFont;								// Use one type of font for all games(for now) to be initialized in constructor
+	unsigned int m_score;								// Game score variable
+	unsigned int m_highScore = 0;						// Highscore variable 
+	
 
-	//REMINDER Members in this section are unaccessible outside 
+	//REMINDER Members in this section are unaccessible outside
 private:
 
 
@@ -63,30 +56,36 @@ private:
 ************************************DERIVED CLASSES************************************
 ***************************************************************************************/
 
-//TODO create derived game engine from the base class Game
+//TODO create derived game from the base class Game
 
 /*************************SPACESHOOTER***************************/
 
 class SpaceShooter : public Game
 {
 public:
-	SpaceShooter();
+	SpaceShooter(const sf::Vector2u winSize);
 	virtual ~SpaceShooter();
 
 	//Redefined Virtual Functions
 	virtual void Update();
 	virtual void Render();
 	virtual void AddObject(GameObjects * object);
+	virtual void SetScore(int scoreVal);
+	virtual void DrawText();
+	virtual void DrawBackground();
+	virtual void DrawObjects();
 
 	//SpaceShooter Functions
-	void RespawnPlayer();			//Function to spawn player
-	void SpawnAI();					//Function to spawn AI
-	void SpawnDestructibles();		//Function to spawn destructibles
-	void SetSpawnCount();           //Function to set how many AI and destructible to spawn per level
-	
+	void RespawnPlayer();								//Function to spawn player
+	void SpawnAI();										//Function to spawn AI
+	void SpawnDestructibles();							//Function to spawn destructibles
+	void SpawnItem();									//Function to spawn Coins/Ammo/ExtraLife
+	void SetSpawnCount();							    //Function to set how many AI and destructible to spawn per level
+
+
 	//SpaceShooter member variables
 private:
-	int m_level = 0;
+	int m_level;
 	int m_livesRemaining;
 	int m_specialAmmoRemaining;
 	int m_spawnCount;
@@ -100,6 +99,13 @@ private:
 class Asteroid : public Game
 {
 public:
+	Asteroid();
+	virtual ~Asteroid();
+
+	//Redefined Virtual Functions
+	virtual void Update();
+	virtual void Render();
+	virtual void AddObject(GameObjects * object);
 
 private:
 

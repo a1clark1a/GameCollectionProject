@@ -10,7 +10,7 @@ Window::Window()
 }
 
 //Constructor for assigning window title and window size
-//To be invoked by specific game type to recreate window appropriate for game
+//To be initialized by Game constructor to recreate window appropriate for game
 Window::Window(const std::string & winTitle, const sf::Vector2u & winSize)          
 {
 	Setup(winTitle, winSize);														// Call Setup() and pass the arguments taken from constructor
@@ -22,6 +22,7 @@ Window::~Window()
 {
 	Destroy();																		// Upon deletion of window, call Destroy() to close window
 }
+
 
 
 //Window Update function to be called in Game Update()
