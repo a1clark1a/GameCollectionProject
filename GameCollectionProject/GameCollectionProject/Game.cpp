@@ -7,9 +7,10 @@
 *********************************************************************/
 
 Game::Game(const std::string winTitle, const sf::Vector2u winSize)
-	:m_window(winTitle,winSize)
+	:m_windowObj(winTitle,winSize)
 {
 	//TODO Initialize m_mainFont
+	
 }
 
 Game::~Game()
@@ -25,6 +26,7 @@ void Game::SetScore(int scoreVal)
 		m_highScore = m_score;
 	}
 	//TODO allow to save Highscore unto text file
+	
 }
 
 
@@ -37,7 +39,7 @@ void Game::SetScore(int scoreVal)
 /*************************SPACESHOOTER***************************/
 
 SpaceShooter::SpaceShooter(const sf::Vector2u winSize)
-	:Game("SpaceShooter",winSize)
+	:Game("SpaceShooter", winSize)
 {
 	
 }
@@ -52,19 +54,22 @@ SpaceShooter::~SpaceShooter()
 
 void SpaceShooter::Update()
 {
-	m_window.Update();
+	m_windowObj.Update();
+	AddObject(&first);
 }
 
 void SpaceShooter::Render()
 {
-	m_window.Clear();
+	m_windowObj.Clear();
 	//TODO Call derived class Draw functions 
-	m_window.Display();
+	m_windowObj.Display();
+
 }
 
 void SpaceShooter::AddObject(GameObjects * object)
 {
 	//TODO Add objects into vector of gameobjects
+	
 }
 
 void SpaceShooter::DrawText()

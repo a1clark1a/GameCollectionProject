@@ -28,9 +28,11 @@ Window::~Window()
 //Window Update function to be called in Game Update()
 void Window::Update()
 {
+	dt = m_clock.restart();
 	sf::Event event;																// Event object creation
-	while (m_window.pollEvent(event))
+	while (m_renderWindow.pollEvent(event))
 	{
+		
 		if (event.type == sf::Event::Closed)
 		{
 			m_isDone = true;														// When window is closed set m_isDone to true
@@ -65,8 +67,8 @@ void Window::ToggleFullscreen()
 //to be called from inside constructor
 void Window::Setup(const std::string & winTitle, const sf::Vector2u & winSize)
 {
-	m_windowTitle = winTitle; 
-	m_windowSize = winSize;
+	m_renderWindowTitle = winTitle; 
+	m_renderWindowSize = winSize;
 	m_isFullscreen = false;
 	m_isDone = false;
 	Create();																		// After assigning values, Call Create() 
@@ -78,6 +80,6 @@ void Window::Setup(const std::string & winTitle, const sf::Vector2u & winSize)
 void Window::Create()
 {
 	auto style = (m_isFullscreen ? sf::Style::Fullscreen : sf::Style::Default);   // Value for auto type variable is based on value of m_isFullScreen
-	m_window.create({ m_windowSize.x, m_windowSize.y, 32 }, m_windowTitle, style);// create window using the values taken from Constructor parameters passed 
+	m_renderWindow.create({ m_renderWindowSize.x, m_renderWindowSize.y, 32 }, m_renderWindowTitle, style);// create window using the values taken from Constructor parameters passed 
 																				  // into Setup()
 }

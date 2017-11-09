@@ -5,6 +5,7 @@
 #include <vector>
 
 
+
 //TODO Create a base class game engine to be used to derive other game engines specifically for each game
 
 /*********************************************************************
@@ -28,16 +29,16 @@ public:
 	virtual void DrawText() = 0;						// Pure Virtual Function to draw the score text, level text, ammo count etc on window(be called in Render())
 	virtual void DrawBackground() = 0;					// Pure Virtual Function to draw the background(be called in Render())
 	virtual void DrawObjects() = 0;						// Pure Virtual Function to draw game objects(be called in Render())
-
-		//Virtual Helper Functions
-	virtual Window* GetWindow() { return &m_window; }
+	
+	//Virtual Helper Functions
+	virtual Window* GetWindow() { return &m_windowObj; }// Inline helper function to acces a reference to m_windowObj object
 	
 	//REMINDER Members in this section are public ONLY INSIDE a derived class otherwise PRIVATE
 protected:
 
 	// Create a Window object to be accessed by derived classes to be able to draw object in window
-	Window m_window;									// Use values passed in constructor of a created derived object of Game class to initialize window member variables
-	std::vector<GameObjects*> m_gameObjects;			// Create a vector container of pointers to a gameobject. 
+	Window m_windowObj;									// Object used to access Window members
+	std::vector<GameObjects*> m_gameObjects;			// A vector container of pointers to a gameobject. 
 	sf::Font m_mainFont;								// Use one type of font for all games(for now) to be initialized in constructor
 	unsigned int m_score;								// Game score variable
 	unsigned int m_highScore = 0;						// Highscore variable 
@@ -70,7 +71,6 @@ public:
 	virtual void Update();
 	virtual void Render();
 	virtual void AddObject(GameObjects * object);
-	virtual void SetScore(int scoreVal);
 	virtual void DrawText();
 	virtual void DrawBackground();
 	virtual void DrawObjects();
@@ -81,7 +81,7 @@ public:
 	void SpawnDestructibles();							//Function to spawn destructibles
 	void SpawnItem();									//Function to spawn Coins/Ammo/ExtraLife
 	void SetSpawnCount();							    //Function to set how many AI and destructible to spawn per level
-
+	GameObjects first;
 
 	//SpaceShooter member variables
 private:

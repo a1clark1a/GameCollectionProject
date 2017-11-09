@@ -1,11 +1,16 @@
 #include "GameObjects.h"
 
-GameObjects::GameObjects(std::string, const sf::Vector2u & pos)
+GameObjects::GameObjects(const std::string texturePath, const sf::Vector2f& pos)
 {
 
 }
 
-void GameObjects::Draw()
+void GameObjects::Draw(Window* window)
 {
 
+}
+
+void GameObjects::LimitVelocity(float dt)
+{
+	
 }
