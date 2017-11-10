@@ -81,7 +81,7 @@ public:
 	void SpawnDestructibles();							//Function to spawn destructibles
 	void SpawnItem();									//Function to spawn Coins/Ammo/ExtraLife
 	void SetSpawnCount();							    //Function to set how many AI and destructible to spawn per level
-	GameObjects first;
+	
 
 	//SpaceShooter member variables
 private:

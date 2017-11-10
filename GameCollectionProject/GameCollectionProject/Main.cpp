@@ -15,7 +15,7 @@ int main()
 {
 	srand(static_cast<unsigned int>(time(0)));
 	SpaceShooter shooter(sf::Vector2u(800,800));
-	while (!shooter.GetWindow()->isDone())
+	while (!shooter.GetWindow()->IsClosed())
 	{
 		
 		shooter.Update();

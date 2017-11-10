@@ -6,6 +6,7 @@
 **********************ABSTRACT BASE CLASS*****************************
 *********************************************************************/
 
+
 Game::Game(const std::string winTitle, const sf::Vector2u winSize)
 	:m_windowObj(winTitle,winSize)
 {
@@ -55,7 +56,7 @@ SpaceShooter::~SpaceShooter()
 void SpaceShooter::Update()
 {
 	m_windowObj.Update();
-	AddObject(&first);
+	
 }
 
 void SpaceShooter::Render()

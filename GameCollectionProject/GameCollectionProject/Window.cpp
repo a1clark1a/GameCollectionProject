@@ -3,6 +3,7 @@
 /**************************************************************************
 *************************PUBLIC MEMBERS***********************************
 **************************************************************************/
+
 //Default Constructor
 Window::Window()
 {
@@ -35,7 +36,7 @@ void Window::Update()
 		
 		if (event.type == sf::Event::Closed)
 		{
-			m_isDone = true;														// When window is closed set m_isDone to true
+			m_isClosed = true;														// When window is closed set m_isDone to true
 		}																			// then the while loop playing the game will end
 		else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::F5)
 		{
@@ -70,7 +71,7 @@ void Window::Setup(const std::string & winTitle, const sf::Vector2u & winSize)
 	m_renderWindowTitle = winTitle; 
 	m_renderWindowSize = winSize;
 	m_isFullscreen = false;
-	m_isDone = false;
+	m_isClosed = false;
 	Create();																		// After assigning values, Call Create() 
 																					// to create window with appropriate values
 }																		
