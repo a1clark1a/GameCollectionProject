@@ -85,10 +85,7 @@ protected:
 *************************GAMEOBJECTS FOR SPACESHOOTER GAME******************************
 ****************************************************************************************/
 
-/**********************************
-*******SPACESHOOTER::PLAYER********
-***********************************/
-
+/***********PLAYER FOR SPACESHOOTER :: DERIVED FROM PLAYER CLASS**********/
 class SS_Player : public Player
 {
 public:

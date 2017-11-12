@@ -92,25 +92,25 @@ void SpaceShooter::DrawObjects()
 
 void SpaceShooter::RespawnPlayer()
 {
-
+	//TODO Function to spawn player after every death
 }
 
 void SpaceShooter::SpawnAI()
 {
-
+	//TODO Function to create AI 
 }
 
 void SpaceShooter::SpawnDestructibles()
 {
-
+	//TODO Function to spawn destructible objects( Can Call Spawn Item)
 }
 
 void SpaceShooter::SpawnItem()
 {
-
+	//TODO Function to spawn items to be picked up
 }
 
 void SpaceShooter::SetSpawnCount()
 {
-
+	//TODO Function to call to set how many AI to spawn
 }

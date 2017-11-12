@@ -5,6 +5,7 @@
 *********************************************************************/
 
 //PUBLIC MEMBERS//
+//Constructor to initialize GameObject object's texture and initial position
 GameObjects::GameObjects(const std::string texturePath, const sf::Vector2f& pos)
 	:m_gameObjIsDestroyed(false)
 	,m_pos(pos)
@@ -17,6 +18,7 @@ GameObjects::GameObjects(const std::string texturePath, const sf::Vector2f& pos)
 	m_sprite.setOrigin(m_sprite.getTextureRect().width * 0.5f, m_sprite.getTextureRect().height * 0.5f);
 }
 
+//Virtual Destructor
 GameObjects::~GameObjects()
 {
 	std::cout << " Abstract Base Class Game Object's Destructor() is called" << std::endl;
@@ -25,6 +27,7 @@ GameObjects::~GameObjects()
 
 //Virtual Functions
 
+//A virtual function : Base version draws a CollisionSphere on object
 void GameObjects::Draw(Window* window)
 {
 	CollisionSphere->setRadius(m_collisionRadius);
@@ -38,11 +41,13 @@ void GameObjects::Draw(Window* window)
 
 }
 
+//A virtual function: Base version Updates an objects general velocity and movement
 void GameObjects::Update(Window* window)
 {
 	
 }
 
+//
 void GameObjects::SetVelocity(float velAmount)
 {
 
@@ -71,16 +76,16 @@ void GameObjects::OutOfBounds()
 
 //Helper/Getter Functions
 
+//Distance formula is the sqrt( (x1-x2)sqred + (y1-y2)sqred)
 float GameObjects::GetDistance(const sf::Vector2f & otherVector) const
 {
-	//Distance formula is the sqrt( (x1-x2)sqred + (y1-y2)sqred)
-
-	sf::Vector2f vecDifference;  //Difference between the 2 game object vectors
-	vecDifference = sf::Vector2f(otherVector.x - m_pos.x, otherVector.y - m_pos.y);			// or simply vecDifference = otherVector - m_pos; (
+	sf::Vector2f vecDifference;																 //Difference between the 2 game object vectors
+	vecDifference = sf::Vector2f(otherVector.x - m_pos.x, otherVector.y - m_pos.y);			 // or simply vecDifference = otherVector - m_pos; (
 	float dist = sqrt(vecDifference.x * vecDifference.x + vecDifference.y * vecDifference.y);
 	return dist;
 }
 
+//Collision check if another object collides with this(invoking) object
 bool GameObjects::IsColliding(const GameObjects* otherObj) const
 {
 	bool result = false;

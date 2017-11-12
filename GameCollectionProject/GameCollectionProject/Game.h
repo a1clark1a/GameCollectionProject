@@ -68,7 +68,7 @@ public:
 	virtual ~SpaceShooter();
 
 	//Redefined Virtual Functions
-	virtual void Update();
+	virtual void Update();								// Call m_windowObj.Update() 
 	virtual void Render();
 	virtual void AddObject(GameObjects * object);
 	virtual void DrawText();
@@ -76,11 +76,11 @@ public:
 	virtual void DrawObjects();
 
 	//SpaceShooter Functions
-	void RespawnPlayer();								//Function to spawn player
-	void SpawnAI();										//Function to spawn AI
-	void SpawnDestructibles();							//Function to spawn destructibles
-	void SpawnItem();									//Function to spawn Coins/Ammo/ExtraLife
-	void SetSpawnCount();							    //Function to set how many AI and destructible to spawn per level
+	void RespawnPlayer();								// Function to spawn player
+	void SpawnAI();										// Function to spawn AI
+	void SpawnDestructibles();							// Function to spawn destructibles
+	void SpawnItem();									// Function to spawn Coins/Ammo/ExtraLife
+	void SetSpawnCount();							    // Function to set how many AI and destructible to spawn per level
 	
 
 	//SpaceShooter member variables
