@@ -44,7 +44,7 @@ void GameObjects::Draw(Window* window)
 //A virtual function: Base version Updates an objects general velocity and movement
 void GameObjects::Update(Window* window)
 {
-	
+	m_sprite.setPosition(m_pos);
 }
 
 //
@@ -76,11 +76,11 @@ void GameObjects::OutOfBounds()
 
 //Helper/Getter Functions
 
-//Distance formula is the sqrt( (x1-x2)sqred + (y1-y2)sqred)
+//Distance formula is the sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2))
 float GameObjects::GetDistance(const sf::Vector2f & otherVector) const
 {
 	sf::Vector2f vecDifference;																 //Difference between the 2 game object vectors
-	vecDifference = sf::Vector2f(otherVector.x - m_pos.x, otherVector.y - m_pos.y);			 // or simply vecDifference = otherVector - m_pos; (
+	vecDifference = sf::Vector2f(otherVector.x - m_pos.x, otherVector.y - m_pos.y);			 // or simply vecDifference = otherVector - m_pos since vecDifference is a vector; 
 	float dist = sqrt(vecDifference.x * vecDifference.x + vecDifference.y * vecDifference.y);
 	return dist;
 }
@@ -97,3 +97,71 @@ bool GameObjects::IsColliding(const GameObjects* otherObj) const
 }
 
 //PRIVATE MEMBERS//
+
+/*********************************************************************
+***************PLAYER CLASS : DERIVED FROM GAMEOBJECT*****************
+*********************************************************************/
+
+void Player::Draw(Window* window)
+{
+	GameObjects::Draw(window);
+}
+
+void Player::Update(Window* window)
+{
+	GameObjects::Update(window);
+}
+
+void Player::CollidedWith(GameObjects* object)
+{
+
+}
+
+void Player::MoveObject(float dt)
+{
+
+}
+
+void Player::MakeInvulnerable()
+{
+
+}
+
+SS_Player::SS_Player(const std::string texturePath , const sf::Vector2f & pos)
+	:Player( texturePath,pos)
+{
+	SetCollisionRadius(30);
+	m_sprite.setScale(0.1, 0.1);
+}
+
+SS_Player::~SS_Player()
+{
+	std::cout << "SS_Player's Destructor called" << std::endl;
+}
+
+void SS_Player::Draw(Window* window)
+{
+	Player::Draw(window);  
+
+}
+
+void SS_Player::Update(Window* window)
+{
+	Player::Update(window);
+
+}
+
+void SS_Player::CollidedWith(GameObjects* object)
+{
+
+}
+
+void SS_Player::MoveObject(float dt)
+{
+
+}
+
+void SS_Player::MakeInvulnerable()
+{
+
+}

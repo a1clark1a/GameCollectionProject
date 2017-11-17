@@ -55,14 +55,25 @@ SpaceShooter::~SpaceShooter()
 
 void SpaceShooter::Update()
 {
-	m_windowObj.Update();
-	
+	Game::Update();
+	bool test = true;
+	if (test = true)
+	{
+		SS_Player* player = new SS_Player("Ships/Ship/Ship (15).png", sf::Vector2f(400, 400));
+		AddObject(player);
+	}
+	for (int i = 0; i < m_gameObjects.size(); i++)
+	{
+		GameObjects* current = m_gameObjects[i];
+		current->Update(&m_windowObj);
+	}
 }
 
 void SpaceShooter::Render()
 {
 	m_windowObj.Clear();
 	//TODO Call derived class Draw functions 
+	DrawObjects();
 	m_windowObj.Display();
 
 }
@@ -70,7 +81,8 @@ void SpaceShooter::Render()
 void SpaceShooter::AddObject(GameObjects * object)
 {
 	//TODO Add objects into vector of gameobjects
-	
+	object->SetOwner(this);
+	m_gameObjects.push_back(object);
 }
 
 void SpaceShooter::DrawText()
@@ -86,6 +98,11 @@ void SpaceShooter::DrawBackground()
 void SpaceShooter::DrawObjects()
 {
 	//TODO Create a forloop that draws all objects in gameobject vector
+	for (int i = 0; i < m_gameObjects.size(); i++)
+	{
+		GameObjects* current = m_gameObjects[i];
+		current->Draw(&m_windowObj);
+	}
 }
 
 //SPACESHOOTER MAIN FUNCTIONS
@@ -93,6 +110,7 @@ void SpaceShooter::DrawObjects()
 void SpaceShooter::RespawnPlayer()
 {
 	//TODO Function to spawn player after every death
+
 }
 
 void SpaceShooter::SpawnAI()

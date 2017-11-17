@@ -22,7 +22,7 @@ public:
 	virtual ~Game();									// virtual Destructor
 
 	//Virtual Functions
-	virtual void Update() = 0;							// Pure Virtual Function to be redefined in each respective derived classes
+	virtual void Update() { m_windowObj.Update(); }		// Inline call m_windowObj update function then to be redefined in each respective derived classes
 	virtual void Render() = 0;							// Pure Virtual Function to clear, draw and display 
 	virtual void AddObject(GameObjects * object) = 0;   // Pure Virtual Function to be redefined in each respective derived class
 	virtual void SetScore(int scoreVal);				// Function to add Score( maybe redefined to set specific score variable based on game(to be drawn by DrawText())

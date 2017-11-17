@@ -64,7 +64,7 @@ protected:
 class Player : public GameObjects
 {
 public:
-	Player(const std::string texturePath, const sf::Vector2f& pos)
+	Player(const std::string texturePath, const sf::Vector2f & pos)
 		:GameObjects(texturePath, pos) {}								// Initialize a GameObjects texture and pos using the arguments passed to Player constructor
 	virtual ~Player()													// Virtual destructor
 	{ std::cout << "Base Player Class's Destructor called " << std::endl; }
