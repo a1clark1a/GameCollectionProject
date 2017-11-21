@@ -18,7 +18,8 @@ int main()
 	while (!shooter.GetWindow()->IsClosed())
 	{
 		
-		shooter.Update();
+		
+		shooter.Update(shooter.GetWindow()->GetDeltaTime().asSeconds());
 		shooter.Render();
 	}
 	

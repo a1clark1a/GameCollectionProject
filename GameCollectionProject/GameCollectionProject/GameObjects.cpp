@@ -9,8 +9,8 @@
 GameObjects::GameObjects(const std::string texturePath, const sf::Vector2f& pos)
 	:m_gameObjIsDestroyed(false)
 	,m_pos(pos)
-	,m_collisionRadius(0)
-	,m_angle(0)
+	,m_collisionRadius(0.0f)
+	,m_angle(0.0f)
 	
 {
 	m_texture.loadFromFile(texturePath);
@@ -27,16 +27,16 @@ GameObjects::~GameObjects()
 
 //Virtual Functions
 
-//A virtual function : Base version draws a CollisionSphere on object
+//A virtual function : Base version draws a CollisionSphere on each object
 void GameObjects::Draw(Window* window)
 {
 	CollisionSphere->setRadius(m_collisionRadius);
-	CollisionSphere->setOutlineThickness(2);
+	CollisionSphere->setOutlineThickness(2.0f);
 	CollisionSphere->setFillColor(sf::Color::Transparent);
 	CollisionSphere->setPosition(m_pos);
 	CollisionSphere->setOrigin(m_collisionRadius, m_collisionRadius);
 	CollisionSphere->setOutlineColor(sf::Color::Red);
-	window->DrawThis(CollisionSphere);
+	window->DrawThis(CollisionSphere);							//Comment out
 	window->DrawThis(&m_sprite);
 
 }
@@ -107,6 +107,7 @@ void Player::Draw(Window* window)
 	GameObjects::Draw(window);
 }
 
+//A virtual function:: Base version of all Player classes, 
 void Player::Update(Window* window)
 {
 	GameObjects::Update(window);
@@ -129,9 +130,11 @@ void Player::MakeInvulnerable()
 
 SS_Player::SS_Player(const std::string texturePath , const sf::Vector2f & pos)
 	:Player( texturePath,pos)
+	,m_health(100.0f)
 {
-	SetCollisionRadius(30);
-	m_sprite.setScale(0.1, 0.1);
+	SetCollisionRadius(45.0f);
+	m_sprite.setScale(0.1f, 0.1f);
+	m_sprite.setOrigin(m_sprite.getTextureRect().width * 0.5f, m_sprite.getTextureRect().height * 0.65f);
 }
 
 SS_Player::~SS_Player()
@@ -148,7 +151,12 @@ void SS_Player::Draw(Window* window)
 void SS_Player::Update(Window* window)
 {
 	Player::Update(window);
-
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
+	{
+		
+		Destroy();
+		
+	}
 }
 
 void SS_Player::CollidedWith(GameObjects* object)
@@ -158,7 +166,7 @@ void SS_Player::CollidedWith(GameObjects* object)
 
 void SS_Player::MoveObject(float dt)
 {
-
+	
 }
 
 void SS_Player::MakeInvulnerable()

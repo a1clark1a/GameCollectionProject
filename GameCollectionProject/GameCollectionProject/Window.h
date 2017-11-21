@@ -26,7 +26,7 @@ public:
 	bool IsClosed() const {	return m_isClosed; }									// inline Bool function to get value of m_isDone
 	bool isFullScreen() const { return m_isFullscreen; }						// inline Bool function to get value of m_isFullScreen
 	sf::Vector2u* GetWindowSize() { return &m_renderWindowSize; }				// inline get a pointer to rendered window size variable;
-	sf::Time* GetDeltaTime() { return &dt; }									// inline get a pointer to Deltatime and access seconds, milliseconds
+	sf::Time GetDeltaTime() { return dt; }									// inline get a pointer to Deltatime and access seconds, milliseconds
 	
 private:
 	//Behind the scenes function

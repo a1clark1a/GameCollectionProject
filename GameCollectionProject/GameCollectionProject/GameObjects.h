@@ -98,7 +98,11 @@ public:
 	virtual void MoveObject(float dt);
 	virtual void MakeInvulnerable();
 
+	//Main Functions
+	void DealDamage(float dmgVal);
+
 private:
 	float m_health; 
 	
 };
+
