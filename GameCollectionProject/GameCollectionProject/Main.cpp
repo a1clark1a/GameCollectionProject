@@ -19,7 +19,7 @@ int main()
 	{
 		
 		
-		shooter.Update(shooter.GetWindow()->GetDeltaTime().asSeconds());
+		shooter.Update(shooter.GetWindow()->GetDeltaTime()->asSeconds());
 		shooter.Render();
 	}
 	

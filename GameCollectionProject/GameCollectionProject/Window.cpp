@@ -21,6 +21,7 @@ Window::Window(const std::string & winTitle, const sf::Vector2u & winSize)
 //To be called when toggling fullscreen or closing window,
 Window::~Window()
 {
+	std::cout << "Window Destructor is called" << std::endl;
 	Destroy();																		// Upon deletion of window, call Destroy() to close window
 }
 
@@ -29,16 +30,16 @@ Window::~Window()
 //Window Update function to be called in Game Update()
 void Window::Update()
 {
-	dt = m_clock.restart();
-	sf::Event event;																// Event object creation
-	while (m_renderWindow.pollEvent(event))
+	l_dt = m_clock.restart();
+	sf::Event l_event;																// Event object creation
+	while (m_renderWindow.pollEvent(l_event))
 	{
 		
-		if (event.type == sf::Event::Closed)
+		if (l_event.type == sf::Event::Closed)
 		{
 			m_isClosed = true;														// When window is closed set m_isDone to true
 		}																			// then the while loop playing the game will end
-		else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::F5)
+		else if (l_event.type == sf::Event::KeyPressed && l_event.key.code == sf::Keyboard::F5)
 		{
 			ToggleFullscreen();														// Call function to toggle Full Screen 
 		}
@@ -80,7 +81,7 @@ void Window::Setup(const std::string & winTitle, const sf::Vector2u & winSize)
 //To be called from inside Setup()
 void Window::Create()
 {
-	auto style = (m_isFullscreen ? sf::Style::Fullscreen : sf::Style::Default);   // Value for auto type variable is based on value of m_isFullScreen
-	m_renderWindow.create({ m_renderWindowSize.x, m_renderWindowSize.y, 32 }, m_renderWindowTitle, style);// create window using the values taken from Constructor parameters passed 
+	auto l_style = (m_isFullscreen ? sf::Style::Fullscreen : sf::Style::Default);   // Value for auto type variable is based on value of m_isFullScreen
+	m_renderWindow.create({ m_renderWindowSize.x, m_renderWindowSize.y, 32 }, m_renderWindowTitle, l_style);// create window using the values taken from Constructor parameters passed 
 																				  // into Setup()
 }

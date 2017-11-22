@@ -50,14 +50,14 @@ SpaceShooter::SpaceShooter(const sf::Vector2u winSize)
 {
 	//TODO 
 	m_isGameOver = false;
-	CreateBackground(m_background, m_bgTexture, "Background/longBGStars.png", sf::Vector2f(0.0f, 0.0f));
-	CreateBackground(m_background2, m_bgTexture, "Background/longBGStars.png", sf::Vector2f(0.0f, -1200.0f));
+	CreateBackground(&m_background, &m_bgTexture, "Background/longBGStars.png", sf::Vector2f(0.0f, 0.0f));
+	CreateBackground(&m_background2, &m_bgTexture, "Background/longBGStars.png", sf::Vector2f(0.0f, -800.0f));
 }
 
 SpaceShooter::~SpaceShooter()
 {
 	std::cout << "DERIVED CLASS(SpaceShooter) DESTRUCTOR CALLED" << std::endl;
-	delete m_background, m_background2, m_bgTexture;
+	
 }
 
 
@@ -79,8 +79,8 @@ void SpaceShooter::Render()
 {
 	m_windowObj.Clear();
 	//TODO Call derived class Draw functions 
-	m_windowObj.DrawThis(m_background);
-	m_windowObj.DrawThis(m_background2);
+	m_windowObj.DrawThis(&m_background);
+	m_windowObj.DrawThis(&m_background2);
 	DrawText();
 	DrawObjects();
 	m_windowObj.Display();
@@ -97,24 +97,24 @@ void SpaceShooter::AddObject(GameObjects * object)
 //TODO Create drawable Text for window to tract score, ammo, lives etc
 void SpaceShooter::DrawText()
 {
-	sf::Texture livesTexture;
-	livesTexture.loadFromFile("Ships/TopDownShips/ship2.png");
+	sf::Texture l_livesTexture;
+	l_livesTexture.loadFromFile("Ships/TopDownShips/ship2.png");
 	for (int i = 0; i < m_livesRemaining; i++)
 	{
-		sf::Sprite livesSprite(livesTexture);
-		livesSprite.setScale(sf::Vector2f(0.05f, 0.05f));
-		livesSprite.setPosition(sf::Vector2f(i * 40, 50));
-		m_windowObj.DrawThis(&livesSprite);
+		sf::Sprite l_livesSprite(l_livesTexture);
+		l_livesSprite.setScale(sf::Vector2f(0.08f, 0.08f));
+		l_livesSprite.setPosition(sf::Vector2f(i * 60, 50));
+		m_windowObj.DrawThis(&l_livesSprite);
 	}
 }
 
 //Create a background 
 void SpaceShooter::CreateBackground
-(sf::RectangleShape* bg, sf::Texture* bgText, std::string texturePath, sf::Vector2f Position)
+( sf::RectangleShape* bg, sf::Texture* bgText, const std::string texturePath, const sf::Vector2f Position)
 {
 	bgText->loadFromFile(texturePath);
 	bg->setTexture(bgText);
-	bg->setSize(sf::Vector2f(800.0f,1200.0f));
+	bg->setSize(sf::Vector2f(800.0f,800.0f));
 	bg->setOrigin(sf::Vector2f(0.0f,0.0f));
 	bg->setPosition(sf::Vector2f(Position));
 }
@@ -124,8 +124,8 @@ void SpaceShooter::DrawObjects()
 {
 	for (int i = 0; i < m_gameObjects.size(); i++)
 	{
-		GameObjects* current = m_gameObjects[i];
-		current->Draw(&m_windowObj);
+		GameObjects* l_current = m_gameObjects[i];
+		l_current->Draw(&m_windowObj);
 	}
 }
 
@@ -135,28 +135,28 @@ void SpaceShooter::UpdateGameObj()
 	//Loop through m_gameObjects vector and call each Update function
 	for (int i = 0; i < m_gameObjects.size(); i++)
 	{
-		GameObjects* current = m_gameObjects[i];
-		current->Update(&m_windowObj);
+		GameObjects* l_current = m_gameObjects[i];
+		l_current->Update(&m_windowObj);
 	}
 
 	//Loop through m_gameObjects vector can check if each GameObjects destroy state is true, 
 	//If its the player , delete it then reset the m_timeUntilRespawn
 	for (int i = m_gameObjects.size() - 1; i >= 0; i--)
 	{
-		GameObjects* current = m_gameObjects[i];
-		SS_Player* player = dynamic_cast<SS_Player*>(current);
-		if (player->IsDestroyed())
+		GameObjects* l_current = m_gameObjects[i];
+		SS_Player* l_player = dynamic_cast<SS_Player*>(l_current);
+		if (l_player->IsDestroyed())
 		{
 			
-			delete player;
+			delete l_player;
 			m_gameObjects.erase(m_gameObjects.begin() + i);
 			m_timeUntilRespawn = 2.0f;
 
 		}
-		else if(current->IsDestroyed())
+		else if(l_current->IsDestroyed())
 		{
 			
-			delete current;
+			delete l_current;
 			m_gameObjects.erase(m_gameObjects.begin() + i);
 		}
 	}
@@ -168,8 +168,8 @@ void SpaceShooter::GameOver()
 	m_isGameOver = true;
 	for (int i = 0; i < m_gameObjects.size(); i++)
 	{
-		GameObjects* current = m_gameObjects[i];
-		current->Destroy();
+		GameObjects* l_current = m_gameObjects[i];
+		l_current->Destroy();
 	}
 }
 
@@ -219,23 +219,30 @@ void SpaceShooter::SetSpawnCount()
 	//TODO Function to call to set how many AI to spawn
 }
 
-//A Function to loop the background by dynamically deleting and recreating a new background
+//A Function to loop the background 
 void SpaceShooter::LoopBackground()
 {
-	//TODO create a linear interpolation function for a smoother background movement
-	m_background->setPosition(m_background->getPosition().x, m_background->getPosition().y + 0.05f);
-	m_background2->setPosition(m_background2->getPosition().x, m_background2->getPosition().y + 0.05f);
-	if (m_background->getPosition().y > 800)
+	m_background.setPosition(m_background.getPosition().x, m_background.getPosition().y + 50.0f * m_windowObj.GetDeltaTime()->asSeconds());
+	m_background2.setPosition(m_background2.getPosition().x, m_background2.getPosition().y + 50.0f * m_windowObj.GetDeltaTime()->asSeconds());
+	if (m_background.getPosition().y > 800)
 	{
-		delete m_background;
+		//The dynamic recreation of objects creates a stutter // TODO figure it out
+		/*sf::RectangleShape* l_temp = m_background;
 		m_background = new sf::RectangleShape;
-		CreateBackground(m_background, m_bgTexture, "Background/longBGStars.png", sf::Vector2f(0.0f, -1200.0f));
+		CreateBackground(m_background, m_bgTexture, "Background/longBGStars.png", sf::Vector2f(0.0f, -800.0f));
+		delete l_temp;
+		*/
+		m_background.setPosition(sf::Vector2f(0.0f, -800.0f));
 	}
-	if (m_background2->getPosition().y > 800)
+	if (m_background2.getPosition().y > 800)
 	{
-		delete m_background2;
+		//The dynamic recreation of objects creates a stutter // TODO figure it out
+		/*
+		sf::RectangleShape* l_temp = m_background2;
 		m_background2 = new sf::RectangleShape;
-		CreateBackground(m_background2, m_bgTexture, "Background/longBGStars.png", sf::Vector2f(0.0f, -1200.0f));
+		CreateBackground(m_background2, m_bgTexture, "Background/longBGStars.png", sf::Vector2f(0.0f, -800.0f));
+		delete l_temp;*/
+		m_background2.setPosition(sf::Vector2f(0.0f, -800.0f));
 	}
 
 	

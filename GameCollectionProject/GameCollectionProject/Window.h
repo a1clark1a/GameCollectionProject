@@ -25,8 +25,8 @@ public:
 	//Getter functions
 	bool IsClosed() const {	return m_isClosed; }									// inline Bool function to get value of m_isDone
 	bool isFullScreen() const { return m_isFullscreen; }						// inline Bool function to get value of m_isFullScreen
-	sf::Vector2u* GetWindowSize() { return &m_renderWindowSize; }				// inline get a pointer to rendered window size variable;
-	sf::Time GetDeltaTime() { return dt; }									// inline get a pointer to Deltatime and access seconds, milliseconds
+	const sf::Vector2u* GetWindowSize() { return &m_renderWindowSize; }				// inline get a pointer to rendered window size variable;
+	const sf::Time* GetDeltaTime() { return &l_dt; }									// inline get a pointer to Deltatime and access seconds, milliseconds
 	
 private:
 	//Behind the scenes function
@@ -38,7 +38,7 @@ private:
 	sf::Vector2u m_renderWindowSize; 
 	std::string m_renderWindowTitle;
 	sf::Clock m_clock;
-	sf::Time dt;																// DeltaTime to access seconds, milliseconds etc
+	sf::Time l_dt;																// DeltaTime to access seconds, milliseconds etc
 	bool m_isFullscreen;														// renderWindow state
 	bool m_isClosed;				
 

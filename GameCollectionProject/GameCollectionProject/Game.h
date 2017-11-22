@@ -33,20 +33,20 @@ public:
 	virtual void CreateBackground() {};									// Virtual Function to draw the background(be called in Render())
 
 	//Virtual Helper Functions
-	virtual Window* GetWindow() { return &m_windowObj; }// Inline helper function to acces a reference to m_windowObj object
+	virtual Window* GetWindow()  { return &m_windowObj; }			// Inline helper function to acces a reference to m_windowObj object
 	
 	//REMINDER Members in this section are public ONLY INSIDE a derived class otherwise PRIVATE
 protected:
 
 	// Create a Window object to be accessed by derived classes to be able to draw object in window
 	Window m_windowObj ;													// Object used to access Window members
-	std::vector<GameObjects*> m_gameObjects;							// A vector container of pointers to a gameobject. 
-	sf::Font m_mainFont;												// Use one type of font for all games(for now) to be initialized in constructor
-	sf::RectangleShape* m_background = new sf::RectangleShape;
-	sf::Texture* m_bgTexture = new sf::Texture;
-	unsigned int m_score;												// Game score variable
-	unsigned int m_highScore = 0;										// Highscore variable 
-	bool m_isGameOver;													// A Game's gameover state
+	std::vector<GameObjects*> m_gameObjects;								// A vector container of pointers to a gameobject. 
+	sf::Font m_mainFont;													// Use one type of font for all games(for now) to be initialized in constructor
+	sf::RectangleShape m_background;
+	sf::Texture m_bgTexture;
+	unsigned int m_score;													// Game score variable
+	unsigned int m_highScore = 0;											// Highscore variable 
+	bool m_isGameOver;														// A Game's gameover state
 	
 
 	//REMINDER Members in this section are unaccessible outside
@@ -81,7 +81,7 @@ public:
 	virtual void UpdateGameObj();
 	virtual void GameOver();
 	virtual void CreateBackground
-	(sf::RectangleShape* bg, sf::Texture* bgText, std::string texturePath, sf::Vector2f Position);
+	(sf::RectangleShape* bg,  sf::Texture* bgText, const std::string texturePath,const sf::Vector2f Position);
 
 
 	//SpaceShooter Functions
@@ -100,7 +100,7 @@ private:
 	int m_livesRemaining;
 	int m_specialAmmoRemaining;
 	float m_timeUntilRespawn;
-	sf::RectangleShape* m_background2 = new sf::RectangleShape;
+	sf::RectangleShape m_background2;
 	
 
 };
