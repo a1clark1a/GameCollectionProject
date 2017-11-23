@@ -51,9 +51,18 @@ void GameObjects::Update(Window* window)
 	m_sprite.setPosition(m_pos);
 }
 
-//
+//GameObjects version of setting an objects Velocity
 void GameObjects::SetVelocity(float velAmount)
 {
+	if (velAmount > 0.0f)
+	{
+		float l_rotInRadians = DEG_TO_RAD * m_angle;
+		m_vel = sf::Vector2f(velAmount * sin(l_rotInRadians), -velAmount * cos(l_rotInRadians));
+	}
+	else
+	{
+		m_vel = sf::Vector2f(0.0f, 0.0f);
+	}
 
 }
 
@@ -81,21 +90,57 @@ void GameObjects::MaxVelocity()
 }
 
 //GameObject's version to apply some drag to objects movements when no acceleration
-void GameObjects::ApplyDrag(float dt)
+void GameObjects::ApplyDrag(float dt, float dragval)
 {
 	if (m_accel.x == 0.0f && m_accel.y == 0.0f)
 	{
-		float dragAmount = dt* 0.9f;
+		float dragAmount = dt* dragval;
 		m_vel.x -= dragAmount * m_vel.x;
 		m_vel.y -= dragAmount * m_vel.y;
 	}
 }
 
-//GameObjects version
+//GameObjects version setting an Objects acceleration
 void GameObjects::SetAccel(float accelVal)
 {
+	if (accelVal > 0.0f)
+	{
+		float l_rotInRadians = DEG_TO_RAD * m_angle;
+		m_accel = sf::Vector2f(accelVal * sin(l_rotInRadians), -accelVal * cos(l_rotInRadians));
+	}
+	else
+	{
+		m_accel = sf::Vector2f(0.0f, 0.0f);
+	}
 
 }
+
+//GameObjects version to accelerate player forward or backward in a more linear value
+void GameObjects::SetLinearAccel(float accelVal)
+{
+	if (accelVal != 0)
+	{
+		m_accel = sf::Vector2f(0.0, 10.0f * -accelVal);
+	}
+	else
+	{
+		m_accel = sf::Vector2f(0.0f, 0.0f);
+	}
+}
+
+//GameObjects to accelerate player Left or Right
+void GameObjects::SetSideAccel(float accelVal)
+{
+	if (accelVal != 0.0f)
+	{
+		m_accel = sf::Vector2f(10.0f * accelVal, 0.0f);
+	}
+	else
+	{
+		m_accel = sf::Vector2f(0.0f, 0.0f);
+	}
+}
+
 
 //GameObjects function checking if object is going out of window
 //Redefined in Player
@@ -132,7 +177,7 @@ float GameObjects::GetDistance(const sf::Vector2f & otherVector) const
 }
 
 //GameObjects version Collision check if another object collides with this(invoking) object
-bool GameObjects::IsColliding(const GameObjects* otherObj) const
+bool GameObjects::IsColliding(const GameObjects* otherObj)
 {
 	bool l_result = false;
 	if (this != otherObj && !IsDestroyed() && !otherObj->IsDestroyed() && GetDistance(otherObj->m_pos) < (m_collisionRadius + otherObj->m_collisionRadius))
@@ -168,15 +213,168 @@ void Player::MakeInvulnerable()
 
 }
 
+void Player::TakeDmg(const float & dmgVal)
+{
+	if (m_playerHealth > 0.0f)
+	{
+		m_playerHealth -= dmgVal;
+	}
+	else
+	{
+		Destroy();
+	}
+}
+
+/*********************************************************************
+***************BULLET CLASS : DERIVED FROM GAMEOBJECT*****************
+*********************************************************************/
+
+//Bullet version's Update that calls GameObject's update and decreases a bullets lifetime overtime
+void Bullet::Update(Window* window)
+{
+	GameObjects::Update(window); 
+	m_lifeTime -= window->GetDeltaTime()->asSeconds();
+}
+
+void Bullet::DealDmg(GameObjects* object)
+{
+	Enemy* enemy = dynamic_cast<Enemy*>(object);
+	if (enemy->GetEnemyHealth() > 0.0f)
+	{
+		enemy->TakeDamage(m_dmgVal);
+		Destroy();
+	}
+	else
+	{
+		enemy->Destroy();
+		Destroy();
+	}
+}
+
+/*********************************************************************
+***************FASTBULLET CLASS : DERIVED FROM BULLET*****************
+*********************************************************************/
+
+FastBullet::FastBullet(const sf::Vector2f & pos, const float & dmgVal)
+	:Bullet("Ships/Effects/Lasers/laserBlue01.png", pos, dmgVal)
+	
+{
+	m_lifeTime = 3.0f;
+	m_collisionRadius = 2.f;
+	m_sprite.scale(0.5f, 0.5f);
+	m_sprite.setOrigin(m_sprite.getTextureRect().width * 0.5f, m_sprite.getTextureRect().height * 0.5f);
+}
+
+//FastBullet version that calls Bullets update and checks for FastBullets lifetime
+void FastBullet::Update(Window* window)
+{
+	Bullet::Update(window);
+	if (m_lifeTime <= 0.0f)
+	{
+		Destroy();
+	}
+}
+
+//FastBullet's version that takes a collided object and checks if its an enemy
+void FastBullet::CollidedWith(GameObjects* object)
+{
+	
+	Enemy* l_enemy = dynamic_cast<Enemy*>(object);
+	if(l_enemy)
+	{
+		Asteroid* l_asteroid = dynamic_cast<Asteroid*>(object);
+		if (l_asteroid)
+		{
+			object->Destroy();
+			Destroy();
+		}
+		else
+		{
+			DealDmg(l_enemy);
+		}
+		
+	}
+}
+
+/*********************************************************************
+***************LASERBULLET CLASS : DERIVED FROM BULLET*****************
+*********************************************************************/
+LaserBullet::LaserBullet(const sf::Vector2f & pos, const float & dmgVal)
+	:Bullet("TODO ADD BULLET SPRITE ADDRESS", pos, dmgVal)
+{
+	
+}
+
+LaserBullet::~LaserBullet()
+{
+	std::cout << "LaserBullet Destructor Called" << std::endl;
+	delete m_collisionBox;
+}
+
+void LaserBullet::Draw(Window* window)
+{
+	m_collisionBox->setSize(m_collisionSize);
+	m_collisionBox->setOrigin(m_collisionSize.x * 0.5f,m_collisionSize.y * 0.5f);
+	m_collisionBox->setPosition(m_pos);
+	m_collisionBox->setFillColor(sf::Color::Transparent);
+	m_collisionBox->setOutlineThickness(2.0f);
+	m_collisionBox->setOutlineColor(sf::Color::Red);
+	window->DrawThis(m_collisionBox);
+	window->DrawThis(&m_sprite);
+
+}
+
+void LaserBullet::Update(Window* window)
+{
+	Bullet::Update(window);
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+	{
+		m_lifeTime = 2.0f;
+	}
+	else
+	{
+		m_lifeTime -= window->GetDeltaTime()->asSeconds();
+	}
+
+}
+
+void LaserBullet::CollidedWith(GameObjects* object)
+{
+	Enemy* l_enemy = dynamic_cast<Enemy*>(object);
+	if (l_enemy)
+	{
+		Asteroid* l_asteroid = dynamic_cast<Asteroid*>(l_enemy);
+		if (l_asteroid)
+		{
+			object->Destroy();
+			Destroy();
+		}
+		else
+		{
+			DealDmg(l_enemy);
+		}
+	}
+}
+
+void LaserBullet::Destroy()
+{
+	//TODO make the sprite slowly vanish before calling Destroy
+	Bullet::Destroy();
+}
+
+/*********************************************************************
+***************SS_PLAYER CLASS : DERIVED FROM PLAYER******************
+*********************************************************************/
+
 //SS_Player Constructor 
 //Needs texture address and initial position to initialize player sprite
-SS_Player::SS_Player(const std::string texturePath, const sf::Vector2f & pos)
-	:Player(texturePath, pos)
-	, m_playerHealth(100.0f)
+SS_Player::SS_Player()
+	:Player("Ships/TopDownShips/ship2.png", sf::Vector2f(400.0f, 400.0f))
 {
+	m_playerHealth = 100.0f;
 	m_shootCooldown = 0.2f;
 	m_shooting = false;
-	SetCollisionRadius(45.0f);
+	m_collisionRadius = 45.0f;
 	m_sprite.setScale(0.1f, 0.1f);
 	m_sprite.setOrigin(m_sprite.getTextureRect().width * 0.5f, m_sprite.getTextureRect().height * 0.65f);
 }
@@ -198,14 +396,23 @@ void SS_Player::Draw(Window* window)
 void SS_Player::Update(Window* window)
 {
 	Player::Update(window);
-	SetAccel(0.0f);
+	SetLinearAccel(0.0f);
 	OutOfBounds(window);
 	PlayerControls(window);
-	
+	ShootFunction();
 }
 
+//SS_Player version that calls GameObjects Destroy then resets player spawntime
+void SS_Player::Destroy()
+{
+	GameObjects::Destroy();
+	m_owner->ResetSpawnTimer();
+}
+
+//SS_Player version that checks if an enemy collides to player then destroy if health < enemy dmg
 void SS_Player::CollidedWith(GameObjects* object)
 {
+	/**
 	Enemy* l_enemy = dynamic_cast<Enemy*>(object);
 	if (l_enemy)
 	{
@@ -220,30 +427,7 @@ void SS_Player::CollidedWith(GameObjects* object)
 			Destroy();
 		}
 	}
-}
-
-//SS_player version to accelerate player forward or backward
-void SS_Player::SetAccel(float accelVal)
-{
-	if (accelVal != 0)
-	{
-		m_accel = sf::Vector2f(0.0, 10.0f * -accelVal);
-	}
-	else
-	{
-		m_accel = sf::Vector2f(0.0f, 0.0f);
-	}
-}
-
-//SS_Player version of ApplyDrag is redefined to decelerate the player
-void SS_Player::ApplyDrag(float dt)
-{
-	if (m_accel.x == 0.0f && m_accel.y == 0.0f)
-	{
-		float l_decelerate = dt * 10.0f;
-		m_vel.x -= l_decelerate* m_vel.x;
-		m_vel.y -= l_decelerate* m_vel.y;
-	}
+	*/
 }
 
 //SS_Player version to prevent player from going out of window in the Y direction
@@ -277,13 +461,11 @@ void SS_Player::PlayerControls(Window* window)
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 	{
-
-		SetAccel(200);
-
+		SetLinearAccel(2000);
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
 	{
-		SetAccel(-200);
+		SetLinearAccel(-200);
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 	{
@@ -292,10 +474,15 @@ void SS_Player::PlayerControls(Window* window)
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 	{
 		SetSideAccel(200);
+		//TEST
+		LargeAsteroid* test = new LargeAsteroid(sf::Vector2f(rand() % 400,50.0f));
+		test->SetLinearAccel(-10.0f);
+		m_owner->AddObject(test);
 	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
 	{
-		//TODO call shoot function
+		m_shooting = true;
+		ShootFunction();
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab))
 	{
@@ -303,19 +490,20 @@ void SS_Player::PlayerControls(Window* window)
 	}
 	else
 	{
-		ApplyDrag(window->GetDeltaTime()->asSeconds());
+		ApplyDrag(window->GetDeltaTime()->asSeconds(), 10.0f);
 		
 	}
+	
 }
 
 //SS_Player version shoot bullets based on which weapon type equipped
 void SS_Player::ShootFunction()
 {
-	//TODO TRY IT OUT NOT TESTES
 	if (m_shooting && m_shootCooldown <= 0.0f)
 	{
-		FastBullet* l_fastBullet1 = new FastBullet("TODO PUT BULLET SPRITE ADDRESS", sf::Vector2f(m_pos.x + 0.1f, m_pos.y));
-		FastBullet* l_fastBullet2 = new FastBullet("TODO PUT BULLET SPRITE ADDRESS", sf::Vector2f(m_pos.x - 0.1f, m_pos.y));
+		m_shootCooldown = 0.1f;
+		FastBullet* l_fastBullet1 = new FastBullet(sf::Vector2f(m_pos.x + 30.0f, m_pos.y - 30), 10.0f);
+		FastBullet* l_fastBullet2 = new FastBullet(sf::Vector2f(m_pos.x - 30.0f, m_pos.y - 30), 10.0f);
 		l_fastBullet1->SetVelocity(1000);
 		l_fastBullet2->SetVelocity(1000);
 		m_owner->AddObject(l_fastBullet1);
@@ -332,16 +520,122 @@ void SS_Player::MakeInvulnerable()
 
 //SS_Player Main Functions
 
-//SS_player only function to accelerate player Left or Right
-void SS_Player::SetSideAccel(float accelVal)
+
+
+/*********************************************************************
+****************ENEMY CLASS : DERIVED FROM GAMEOBJECTS****************
+*********************************************************************/
+
+//Enemy version when player collides with an enemy object, if player health > 0 then player takes dmg else destroy
+void Enemy::CollidedWith(GameObjects* object)
 {
-	if (accelVal != 0.0f)
+	Player* l_player = dynamic_cast<Player*>(object);
+	if (l_player)
 	{
-		m_accel = sf::Vector2f(10.0f * accelVal, 0.0f);
+		if (l_player->GetPlayerHealth() > 0)
+		{
+			//Player takes damage 
+			TakeDamage(m_dmgVal);
+			Destroy();
+			std::cout << "Player collided to Enemy object" << std::endl;
+		}
+		else
+		{
+			std::cout << "Player destroyed" << std::endl;
+			l_player->Destroy();
+		}
+	}
+}
+
+void Enemy::TakeDamage(const float dmgVal)
+{
+	if (m_enemyHealth > 0.0f)
+	{
+		m_enemyHealth -= dmgVal;
 	}
 	else
 	{
-		m_accel = sf::Vector2f(0.0f, 0.0f);
+		Destroy();
 	}
+}
+
+/*********************************************************************
+****************ASTEROID CLASS : DERIVED FROM ENEMY*******************
+*********************************************************************/
+
+Asteroid::Asteroid(const std::string texturePath, const sf::Vector2f & pos)
+	:Enemy(texturePath, pos)
+{
+	m_rotationRate = rand() % 45 + 45;									// between 45 - 90
+	m_rotationRate *= rand() % 2 == 0 ? 1 : -1;							// chooses if its negative or positive	
+}
+
+void Asteroid::Update(Window* window)
+{
+	m_angle += m_rotationRate * window->GetDeltaTime()->asSeconds();	//continously rotate an asteroid by rotation rate * time
+	Enemy::Update(window);
+}
+
+/*********************************************************************
+*************LARGE ASTEROID CLASS : DERIVED FROM ASTEROID*************
+*********************************************************************/
+
+LargeAsteroid::LargeAsteroid(const sf::Vector2f & pos)
+	:Asteroid("Ships/Meteors/meteorBrown_big4.png", pos)
+{
+	m_dmgVal = 15.0f;
+	m_scoreVal = 10;
+	SetCollisionRadius(50);
+}
+
+void LargeAsteroid::Destroy()
+{
+	
+	m_owner->SetScore(m_scoreVal);
+	for (int i = 0; i < 3; i++)
+	{
+		MediumAsteroid* mediumAsteroid = new MediumAsteroid(m_pos);
+		mediumAsteroid->SetAngle(rand() % 360);
+		mediumAsteroid->SetVelocity(100.0f);
+		m_owner->AddObject(mediumAsteroid);
+	}
+	GameObjects::Destroy();
+}
+
+/*********************************************************************
+*************MEDIUM ASTEROID CLASS : DERIVED FROM ASTEROID************
+*********************************************************************/
+
+MediumAsteroid::MediumAsteroid(const sf::Vector2f & pos)
+	:Asteroid("Ships/Meteors/meteorBrown_med3.png", pos)
+{
+	m_dmgVal = 10.0f;
+	m_scoreVal = 50;
+	SetCollisionRadius(30);
+}
+
+void MediumAsteroid::Destroy()
+{
+	m_owner->SetScore(m_scoreVal);
+	for (int i = 0; i < 3; i++)
+	{
+		SmallAsteroid* smallAsteroid = new SmallAsteroid(m_pos);
+		smallAsteroid->SetAngle(rand() % 360);
+		smallAsteroid->SetVelocity(100.0f);
+		m_owner->AddObject(smallAsteroid);
+	}
+	GameObjects::Destroy();
+}
+
+/*********************************************************************
+**************SMALL ASTEROID CLASS : DERIVED FROM ASTEROID************
+*********************************************************************/
+
+SmallAsteroid::SmallAsteroid(const sf::Vector2f & pos)
+	:Asteroid("Ships/Meteors/meteorBrown_tiny1.png", pos)
+{
+	m_dmgVal = 5.0f;
+	m_scoreVal = 100;
+	SetCollisionRadius(10);
 }
 

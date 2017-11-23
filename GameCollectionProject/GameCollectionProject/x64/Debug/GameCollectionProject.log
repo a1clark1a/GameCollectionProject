@@ -1,23 +1,11 @@
 ﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(392,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (BaseSFMLProject.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  Main.cpp
-c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\game.h(110): error C2011: 'Asteroid': 'class' type redefinition
-  c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\gameobjects.h(255): note: see declaration of 'Asteroid'
-c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\main.cpp(22): error C2228: left of '.asSeconds' must have class/struct/union
-  c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\main.cpp(22): note: type is 'const sf::Time *'
-  c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\main.cpp(22): note: did you intend to use '->' instead?
   GameObjects.cpp
-c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\game.h(110): error C2011: 'Asteroid': 'class' type redefinition
-  c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\gameobjects.h(255): note: see declaration of 'Asteroid'
-c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\gameobjects.cpp(107): warning C4244: '=': conversion from 'const unsigned int' to 'float', possible loss of data
-c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\gameobjects.cpp(115): warning C4244: '=': conversion from 'const unsigned int' to 'float', possible loss of data
-c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\gameobjects.cpp(215): warning C4552: '-': operator has no effect; expected operator with side-effect
-c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\gameobjects.cpp(255): warning C4244: '=': conversion from 'const unsigned int' to 'float', possible loss of data
-  Game.cpp
-c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\game.h(110): error C2011: 'Asteroid': 'class' type redefinition
-  c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\gameobjects.h(255): note: see declaration of 'Asteroid'
-c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\game.cpp(106): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\game.cpp(144): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-  Generating Code...
-  Compiling...
-  Window.cpp
-  Generating Code...
+c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\gameobjects.cpp(152): warning C4244: '=': conversion from 'const unsigned int' to 'float', possible loss of data
+c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\gameobjects.cpp(160): warning C4244: '=': conversion from 'const unsigned int' to 'float', possible loss of data
+c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\gameobjects.cpp(439): warning C4244: '=': conversion from 'const unsigned int' to 'float', possible loss of data
+c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\gameobjects.cpp(477): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\gameobjects.cpp(568): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\gameobjects.cpp(597): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\gameobjects.cpp(622): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+  GameCollectionProject.vcxproj -> C:\Users\a1cla\Desktop\KrakenFiles\GameCollectionProject\GameCollectionProject\x64\Debug\GameCollectionProject.exe
+  GameCollectionProject.vcxproj -> C:\Users\a1cla\Desktop\KrakenFiles\GameCollectionProject\GameCollectionProject\x64\Debug\GameCollectionProject.pdb (Partial PDB)

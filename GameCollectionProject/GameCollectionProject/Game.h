@@ -27,13 +27,18 @@ public:
 	virtual void AddObject(GameObjects * object) = 0;					// Pure Virtual Function to be redefined in each respective derived class
 	virtual void SetScore(int scoreVal);								// Function to add Score( maybe redefined to set specific score variable based on game(to be drawn by DrawText())
 	virtual void DrawText() = 0;										// Pure Virtual Function to draw the score text, level text, ammo count etc on window(be called in Render())
-	virtual void DrawObjects() = 0;										// Pure Virtual Function to draw game objects(be called in Render())
+	virtual void DrawObjects() = 0;										// Virtual Function to draw game objects(be called in Render())
+	virtual void ResetSpawnTimer() {};									// VirtualFunction to reset spawn timer
 	virtual void UpdateGameObj() {};									// Virtual Function to update each and every game object(if using GameObject)(to be called in Update())
 	virtual void GameOver() {};											// Virtual Function to call when game is over, to handle setting of remaining GameObjects' state into destroyed = true
 	virtual void CreateBackground() {};									// Virtual Function to draw the background(be called in Render())
 
+
+	//Main Functions
+	
+
 	//Virtual Helper Functions
-	virtual Window* GetWindow()  { return &m_windowObj; }			// Inline helper function to acces a reference to m_windowObj object
+	virtual Window* GetWindow()  { return &m_windowObj; }				// Inline helper function to acces a reference to m_windowObj object
 	
 	//REMINDER Members in this section are public ONLY INSIDE a derived class otherwise PRIVATE
 protected:
@@ -47,6 +52,7 @@ protected:
 	unsigned int m_score;													// Game score variable
 	unsigned int m_highScore = 0;											// Highscore variable 
 	bool m_isGameOver;														// A Game's gameover state
+	float m_timeUntilRespawn;
 	
 
 	//REMINDER Members in this section are unaccessible outside
@@ -83,10 +89,11 @@ public:
 	virtual void CreateBackground
 	(sf::RectangleShape* bg,  sf::Texture* bgText, const std::string texturePath,const sf::Vector2f Position);
 
+	//Helper/Getter Functions
+	virtual void ResetSpawnTimer() { m_timeUntilRespawn = 3.0f; }
 
 	//SpaceShooter Functions
-	
-	void RespawnPlayer(float dt);										// Function to spawn player
+	void RespawnPlayer();												// Function to spawn player
 	void SpawnAI();														// Function to spawn AI
 	void SpawnDestructibles();											// Function to spawn destructibles
 	void SpawnItem();													// Function to spawn Coins/Ammo/ExtraLife
@@ -96,22 +103,21 @@ public:
 
 	//SpaceShooter member variables
 private:
-	int m_level;
-	int m_livesRemaining;
-	int m_specialAmmoRemaining;
-	float m_timeUntilRespawn;
 	sf::RectangleShape m_background2;
-	
+	unsigned int m_specialAmmoRemaining;
+	unsigned int m_level;
+	unsigned int m_livesRemaining;
+	unsigned int m_spawnCount;
 
 };
 
 /*************************ASTEROID***************************/
 
-class Asteroid : public Game
+class AsteroidGame : public Game
 {
 public:
-	Asteroid();
-	virtual ~Asteroid();
+	AsteroidGame();
+	virtual ~AsteroidGame();
 
 	//Redefined Virtual Functions
 	virtual void Update();

@@ -31,7 +31,6 @@ void Game::SetScore(int scoreVal)
 	
 }
 
-
 /**************************************************************************************
 ************************************DERIVED CLASSES************************************
 *************************************************************************************** /
@@ -42,13 +41,14 @@ void Game::SetScore(int scoreVal)
 
 SpaceShooter::SpaceShooter(const sf::Vector2u winSize)
 	:Game("SpaceShooter", winSize)
-	,m_livesRemaining(4)
-	,m_level(0)
-	,m_specialAmmoRemaining(100)
-	,m_timeUntilRespawn(2.0f)
+	, m_specialAmmoRemaining(100)
+	, m_level(0)
+	, m_livesRemaining(4)
+
 	
 {
 	//TODO 
+	ResetSpawnTimer();
 	m_isGameOver = false;
 	CreateBackground(&m_background, &m_bgTexture, "Background/longBGStars.png", sf::Vector2f(0.0f, 0.0f));
 	CreateBackground(&m_background2, &m_bgTexture, "Background/longBGStars.png", sf::Vector2f(0.0f, -800.0f));
@@ -67,8 +67,8 @@ void SpaceShooter::Update(float dt)
 {
 	Game::Update();									//Call Base Game Update using scope resolution operator
 	if(!m_isGameOver)
-	{			
-		RespawnPlayer(dt);
+	{
+	 
 		UpdateGameObj();
 		LoopBackground();
 		//std::cout << m_background.getPosition().y << std::endl;
@@ -132,6 +132,16 @@ void SpaceShooter::DrawObjects()
 //A forloop function that calls each objects update function
 void SpaceShooter::UpdateGameObj()
 {
+	//If player dies, timer goes up then decreases to allow respawn of player
+	if (m_timeUntilRespawn > 0)
+	{
+		m_timeUntilRespawn -= m_windowObj.GetDeltaTime()->asSeconds();
+		if (m_timeUntilRespawn <= 0)
+		{
+			RespawnPlayer();
+		}
+	}
+
 	//Loop through m_gameObjects vector and call each Update function
 	for (int i = 0; i < m_gameObjects.size(); i++)
 	{
@@ -140,26 +150,20 @@ void SpaceShooter::UpdateGameObj()
 	}
 
 	//Loop through m_gameObjects vector can check if each GameObjects destroy state is true, 
-	//If its the player , delete it then reset the m_timeUntilRespawn
 	for (int i = m_gameObjects.size() - 1; i >= 0; i--)
 	{
 		GameObjects* l_current = m_gameObjects[i];
-		SS_Player* l_player = dynamic_cast<SS_Player*>(l_current);
-		if (l_player->IsDestroyed())
-		{
-			
-			delete l_player;
-			m_gameObjects.erase(m_gameObjects.begin() + i);
-			m_timeUntilRespawn = 2.0f;
-
-		}
-		else if(l_current->IsDestroyed())
+		if(l_current->IsDestroyed())
 		{
 			
 			delete l_current;
 			m_gameObjects.erase(m_gameObjects.begin() + i);
 		}
+
 	}
+
+	
+
 }
 
 //Set m_isGameOver state to true then call Destroy() on all GameObjects
@@ -176,26 +180,19 @@ void SpaceShooter::GameOver()
 //SPACESHOOTER MAIN FUNCTIONS
 
 //Spawn player after every death, checking for m_timeUntilRespawn and m_livesRemaining
-void SpaceShooter::RespawnPlayer(float dt)
+void SpaceShooter::RespawnPlayer()
 {
 	
-	if (m_timeUntilRespawn > 0)
-	{
-		m_timeUntilRespawn -= dt;
-		if (m_timeUntilRespawn <= 0)
+		if (m_livesRemaining > 0)
 		{
-			if (m_livesRemaining > 0)
-			{
-				m_livesRemaining--;
-				SS_Player* player = new SS_Player("Ships/TopDownShips/ship2.png", sf::Vector2f(400.0f, 400.0f));
-				AddObject(player);
-			}
-			else
-			{
-				GameOver();
-			}
+			m_livesRemaining--;
+			SS_Player* player = new SS_Player();
+			AddObject(player);
 		}
-	}
+		else
+		{
+			GameOver();
+		}
 
 }
 
@@ -207,6 +204,7 @@ void SpaceShooter::SpawnAI()
 void SpaceShooter::SpawnDestructibles()
 {
 	//TODO Function to spawn destructible objects( Can Call Spawn Item)
+
 }
 
 void SpaceShooter::SpawnItem()
