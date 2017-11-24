@@ -2,10 +2,16 @@
   GameObjects.cpp
 c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\gameobjects.cpp(152): warning C4244: '=': conversion from 'const unsigned int' to 'float', possible loss of data
 c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\gameobjects.cpp(160): warning C4244: '=': conversion from 'const unsigned int' to 'float', possible loss of data
-c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\gameobjects.cpp(439): warning C4244: '=': conversion from 'const unsigned int' to 'float', possible loss of data
-c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\gameobjects.cpp(477): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\gameobjects.cpp(568): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\gameobjects.cpp(597): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
-c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\gameobjects.cpp(622): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\gameobjects.cpp(425): warning C4244: '=': conversion from 'const unsigned int' to 'float', possible loss of data
+c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\gameobjects.cpp(464): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\gameobjects.cpp(592): warning C4244: '=': conversion from 'const unsigned int' to 'float', possible loss of data
+c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\gameobjects.cpp(617): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\gameobjects.cpp(647): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\gameobjects.cpp(672): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+  Game.cpp
+c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\game.cpp(101): warning C4018: '<': signed/unsigned mismatch
+c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\game.cpp(105): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\a1cla\desktop\krakenfiles\gamecollectionproject\gamecollectionproject\gamecollectionproject\game.cpp(152): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  Generating Code...
   GameCollectionProject.vcxproj -> C:\Users\a1cla\Desktop\KrakenFiles\GameCollectionProject\GameCollectionProject\x64\Debug\GameCollectionProject.exe
   GameCollectionProject.vcxproj -> C:\Users\a1cla\Desktop\KrakenFiles\GameCollectionProject\GameCollectionProject\x64\Debug\GameCollectionProject.pdb (Partial PDB)

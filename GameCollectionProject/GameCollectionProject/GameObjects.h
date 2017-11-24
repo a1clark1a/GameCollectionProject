@@ -82,7 +82,7 @@ public:
 	virtual void ShootFunction() {};									// Virtual Function to handle player's different type of shooting capabilities 
 
 	//Main Functions
-	void TakeDmg(const float & dmgVal);
+	virtual void TakeDmg(const float & dmgVal);
 
 	//Helper/Getter Functions
 	float GetPlayerHealth() const { return m_playerHealth; }
@@ -92,7 +92,7 @@ protected:
 	float m_shootCooldown;												// A player's shooting cooldown value
 	float m_invincibilityCooldown;										// A player's invincibility cooldown value
 	float m_playerHealth;
-	
+	unsigned int m_currentWeap;
 };
 
 /**************BASE BULLET CLASS:: DERIVED FROM GAMEOBJECTS**********/
@@ -233,12 +233,13 @@ class Enemy : public GameObjects
 {
 public:
 	Enemy(const std::string texturePath, const sf::Vector2f & pos)
-		:GameObjects(texturePath, pos) {};
+		:GameObjects(texturePath, pos) { };
 	virtual ~Enemy() { std::cout << "Enemy Destructor called" << std::endl; }
 
-	virtual void Update(Window* window) { GameObjects::Update(window); }
+	virtual void Update(Window* window) { GameObjects::Update(window); OutOfBounds(window); }
 	virtual void CollidedWith(GameObjects* object);
 	virtual void TakeDamage(const float dmgVal);
+	virtual void OutOfBounds(Window* window);
 
 	//helper functions
 	const float GetDmgVal() const { return m_dmgVal; };
@@ -249,6 +250,7 @@ protected:
 	unsigned int m_scoreVal;
 	float m_enemyHealth;
 	float m_dmgVal;
+	float l_delay;
 };
 
 

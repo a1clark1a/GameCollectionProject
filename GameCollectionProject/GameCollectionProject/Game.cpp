@@ -71,7 +71,6 @@ void SpaceShooter::Update(float dt)
 	 
 		UpdateGameObj();
 		LoopBackground();
-		//std::cout << m_background.getPosition().y << std::endl;
 	}
 }
 
@@ -149,7 +148,7 @@ void SpaceShooter::UpdateGameObj()
 		l_current->Update(&m_windowObj);
 	}
 
-	//Loop through m_gameObjects vector can check if each GameObjects destroy state is true, 
+	//Loop through m_gameObjects vector to check if each GameObjects destroy state is true, 
 	for (int i = m_gameObjects.size() - 1; i >= 0; i--)
 	{
 		GameObjects* l_current = m_gameObjects[i];
@@ -162,7 +161,19 @@ void SpaceShooter::UpdateGameObj()
 
 	}
 
-	
+	//Loop through m_gameObjects vector to check if any GameObjects object is colliding with another
+	for (int i = 0; i < m_gameObjects.size(); i++)
+	{
+		GameObjects* l_current = m_gameObjects[i];
+		for (int j = 0; j < m_gameObjects.size(); j++)
+		{
+			GameObjects* l_other = m_gameObjects[j];
+			if (l_current->IsColliding(l_other))
+			{
+				l_current->CollidedWith(l_other);
+			}
+		}
+	}
 
 }
 
