@@ -14,7 +14,7 @@
 int main()
 {
 	srand(static_cast<unsigned int>(time(0)));
-	SpaceShooter shooter(sf::Vector2u(800,800));
+	SpaceShooter shooter(sf::Vector2f(800,800));
 	while (!shooter.GetWindow()->IsClosed())
 	{
 		

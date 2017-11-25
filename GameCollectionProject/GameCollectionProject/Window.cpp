@@ -7,12 +7,12 @@
 //Default Constructor
 Window::Window()
 {
-	Setup("Default Title", sf::Vector2u(640, 480));                                 // Call Setup() with pre-made default values(should never be called)
+	Setup("Default Title", sf::Vector2f(640, 480));                                 // Call Setup() with pre-made default values(should never be called)
 }
 
 //Constructor for assigning window title and window size
 //To be initialized by Game constructor to recreate window appropriate for game
-Window::Window(const std::string & winTitle, const sf::Vector2u & winSize)          
+Window::Window(const std::string & winTitle, const sf::Vector2f & winSize)          
 {
 	Setup(winTitle, winSize);														// Call Setup() and pass the arguments taken from constructor
 }
@@ -67,7 +67,7 @@ void Window::ToggleFullscreen()
 
 //Main Function to assign values passed from Constructor to initialize values for window object
 //to be called from inside constructor
-void Window::Setup(const std::string & winTitle, const sf::Vector2u & winSize)
+void Window::Setup(const std::string & winTitle, const sf::Vector2f & winSize)
 {
 	m_renderWindowTitle = winTitle; 
 	m_renderWindowSize = winSize;
@@ -82,6 +82,6 @@ void Window::Setup(const std::string & winTitle, const sf::Vector2u & winSize)
 void Window::Create()
 {
 	auto l_style = (m_isFullscreen ? sf::Style::Fullscreen : sf::Style::Default);   // Value for auto type variable is based on value of m_isFullScreen
-	m_renderWindow.create({ m_renderWindowSize.x, m_renderWindowSize.y, 32 }, m_renderWindowTitle, l_style);// create window using the values taken from Constructor parameters passed 
+	m_renderWindow.create({ static_cast<unsigned int>(m_renderWindowSize.x), static_cast<unsigned int>(m_renderWindowSize.y), 32 }, m_renderWindowTitle, l_style);// create window using the values taken from Constructor parameters passed 
 																				  // into Setup()
 }

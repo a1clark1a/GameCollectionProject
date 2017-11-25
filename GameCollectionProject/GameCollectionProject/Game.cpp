@@ -7,7 +7,7 @@
 *********************************************************************/
 
 
-Game::Game(const std::string winTitle, const sf::Vector2u winSize)
+Game::Game(const std::string winTitle, const sf::Vector2f winSize)
 	:m_windowObj(winTitle,winSize)
 	,m_isGameOver(false)
 {
@@ -39,7 +39,7 @@ void Game::SetScore(int scoreVal)
 
 /*************************SPACESHOOTER***************************/
 
-SpaceShooter::SpaceShooter(const sf::Vector2u winSize)
+SpaceShooter::SpaceShooter(const sf::Vector2f winSize)
 	:Game("SpaceShooter", winSize)
 	, m_specialAmmoRemaining(100)
 	, m_level(0)
@@ -98,11 +98,11 @@ void SpaceShooter::DrawText()
 {
 	sf::Texture l_livesTexture;
 	l_livesTexture.loadFromFile("Ships/TopDownShips/ship2.png");
-	for (int i = 0; i < m_livesRemaining; i++)
+	for (unsigned int i = 0; i < m_livesRemaining; i++)
 	{
 		sf::Sprite l_livesSprite(l_livesTexture);
 		l_livesSprite.setScale(sf::Vector2f(0.08f, 0.08f));
-		l_livesSprite.setPosition(sf::Vector2f(i * 60, 50));
+		l_livesSprite.setPosition(sf::Vector2f(i * 60.0f, 50.0f));
 		m_windowObj.DrawThis(&l_livesSprite);
 	}
 }
@@ -149,7 +149,7 @@ void SpaceShooter::UpdateGameObj()
 	}
 
 	//Loop through m_gameObjects vector to check if each GameObjects destroy state is true, 
-	for (int i = m_gameObjects.size() - 1; i >= 0; i--)
+	for (size_t i = m_gameObjects.size() - 1; i >= 0; i--)
 	{
 		GameObjects* l_current = m_gameObjects[i];
 		if(l_current->IsDestroyed())

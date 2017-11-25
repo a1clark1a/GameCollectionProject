@@ -17,7 +17,7 @@ class Game
 	//REMINDER Main User Interface
 public:
 	//REMINDER  When an a derived object is created its base class Constructor gets called first then followed by the derived constructor
-	Game(const std::string winTitle, const sf::Vector2u winSize);												// Constructor to Game
+	Game(const std::string winTitle, const sf::Vector2f winSize);												// Constructor to Game
 	//REMINDER When an a derived object is destroyed derived object destructor gets called first then followed by base destructor
 	virtual ~Game();													// virtual Destructor
 
@@ -75,7 +75,7 @@ private:
 class SpaceShooter : public Game
 {
 public:
-	SpaceShooter(const sf::Vector2u winSize);							//TODO(In Future) for save progression feature allow reinitialization of game variables through arguments in constructor
+	SpaceShooter(const sf::Vector2f winSize);							//TODO(In Future) for save progression feature allow reinitialization of game variables through arguments in constructor
 	virtual ~SpaceShooter();
 
 	//Redefined Virtual Functions

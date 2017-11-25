@@ -11,7 +11,7 @@ class Window
 public:
 	//constructors & destructors
 	Window();																	// default constructor
-	Window(const std::string & winTitle, const sf::Vector2u & winSize);			// Main constructor to be used to set the window type
+	Window(const std::string & winTitle, const sf::Vector2f & winSize);			// Main constructor to be used to set the window type
 	~Window();																	// default destructor
 	
 	//main interface functions
@@ -25,17 +25,17 @@ public:
 	//Getter functions
 	bool IsClosed() const {	return m_isClosed; }									// inline Bool function to get value of m_isDone
 	bool isFullScreen() const { return m_isFullscreen; }						// inline Bool function to get value of m_isFullScreen
-	const sf::Vector2u* GetWindowSize() { return &m_renderWindowSize; }				// inline get a pointer to rendered window size variable;
+	const sf::Vector2f* GetWindowSize() { return &m_renderWindowSize; }				// inline get a pointer to rendered window size variable;
 	const sf::Time* GetDeltaTime() { return &l_dt; }									// inline get a pointer to Deltatime and access seconds, milliseconds
 	
 private:
 	//Behind the scenes function
-	void Setup(const std::string & winTitle, const sf::Vector2u & winSize);		// Function to assign values to member variables;
+	void Setup(const std::string & winTitle, const sf::Vector2f & winSize);		// Function to assign values to member variables;
 	void Destroy() { m_renderWindow.close(); }									// function to close window
 	void Create();																// actual function to create the window
 
 	sf::RenderWindow m_renderWindow;											// render window
-	sf::Vector2u m_renderWindowSize; 
+	sf::Vector2f m_renderWindowSize; 
 	std::string m_renderWindowTitle;
 	sf::Clock m_clock;
 	sf::Time l_dt;																// DeltaTime to access seconds, milliseconds etc

@@ -147,21 +147,21 @@ void GameObjects::SetSideAccel(float accelVal)
 //GameObjects version allows objects comeout of the other side
 void GameObjects::OutOfBounds(Window* window)
 {
-	if (m_pos.x < 0)
+	if (m_pos.x < 0.0f)
 	{
 		m_pos.x = window->GetWindowSize()->x;
 	}
 	else if (m_pos.x > window->GetWindowSize()->x)
 	{
-		m_pos.x = 0;
+		m_pos.x = 0.0f;
 	}
-	if (m_pos.y < 0)
+	if (m_pos.y < 0.0f)
 	{
 		m_pos.y = window->GetWindowSize()->y;
 	}
 	else if (m_pos.y > window->GetWindowSize()->y)
 	{
-		m_pos.y = 0;
+		m_pos.y = 0.0f;
 	}
 }
 
@@ -261,9 +261,9 @@ FastBullet::FastBullet(const sf::Vector2f & pos, const float & dmgVal)
 	
 {
 	m_lifeTime = 3.0f;
-	m_collisionRadius = 2.f;
+	m_collisionRadius = 5.f;
 	m_sprite.scale(0.5f, 0.5f);
-	m_sprite.setOrigin(m_sprite.getTextureRect().width * 0.5f, m_sprite.getTextureRect().height * 0.5f);
+	m_sprite.setOrigin(m_sprite.getTextureRect().width * 0.5f, m_sprite.getTextureRect().height * 0.35f);
 }
 
 //FastBullet version that calls Bullets update and checks for FastBullets lifetime
@@ -460,7 +460,7 @@ void SS_Player::PlayerControls(Window* window)
 	{
 		SetSideAccel(200);
 		//TEST
-		LargeAsteroid* test = new LargeAsteroid(sf::Vector2f(rand() % 400,50.0f));
+		LargeAsteroid* test = new LargeAsteroid(sf::Vector2f(static_cast<float>(rand() % 400),50.0f));
 		test->SetLinearAccel(-10.0f);
 		m_owner->AddObject(test);
 	}
@@ -586,19 +586,19 @@ void Enemy::TakeDamage(const float dmgVal)
 void Enemy::OutOfBounds(Window* window)
 {
 	
-	if (m_pos.x < 0)
+	if (m_pos.x < 0.0f)
 	{
 		m_pos.x = window->GetWindowSize()->x;
 	}
 	else if (m_pos.x > window->GetWindowSize()->x)
 	{
-		m_pos.x = 0;
+		m_pos.x = 0.0f;
 	}
 	else if (m_pos.y > window->GetWindowSize()->y)
 	{
 		//Once an Enemy objects goes out of the window in the Y direction destroy it after l_delay reaches 0
 		l_delay -= window->GetDeltaTime()->asSeconds();
-		if (l_delay <= 0)
+		if (l_delay <= 0.0f)
 		{
 			Destroy();
 		}
@@ -613,7 +613,7 @@ Asteroid::Asteroid(const std::string texturePath, const sf::Vector2f & pos)
 	:Enemy(texturePath, pos)
 {
 	l_delay = 2.0f;
-	m_rotationRate = rand() % 45 + 45;									// between 45 - 90
+	m_rotationRate = static_cast<float>(rand() % 45 + 45);									// between 45 - 90
 	m_rotationRate *= rand() % 2 == 0 ? 1 : -1;							// chooses if its negative or positive	
 }
 
@@ -643,7 +643,7 @@ void LargeAsteroid::Destroy()
 	for (int i = 0; i < 3; i++)
 	{
 		MediumAsteroid* mediumAsteroid = new MediumAsteroid(m_pos);
-		mediumAsteroid->SetAngle(rand() % 360);
+		mediumAsteroid->SetAngle(static_cast<float>(rand() % 360));
 		mediumAsteroid->SetVelocity(100.0f);
 		m_owner->AddObject(mediumAsteroid);
 	}
@@ -659,7 +659,7 @@ MediumAsteroid::MediumAsteroid(const sf::Vector2f & pos)
 {
 	m_dmgVal = 10.0f;
 	m_scoreVal = 50;
-	SetCollisionRadius(30);
+	SetCollisionRadius(20);
 }
 
 void MediumAsteroid::Destroy()
@@ -668,7 +668,7 @@ void MediumAsteroid::Destroy()
 	for (int i = 0; i < 3; i++)
 	{
 		SmallAsteroid* smallAsteroid = new SmallAsteroid(m_pos);
-		smallAsteroid->SetAngle(rand() % 360);
+		smallAsteroid->SetAngle(static_cast<float>(rand() % 360));
 		smallAsteroid->SetVelocity(100.0f);
 		m_owner->AddObject(smallAsteroid);
 	}
