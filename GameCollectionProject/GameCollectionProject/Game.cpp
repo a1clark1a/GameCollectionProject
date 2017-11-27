@@ -44,6 +44,7 @@ SpaceShooter::SpaceShooter(const sf::Vector2f winSize)
 	, m_specialAmmoRemaining(100)
 	, m_level(0)
 	, m_livesRemaining(4)
+	
 
 	
 {
@@ -66,11 +67,10 @@ SpaceShooter::~SpaceShooter()
 void SpaceShooter::Update(float dt)
 {
 	Game::Update();									//Call Base Game Update using scope resolution operator
+	LoopBackground();								//Call outside of if to make sure the background loops even if game is over
 	if(!m_isGameOver)
 	{
-	 
 		UpdateGameObj();
-		LoopBackground();
 	}
 }
 
@@ -105,6 +105,8 @@ void SpaceShooter::DrawText()
 		l_livesSprite.setPosition(sf::Vector2f(i * 60.0f, 50.0f));
 		m_windowObj.DrawThis(&l_livesSprite);
 	}
+
+
 }
 
 //Create a background 
@@ -149,7 +151,7 @@ void SpaceShooter::UpdateGameObj()
 	}
 
 	//Loop through m_gameObjects vector to check if each GameObjects destroy state is true, 
-	for (size_t i = m_gameObjects.size() - 1; i >= 0; i--)
+	for (int i = int(m_gameObjects.size()) - 1; i >= 0; i--)
 	{
 		GameObjects* l_current = m_gameObjects[i];
 		if(l_current->IsDestroyed())
@@ -190,7 +192,7 @@ void SpaceShooter::GameOver()
 
 //SPACESHOOTER MAIN FUNCTIONS
 
-//Spawn player after every death, checking for m_timeUntilRespawn and m_livesRemaining
+//Spawn player after every death, checking for m_livesRemaining
 void SpaceShooter::RespawnPlayer()
 {
 	
@@ -212,10 +214,33 @@ void SpaceShooter::SpawnAI()
 	//TODO Function to create AI 
 }
 
+//Function to spawn destructible objects( Can Call Spawn Item)
 void SpaceShooter::SpawnDestructibles()
 {
-	//TODO Function to spawn destructible objects( Can Call Spawn Item)
+	//Divides the spawncount by 2 and spawns a destructible by quotient
+	for (unsigned int i = 0; i < (m_spawnCount / 2); i++)
+	{
+		Asteroid* asteroid;
+		int l_randNum = rand() % 2;							
 
+		//Before spawn a rand number chooses which destructible to spawn or to cal SpawnItem() function
+		if (l_randNum == 0)
+		{
+			asteroid = new MediumAsteroid(sf::Vector2f(static_cast<float>(rand() & 800), -200.0f));
+			asteroid->SetLinearAccel(-10.0f);
+			AddObject(asteroid);
+		}
+		else if (l_randNum == 1)
+		{
+			SpawnItem();
+		}
+		else
+		{
+			asteroid = new LargeAsteroid(sf::Vector2f(static_cast<float>(rand() % 800), -200.0f));
+			asteroid->SetLinearAccel(-10.0f);
+			AddObject(asteroid);
+		}
+	}
 }
 
 void SpaceShooter::SpawnItem()
@@ -233,7 +258,7 @@ void SpaceShooter::LoopBackground()
 {
 	m_background.setPosition(m_background.getPosition().x, m_background.getPosition().y + 50.0f * m_windowObj.GetDeltaTime()->asSeconds());
 	m_background2.setPosition(m_background2.getPosition().x, m_background2.getPosition().y + 50.0f * m_windowObj.GetDeltaTime()->asSeconds());
-	if (m_background.getPosition().y > 800)
+	if (m_background.getPosition().y > 800.0f)
 	{
 		//The dynamic recreation of objects creates a stutter // TODO figure it out
 		/*sf::RectangleShape* l_temp = m_background;
@@ -243,7 +268,7 @@ void SpaceShooter::LoopBackground()
 		*/
 		m_background.setPosition(sf::Vector2f(0.0f, -800.0f));
 	}
-	if (m_background2.getPosition().y > 800)
+	if (m_background2.getPosition().y > 800.0f)
 	{
 		//The dynamic recreation of objects creates a stutter // TODO figure it out
 		/*

@@ -95,6 +95,61 @@ protected:
 	unsigned int m_currentWeap;
 };
 
+/**************BASE ENEMY CLASS:: DERIVED FROM GAMEOBJECTS**********/
+class Enemy : public GameObjects
+{
+public:
+	Enemy(const std::string texturePath, const sf::Vector2f & pos)
+		:GameObjects(texturePath, pos) { };
+	virtual ~Enemy() { std::cout << "Enemy Destructor called" << std::endl; }
+
+	virtual void Update(Window* window) { GameObjects::Update(window); OutOfBounds(window); }
+	virtual void CollidedWith(GameObjects* object);
+	virtual void TakeDamage(const float dmgVal);
+	virtual void OutOfBounds(Window* window);
+
+	//helper functions
+	const float GetDmgVal() const { return m_dmgVal; };
+	const float GetEnemyHealth() const { return m_enemyHealth; }
+	const unsigned int GetScoreVal() const { return m_scoreVal; }
+
+protected:
+	unsigned int m_scoreVal;
+	float m_enemyHealth;
+	float m_dmgVal;
+	float l_delay;
+};
+
+class AI : public Enemy
+{
+public:
+	AI::AI(const std::string texturePath, const sf::Vector2f & pos)
+		:Enemy(texturePath, pos) {};
+	virtual ~AI() { std::cout << "AI Destructor called" << std::endl; }
+
+	virtual void Draw(Window* window);
+	virtual void Update(Window* window);
+	virtual void CollidedWith(GameObjects* object);
+	virtual void Behavior(Window* window);								//Virtual Function to handle AI behavior states e.g shooting,moving etc
+	virtual void Shoot();
+};
+
+
+/**************BASE ITEM CLASS:: DERIVED FROM GAMEOBJECTS**********/
+class Item : public GameObjects
+{
+public:
+	Item(const std::string texturePath, const sf::Vector2f & pos);
+	virtual ~Item();
+
+	virtual void Draw(Window* window);
+	virtual void Update(Window* window);
+	virtual void CollidedWith(GameObjects* object) {};
+
+protected:
+	float m_lifeTime;
+};
+
 /**************BASE BULLET CLASS:: DERIVED FROM GAMEOBJECTS**********/
 class Bullet : public GameObjects
 {
@@ -185,20 +240,18 @@ public:
 };
 
 
-/**************BASE ITEM CLASS:: DERIVED FROM GAMEOBJECTS**********/
-class Item : public GameObjects
+class EnemyBullet : public Bullet
 {
 public:
-	Item(const std::string texturePath, const sf::Vector2f & pos);
-	virtual ~Item();
+	EnemyBullet(const sf::Vector2f & pos);
+	virtual ~EnemyBullet();
 
-	virtual void Draw(Window* window);
 	virtual void Update(Window* window);
-	virtual void CollidedWith(GameObjects* object) {};
-	
-protected:
-	float m_lifeTime;
+	virtual void Draw(Window* window);
+	virtual void CollidedWith(GameObjects* object);
+
 };
+
 
 /***************************************************************************************
 *************************GAMEOBJECTS FOR SPACESHOOTER GAME******************************
@@ -220,41 +273,8 @@ public:
 	virtual void ShootFunction();
 	virtual void MakeInvulnerable();
 	
-
 	//Main Functions
-	
-
-
-	
 };
-
-/**************BASE ENEMY CLASS:: DERIVED FROM GAMEOBJECTS**********/
-class Enemy : public GameObjects
-{
-public:
-	Enemy(const std::string texturePath, const sf::Vector2f & pos)
-		:GameObjects(texturePath, pos) { };
-	virtual ~Enemy() { std::cout << "Enemy Destructor called" << std::endl; }
-
-	virtual void Update(Window* window) { GameObjects::Update(window); OutOfBounds(window); }
-	virtual void CollidedWith(GameObjects* object);
-	virtual void TakeDamage(const float dmgVal);
-	virtual void OutOfBounds(Window* window);
-
-	//helper functions
-	const float GetDmgVal() const { return m_dmgVal; };
-	const float GetEnemyHealth() const { return m_enemyHealth; }
-	const unsigned int GetScoreVal() const { return m_scoreVal; }
-
-protected:
-	unsigned int m_scoreVal;
-	float m_enemyHealth;
-	float m_dmgVal;
-	float l_delay;
-};
-
-
-
 
 /***************************************************************************************
 ****************GAMEOBJECTS FOR ASTEROID GAME(CAN BE USED IN SPACESHOOTER)**************

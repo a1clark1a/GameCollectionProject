@@ -48,10 +48,11 @@ void GameObjects::Update(Window* window)
 	m_vel += m_accel * window->GetDeltaTime()->asSeconds();
 	MaxVelocity();
 	m_pos += m_vel * window->GetDeltaTime()->asSeconds();
+	m_sprite.setRotation(m_angle);
 	m_sprite.setPosition(m_pos);
 }
 
-//GameObjects version of setting an objects Velocity
+//GameObjects version of setting an objects Velocity based on its angle
 void GameObjects::SetVelocity(float velAmount)
 {
 	if (velAmount > 0.0f)
@@ -100,7 +101,7 @@ void GameObjects::ApplyDrag(float dt, float dragval)
 	}
 }
 
-//GameObjects version setting an Objects acceleration
+//GameObjects version setting an Objects acceleration based on angle
 void GameObjects::SetAccel(float accelVal)
 {
 	if (accelVal > 0.0f)
@@ -115,7 +116,7 @@ void GameObjects::SetAccel(float accelVal)
 
 }
 
-//GameObjects version to accelerate player forward or backward in a more linear value
+//GameObjects version to accelerate player forward or backward in a more linear direction
 void GameObjects::SetLinearAccel(float accelVal)
 {
 	if (accelVal != 0)
@@ -596,11 +597,20 @@ void Enemy::OutOfBounds(Window* window)
 	}
 	else if (m_pos.y > window->GetWindowSize()->y)
 	{
-		//Once an Enemy objects goes out of the window in the Y direction destroy it after l_delay reaches 0
+		//Once an Enemy objects goes out of the window in the positive Y direction destroy it after l_delay reaches 0
 		l_delay -= window->GetDeltaTime()->asSeconds();
 		if (l_delay <= 0.0f)
 		{
 			Destroy();
+		}
+	}
+	else if (m_pos.y < 0.0f)
+	{
+		//Once an Enemy objects goes out of the window in the negative Y direction change its velocity to a positive value after l_delay reaches 0
+		l_delay -= window->GetDeltaTime()->asSeconds();
+		if (l_delay <= 0.0f)
+		{
+			SetVelocity(100.0f);
 		}
 	}
 }

@@ -82,6 +82,7 @@ void Window::Setup(const std::string & winTitle, const sf::Vector2f & winSize)
 void Window::Create()
 {
 	auto l_style = (m_isFullscreen ? sf::Style::Fullscreen : sf::Style::Default);   // Value for auto type variable is based on value of m_isFullScreen
-	m_renderWindow.create({ static_cast<unsigned int>(m_renderWindowSize.x), static_cast<unsigned int>(m_renderWindowSize.y), 32 }, m_renderWindowTitle, l_style);// create window using the values taken from Constructor parameters passed 
-																				  // into Setup()
+	m_renderWindow.create
+	({ static_cast<unsigned int>(m_renderWindowSize.x), static_cast<unsigned int>(m_renderWindowSize.y), 32 }, m_renderWindowTitle, l_style);
+	// create window using the values taken from Constructor parameters passed into Setup()
 }
