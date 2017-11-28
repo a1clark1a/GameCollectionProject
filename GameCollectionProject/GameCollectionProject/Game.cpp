@@ -12,7 +12,7 @@ Game::Game(const std::string winTitle, const sf::Vector2f winSize)
 	,m_isGameOver(false)
 {
 	//TODO Initialize m_mainFont
-
+	srand(static_cast<unsigned int>(time(0)));
 }
 
 Game::~Game()
@@ -105,7 +105,7 @@ void SpaceShooter::DrawText()
 		l_livesSprite.setPosition(sf::Vector2f(i * 60.0f, 50.0f));
 		m_windowObj.DrawThis(&l_livesSprite);
 	}
-
+	
 
 }
 
@@ -227,7 +227,6 @@ void SpaceShooter::SpawnDestructibles()
 		if (l_randNum == 0)
 		{
 			asteroid = new MediumAsteroid(sf::Vector2f(static_cast<float>(rand() & 800), -200.0f));
-			asteroid->SetLinearAccel(-10.0f);
 			AddObject(asteroid);
 		}
 		else if (l_randNum == 1)
@@ -237,7 +236,6 @@ void SpaceShooter::SpawnDestructibles()
 		else
 		{
 			asteroid = new LargeAsteroid(sf::Vector2f(static_cast<float>(rand() % 800), -200.0f));
-			asteroid->SetLinearAccel(-10.0f);
 			AddObject(asteroid);
 		}
 	}
