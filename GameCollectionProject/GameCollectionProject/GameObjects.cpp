@@ -46,14 +46,13 @@ void GameObjects::Draw(Window* window)
 void GameObjects::Update(Window* window)
 {
 	m_vel += m_accel * window->GetDeltaTime()->asSeconds();
-	MaxVelocity();
 	m_pos += m_vel * window->GetDeltaTime()->asSeconds();
 	m_sprite.setRotation(m_angle);
 	m_sprite.setPosition(m_pos);
 }
 
 //GameObjects version of setting an objects Velocity based on its angle
-void GameObjects::SetVelocity(float velAmount)
+void GameObjects::SetVelocity(const float & velAmount)
 {
 	if (velAmount > 0.0f)
 	{
@@ -68,8 +67,9 @@ void GameObjects::SetVelocity(float velAmount)
 }
 
 //GameObjects version Function to set an objects velocity and its max possible velocity 
-void GameObjects::MaxVelocity()
+void GameObjects::MaxVelocity(const float & maxSpeed)
 {
+	
 	// set the speed by getting the square root of an objects velocity vector
 	float l_speed = sqrt(m_vel.x * m_vel.x + m_vel.y * m_vel.y);
 
@@ -80,9 +80,9 @@ void GameObjects::MaxVelocity()
 	// Normalized the objects velocity by dividing the objects velocity by the speed
 	sf::Vector2f l_normalizedVel = sf::Vector2f(m_vel.x / l_speed, m_vel.y / l_speed);
 
-	if (l_speed > 500)
+	if (l_speed > maxSpeed)
 	{
-		l_speed = 500;
+		l_speed = maxSpeed;
 	}
 
 	// Set the objects velocity in a given direction by multiplying the normalized velocity to its speed
@@ -91,18 +91,18 @@ void GameObjects::MaxVelocity()
 }
 
 //GameObject's version to apply some drag to objects movements when no acceleration
-void GameObjects::ApplyDrag(float dt, float dragval)
+void GameObjects::ApplyDrag(const float & dt, const float & dragval)
 {
 	if (m_accel.x == 0.0f && m_accel.y == 0.0f)
 	{
-		float dragAmount = dt* dragval;
+		float dragAmount = dt * dragval;
 		m_vel.x -= dragAmount * m_vel.x;
 		m_vel.y -= dragAmount * m_vel.y;
 	}
 }
 
 //GameObjects version setting an Objects acceleration based on angle
-void GameObjects::SetAccel(float accelVal)
+void GameObjects::SetAccel(const float & accelVal)
 {
 	if (accelVal > 0.0f)
 	{
@@ -117,7 +117,7 @@ void GameObjects::SetAccel(float accelVal)
 }
 
 //GameObjects version to accelerate player forward or backward in a more linear direction
-void GameObjects::SetLinearAccel(float accelVal)
+void GameObjects::SetLinearAccel(const float & accelVal)
 {
 	if (accelVal != 0)
 	{
@@ -130,7 +130,7 @@ void GameObjects::SetLinearAccel(float accelVal)
 }
 
 //GameObjects to accelerate player Left or Right
-void GameObjects::SetSideAccel(float accelVal)
+void GameObjects::SetSideAccel(const float & accelVal)
 {
 	if (accelVal != 0.0f)
 	{
@@ -202,6 +202,7 @@ void Player::Draw(Window* window)
 void Player::Update(Window* window)
 {
 	GameObjects::Update(window);
+	MaxVelocity(500);
 }
 
 void Player::CollidedWith(GameObjects* object)
@@ -234,12 +235,14 @@ void Player::TakeDmg(const float & dmgVal)
 //Bullet version's Update that calls GameObject's update and decreases a bullets lifetime overtime
 void Bullet::Update(Window* window)
 {
-	GameObjects::Update(window); 
+	GameObjects::Update(window);
+	MaxVelocity(500);
 	m_lifeTime -= window->GetDeltaTime()->asSeconds();
 	if (m_lifeTime <= 0.0f)
 	{
 		Destroy();
 	}
+	OutOfBounds(window);
 }
 
 void Bullet::DealDmg(GameObjects* object)
@@ -257,12 +260,32 @@ void Bullet::DealDmg(GameObjects* object)
 	}
 }
 
+void Bullet::OutOfBounds(Window* window)
+{
+	if (m_pos.x < 0.0f)
+	{
+		Destroy();
+	}
+	else if (m_pos.x > window->GetWindowSize()->x)
+	{
+		Destroy();
+	}
+	if (m_pos.y < 0.0f)
+	{
+		Destroy();
+	}
+	else if (m_pos.y > window->GetWindowSize()->y)
+	{
+		Destroy();
+	}
+}
+
 /*********************************************************************
 ***************FASTBULLET CLASS : DERIVED FROM BULLET*****************
 *********************************************************************/
 
 FastBullet::FastBullet(const sf::Vector2f & pos, const float & dmgVal, const float & vel)
-	:Bullet("Ships/Effects/Lasers/laserBlue01.png", pos, dmgVal)
+	:Bullet("Sprites/Effects/Lasers/laserBlue01.png", pos, dmgVal)
 	
 {
 	m_lifeTime = 3.0f;
@@ -294,9 +317,8 @@ void FastBullet::CollidedWith(GameObjects* object)
 		else
 		{
 			DealDmg(l_enemy);
-			object->Destroy();
+			Destroy();
 		}
-		std::cout << "called" << std::endl;
 	}
 }
 
@@ -367,7 +389,7 @@ void LaserBullet::Destroy()
 }
 
 EnemyBullet::EnemyBullet(const sf::Vector2f & pos, const float & dmgVal, const float & vel)
-	:Bullet("Ships/Effects/Lasers/laserBlue01.png", pos, dmgVal)
+	:Bullet("Sprites/Effects/Lasers/laserBlue01.png", pos, dmgVal)
 {
 	SetLinearAccel(vel);
 	m_dmgVal = 10.0f;
@@ -404,7 +426,7 @@ void EnemyBullet::CollidedWith(GameObjects* object)
 //SS_Player Constructor 
 //Needs texture address and initial position to initialize player sprite
 SS_Player::SS_Player()
-	:Player("Ships/TopDownShips/ship2.png", sf::Vector2f(400.0f, 400.0f))
+	:Player("Sprites/TopDownShips/ship2.png", sf::Vector2f(400.0f, 400.0f))
 {
 	m_playerHealth = 100.0f;
 	m_shootCooldown = 0.2f;
@@ -480,10 +502,18 @@ void SS_Player::PlayerControls(Window* window)
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 	{
-		SetLinearAccel(2000);
+		SetLinearAccel(1000);
 		//TEST
-		NormalAI* test = new NormalAI(sf::Vector2f(static_cast<float>(rand() % 800), -50.0f));
-		m_owner->AddObject(test);
+		if (m_shootCooldown <= 0.0f)
+		{
+			//NormalAI* test = new NormalAI(sf::Vector2f(static_cast<float>(rand() % 700 + 200), -50.0f));
+			//AggroAI* test2 = new AggroAI(sf::Vector2f(400.0f, 50.0f));
+			//m_owner->AddObject(test);
+			//m_owner->AddObject(test2);
+			FastAI* test3 = new FastAI(sf::Vector2f(400.0f, 350.0f));
+			m_owner->AddObject(test3);
+			m_shootCooldown = 0.5f;
+		}
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
 	{
@@ -556,7 +586,8 @@ void SS_Player::ShootFunction()
 			break;
 		}
 
-	default: WEAPONTYPE::Fast;
+	default: m_currentWeap = WEAPONTYPE::Fast;
+		break;
 
 
 	}
@@ -650,77 +681,70 @@ void AI::Draw(Window* window)
 	//TODO draw health bar here
 }
 
-
-void AI::ShootFunction(const float & dt)
+void AI::Behavior(const float & dt)
 {
-	
-	SetSideAccel(0.0f);
-	m_shootingCoolDown -= dt;
-	m_pauseTimer -= dt;
-	if (m_pauseTimer > 0.0f)
+	switch (m_aiStates)
 	{
-		if(m_shootingCoolDown <= 0.0f)
-		{
-			EnemyBullet* l_eBullet = new EnemyBullet(m_pos, m_dmgVal, -200.0f);
-			m_owner->AddObject(l_eBullet);
-			m_shootingCoolDown = 2.0f;
-			m_vel.x = 0;
-		
-		}
-
+	case AISTATES::Moving:
+		Move(dt);
+		break;
+	case AISTATES::Shooting:
+		ShootFunction(dt);
+		break;
 	}
-	else
-	{
-		m_moveInterval = 5.0f;
-		m_aiStates = AISTATES::Moving;
-		m_moveStates = MOVESTATES::Left;
-	}
-	
 }
 
 /*********************************************************************
-********************AI CLASS : DERIVED FROM ENEMY*********************
+*****************NORMALAI CLASS : DERIVED FROM AI*********************
 *********************************************************************/
 
 NormalAI::NormalAI(const sf::Vector2f & pos)
-	:AI("Ships/Ship/Ship (1).png", pos)
+	:AI("Sprites/Enemies/enemyBlack2.png", pos)
 {
 	m_moveInterval = 5.0f;
 	m_pauseTimer = 3.0f;
 	m_shootingCoolDown = 1.0f;
-	SetCollisionRadius(15.0f);
-	SetLinearAccel(-30.0f);
-	m_sprite.setScale(0.1f, 0.1f);
+	SetCollisionRadius(25.0f);
+	m_sprite.setScale(0.5f, 0.5f);
 	m_moveStates = MOVESTATES::Forward;
+	m_enemyHealth = 50.0f;
+	m_line = static_cast<float>(rand() % 150 + 100);
 }
 
 void NormalAI::Update(Window* window)
 {
-	Enemy::Update(window);
-	//TODO handle behavior function here
+	GameObjects::Update(window);
+	MaxVelocity(100.0f);
 	Behavior(window->GetDeltaTime()->asSeconds());
-	std::cout << m_pauseTimer << std::endl; 
+	OutOfBounds(window);
 }
 
 void NormalAI::OutOfBounds(Window* window)
 {
+	
+	if (m_pos.y > m_line && m_moveStates == MOVESTATES::Forward)
+	{
+		SetLinearAccel(0.0f);
+		m_vel.y = 0.0f;
+		m_moveStates = rand() % 2 == 0 ? MOVESTATES::Left : MOVESTATES::Right;
+	}
+	else if (m_pos.y < 0.0f)
+	{
+		SetLinearAccel(-50.0f);
+	}
 
 	if (m_pos.x < 50.0f)
 	{
-		//std::cout << "this triggered 1 " << std::endl;
 		m_pos.x = 50.0f;
 		m_vel.x = 0.0f;
 		m_moveStates = MOVESTATES::Right;
 	}
 	else if (m_pos.x > window->GetWindowSize()->x - 50.0f)
 	{
-		//std::cout << "this triggered 2" << std::endl;
 		m_pos.x = window->GetWindowSize()->x - 50.0f;
 		m_vel.x = 0.0f;
 		m_moveStates = MOVESTATES::Left;
 	}
-	
-	
 	else if (m_pos.y > window->GetWindowSize()->y)
 	{
 		//Once an Enemy objects goes out of the window in the positive Y direction destroy it after l_delay reaches 0
@@ -730,87 +754,220 @@ void NormalAI::OutOfBounds(Window* window)
 			Destroy();
 		}
 	}
-	else if (m_pos.y < 0.0f)
-	{
-		//Once an Enemy objects goes out of the window in the negative Y direction change its velocity to a positive value after l_delay reaches 0
-		m_destroyDelay -= window->GetDeltaTime()->asSeconds();
-		if (m_destroyDelay <= 0.0f)
-		{
-			SetLinearAccel(-50.0f);
-		}
-	}
-	
 }
 
-void NormalAI::Behavior(const float & dt)
+void NormalAI::Move(const float & dt)
 {
 	m_moveInterval -= dt;
-	switch (m_aiStates)
+	if (m_moveInterval <= 0)
 	{
-	case AISTATES::Moving:
-		{
-			Move();
-			break;
-		}
-	case AISTATES::Shooting:
-		{
-			ShootFunction(dt);
-			break;
-		}
+		m_moveStates = MOVESTATES::Pause;
 	}
+	switch (m_moveStates)
+	{
+	case MOVESTATES::Left:
+			SetSideAccel(-10.0f);
+			break;
+		
+	case MOVESTATES::Right:
+			SetSideAccel(10.0f);
+			break;
+	case MOVESTATES::Pause:
+			m_pauseTimer = 3.0f;
+			SetSideAccel(0.0f);
+			m_vel.x = 0.0f;
+			m_aiStates = AISTATES::Shooting;
+			m_moveInterval = 5.0f;
+			break;
+	case MOVESTATES::Forward:
+			break;
+	}
+
 }
 
-void NormalAI::Move()
+void NormalAI::ShootFunction(const float & dt)
 {
-	
-	if (m_aiStates == AISTATES::Moving)
+	if (m_aiStates == AISTATES::Shooting)
 	{
-		switch (m_moveStates)
+		m_shootingCoolDown -= dt;
+		m_pauseTimer -= dt;
+		if (m_pauseTimer > 0.0f)
 		{
-		case MOVESTATES::Left:
-			if (m_moveInterval > 0.0f)
+			if (m_shootingCoolDown <= 0.0f)
 			{
-				std::cout << "left" << std::endl;
-				SetSideAccel(-10.0f);
-				break;
+				EnemyBullet* l_eBullet = new EnemyBullet(m_pos, m_dmgVal, -200.0f);
+				m_owner->AddObject(l_eBullet);
+				m_shootingCoolDown = 2.0f;
 			}
-		case MOVESTATES::Right:
-			if (m_moveInterval > 0.0f)
-			{
-				//std::cout << "right" << std::endl;
-				SetSideAccel(10.0f);
-				break;
-			}
-		case MOVESTATES::Pause:
-			if (m_moveInterval <= 0.0f)
-			{
-				std::cout << "pause" << std::endl;
-				m_aiStates = AISTATES::Shooting;
-				m_pauseTimer = 3.0f;
-				break;
-			}
-		case MOVESTATES::Forward: 
-		{
-			
-			SetLinearAccel(-30.0f);
-			if (m_pos.y >= float(rand() % 50 + 100))
-			{
-				std::cout << "Default" << std::endl;
-				SetLinearAccel(0.0f);
-				m_vel.y = 0.0f;
-				m_moveStates = rand() % 2 == 0 ? MOVESTATES::Left : MOVESTATES::Right;
-			}
-			break;
-		}
 
+		}
+		else
+		{
+			std::cout << "This triggered: " << std::endl;
+			m_aiStates = AISTATES::Moving;
+			m_moveStates = rand() % 2 == 0 ? MOVESTATES::Right : MOVESTATES::Left;
 		}
 	}
 }
 
 /*********************************************************************
-****************ASTEROID CLASS : DERIVED FROM ENEMY*******************
+*******************AGGROAI CLASS : DERIVED FROM AI********************
+*********************************************************************/
+AggroAI::AggroAI(const sf::Vector2f & pos)
+	:AI("Sprites/Enemies/enemyGreen1.png", pos)
+{
+	//SETUP here
+	m_enemyHealth = 50.0f;
+	m_moveInterval = 2.0f;
+	SetCollisionRadius(25.0f);
+	m_sprite.setScale(0.5f, 0.5f);
+	m_toggle = rand() % 2 == 0 ? 1 : -1;
+}
+
+void AggroAI::Update(Window* window)
+{
+	GameObjects::Update(window);
+	MaxVelocity(100.0f);
+	Behavior(window->GetDeltaTime()->asSeconds());
+	OutOfBounds(window);
+}
+
+void AggroAI::OutOfBounds(Window* window)
+{
+	if (m_pos.x < 100.0f)
+	{
+		m_vel.x = 0.f;
+		m_moveStates = MOVESTATES::Right;
+	}
+	else if (m_pos.x > window->GetWindowSize()->x - 100.0f)
+	{
+		m_vel.x = 0.f;
+		m_moveStates = MOVESTATES::Left;
+	}
+	if (m_pos.y > window->GetWindowSize()->y)
+	{
+		m_destroyDelay -= window->GetDeltaTime()->asSeconds();
+		if (m_destroyDelay <= 0.0f)
+		{
+			Destroy();
+		}
+	}
+	else
+	{
+		m_moveStates = MOVESTATES::Forward;
+	}
+}
+
+void AggroAI::SetLinearAccel(const float & accelVal_x, const float & accelVal_y)
+{
+	if (accelVal_x != 0 && accelVal_y != 0)
+	{
+		m_accel = sf::Vector2f(10.0f * accelVal_x, 10.0f * -accelVal_y);
+	}
+	else
+	{
+		m_accel = sf::Vector2f(0.0f, 0.0f);
+	}
+}
+
+void AggroAI::Move(const float & dt)
+{
+	m_moveInterval -= dt;
+	if (m_moveInterval <= 0)
+	{
+		m_moveStates = MOVESTATES::Pause;
+	}
+	switch (m_moveStates)
+	{
+	case MOVESTATES::Left:
+		SetLinearAccel(-15.0f, -5.0f);
+		break;
+	case MOVESTATES::Right:
+		SetLinearAccel(15.0f, -5.0f);
+		break;
+	case MOVESTATES::Pause:
+		m_pauseTimer = 3.0f;
+		m_vel = (sf::Vector2f(0.0f, 0.0f));
+		SetLinearAccel(0.0f, 0.0f);
+		m_aiStates = AISTATES::Shooting;
+		m_moveInterval = 2.0f;
+		break;
+	case MOVESTATES::Forward:
+		SetLinearAccel(15.0f * m_toggle, -5.0f);
+		break;
+
+	}
+}
+
+void AggroAI::ShootFunction(const float & dt)
+{
+	if (m_aiStates == AISTATES::Shooting)
+	{
+		m_shootingCoolDown -= dt;
+		m_pauseTimer -= dt;
+		if (m_pauseTimer > 0.0f)
+		{
+			if (m_shootingCoolDown <= 0.0f)
+			{
+				EnemyBullet* l_eBullet = new EnemyBullet(m_pos, m_dmgVal, -200.0f);
+				m_owner->AddObject(l_eBullet);
+				m_shootingCoolDown = 2.0f;
+			}
+
+		}
+		else
+		{
+			m_toggle = rand() % 2 == 0 ? 1 : -1;
+			m_aiStates = AISTATES::Moving;
+			m_moveStates =MOVESTATES::Forward;
+		}
+	}
+}
+
+/*********************************************************************
+*******************FASTAI CLASS : DERIVED FROM AI********************
 *********************************************************************/
 
+FastAI::FastAI(const sf::Vector2f & pos)
+	:AI("Sprites/Enemies/enemyRed1.png", pos)
+{
+	//TODO Setup here
+	//SetAccel(100.0f);
+}
+
+void FastAI::Update(Window* window)
+{
+	GameObjects::Update(window);
+	OutOfBounds(window);
+	
+}
+
+void FastAI::OutOfBounds(Window* window)
+{
+	
+}
+
+void FastAI::Move(const float & dt)
+{
+	//TEST
+	
+}
+
+void FastAI::SetTarget(SS_Player* player)
+{
+	float l_speed = 100.0f;
+	//float l_pDist = GetDistance(player->GetPlayerPos());
+	//sf::Vector2f direction = sf::Vector2f(m_vel.x / l_pDist, m_vel.y / l_pDist);
+	sf::Vector2f vecdiff = player->GetPlayerPos() - m_pos;
+	float dist = sqrt(vecdiff.x * vecdiff.x + vecdiff.y * vecdiff.y);
+	sf::Vector2f direction = sf::Vector2f(vecdiff.x / dist, vecdiff.y / dist);
+	m_vel.x = direction.x * l_speed;
+	m_vel.y = direction.y *l_speed;
+}
+
+/*********************************************************************
+****************ASTEROID CLASS : DERIVED FROM ENEMY*******************
+*********************************************************************/
 Asteroid::Asteroid(const std::string texturePath, const sf::Vector2f & pos)
 	:Enemy(texturePath, pos)
 {
@@ -825,6 +982,7 @@ void Asteroid::Update(Window* window)
 	m_angle += m_rotationRate * window->GetDeltaTime()->asSeconds();	//continously rotate an asteroid by rotation rate * time
 	GameObjects::Update(window);
 	Enemy::OutOfBounds(window);
+	MaxVelocity(500);
 	
 }
 
@@ -833,7 +991,7 @@ void Asteroid::Update(Window* window)
 *********************************************************************/
 
 LargeAsteroid::LargeAsteroid(const sf::Vector2f & pos)
-	:Asteroid("Ships/Meteors/meteorBrown_big4.png", pos)
+	:Asteroid("Sprites/Meteors/meteorBrown_big4.png", pos)
 {
 	m_dmgVal = 15.0f;
 	m_scoreVal = 10;
@@ -859,7 +1017,7 @@ void LargeAsteroid::Destroy()
 *********************************************************************/
 
 MediumAsteroid::MediumAsteroid(const sf::Vector2f & pos)
-	:Asteroid("Ships/Meteors/meteorBrown_med3.png", pos)
+	:Asteroid("Sprites/Meteors/meteorBrown_med3.png", pos)
 {
 	m_dmgVal = 10.0f;
 	m_scoreVal = 50;
@@ -884,7 +1042,7 @@ void MediumAsteroid::Destroy()
 *********************************************************************/
 
 SmallAsteroid::SmallAsteroid(const sf::Vector2f & pos)
-	:Asteroid("Ships/Meteors/meteorBrown_tiny1.png", pos)
+	:Asteroid("Sprites/Meteors/meteorBrown_tiny1.png", pos)
 {
 	m_dmgVal = 5.0f;
 	m_scoreVal = 100;

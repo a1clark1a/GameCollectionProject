@@ -4,8 +4,6 @@
 #include "GameObjects.h"
 #include <vector>
 
-
-
 //TODO Create a base class game engine to be used to derive other game engines specifically for each game
 
 /*********************************************************************
@@ -58,57 +56,7 @@ protected:
 	//REMINDER Members in this section are unaccessible outside
 private:
 
-
 	
-	
-};
-
-
-/**************************************************************************************
-************************************DERIVED CLASSES************************************
-***************************************************************************************/
-
-//TODO create derived game from the base class Game
-
-/*************************SPACESHOOTER***************************/
-
-class SpaceShooter : public Game
-{
-public:
-	SpaceShooter(const sf::Vector2f winSize);							//TODO(In Future) for save progression feature allow reinitialization of game variables through arguments in constructor
-	virtual ~SpaceShooter();
-
-	//Redefined Virtual Functions
-	virtual void Update(float dt);										// Call m_windowObj.Update() 
-	virtual void Render();
-	virtual void AddObject(GameObjects * object);
-	virtual void DrawText();
-	virtual void DrawObjects();
-	virtual void UpdateGameObj();
-	virtual void GameOver();
-	virtual void CreateBackground
-	(sf::RectangleShape* bg,  sf::Texture* bgText, const std::string texturePath,const sf::Vector2f Position);
-
-	//Helper/Getter Functions
-	virtual void ResetSpawnTimer() { m_timeUntilRespawn = 3.0f; }
-
-	//SpaceShooter Functions
-	void RespawnPlayer();												// Function to spawn player
-	void SpawnAI();														// Function to spawn AI
-	void SpawnDestructibles();											// Function to spawn destructibles
-	void SpawnItem();													// Function to spawn Coins/Ammo/ExtraLife
-	void SetSpawnCount();												// Function to set how many AI and destructible to spawn per level
-	void LoopBackground();
-	
-
-	//SpaceShooter member variables
-private:
-	sf::RectangleShape m_background2;
-	unsigned int m_specialAmmoRemaining;
-	unsigned int m_level;
-	unsigned int m_livesRemaining;
-	unsigned int m_spawnCount;
-
 };
 
 /*************************ASTEROID***************************/

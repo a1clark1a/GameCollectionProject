@@ -17,12 +17,12 @@ public:
 	//Virtual Functions
 	virtual void Draw(Window* window);										// Virtual Function to draw a transparent collision sphere around object for collision detection
 	virtual void Update(Window* window);									// Virtual Function responsible to velocity values etc and checking of objects position
-	virtual void SetVelocity(float velAmount);								// Virtual Function to set velocity of a game object
-	virtual void MaxVelocity();												// Virtual Function to determine maximum velocity for each object(to be called in MoveObject())
-	virtual void ApplyDrag(float dt, float dragVal);						// Virtual Function to apply some dragging to objects(to be called in MoveObject())
-	virtual void SetAccel(float accelVal);									// virtual Function to set acceleration rate
-	virtual void SetLinearAccel(float accelVal);							// virutal Function  to allow forward and backward acceleration
-	virtual void SetSideAccel(float accelVal);
+	virtual void SetVelocity(const float & velAmount);								// Virtual Function to set velocity of a game object
+	virtual void MaxVelocity(const float & maxSpeed);								// Virtual Function to determine maximum velocity for each object(to be called in MoveObject())
+	virtual void ApplyDrag(const float & dt, const float & dragVal);						// Virtual Function to apply some dragging to objects(to be called in MoveObject())
+	virtual void SetAccel(const float & accelVal);									// virtual Function to set acceleration rate
+	virtual void SetLinearAccel(const float & accelVal);							// virutal Function  to allow forward and backward acceleration
+	virtual void SetSideAccel(const float & accelVal);
 	virtual void Destroy() { m_gameObjIsDestroyed = true; }					// Virtual Function to set boolean m_gameObjIsDestroyed to true;
 	virtual void CollidedWith(GameObjects* object) {};						// Virtual Function to call when this object collides with an GameObjects object
 	virtual void OutOfBounds(Window* window);								// Virtual Function to call when going object goes out of window
@@ -87,6 +87,7 @@ public:
 
 	//Helper/Getter Functions
 	float GetPlayerHealth() const { return m_playerHealth; }
+	
 
 protected:
 	bool m_shooting;													// A player's shooting state				
@@ -136,10 +137,10 @@ public:
 		:Enemy(texturePath, pos) {};
 	virtual ~AI() { std::cout << "AI Destructor called" << std::endl; }
 
-	virtual void Draw(Window* window);									//Virtual Function to be redefined to call GameObject Draw function and draw health bar on screen
-	virtual void Behavior(const float & dt) = 0;										//Abstract Function to be redefined to have specific behaviors for each derived AI types
-	virtual void Move() = 0;
-	virtual void ShootFunction(const float & dt);
+	virtual void Draw(Window* window);									//Virtual Function that can be redefined to call GameObject Draw function and draw health bar on screen
+	virtual void Behavior(const float & dt);							//Virtual Function that can be redifined to have specific behaviors for each derived AI types
+	virtual void Move(const float & dt) = 0;
+	virtual void ShootFunction(const float & dt) {};
 
 	enum class AISTATES { Moving, Shooting };
 	enum class MOVESTATES { Forward, Left, Right, Pause};
@@ -150,19 +151,48 @@ protected:
 	float m_moveInterval;
 	float m_pauseTimer;
 	float m_shootingCoolDown;
+	float m_line;
 };
 
 class NormalAI : public AI
 {
 public:
-	NormalAI::NormalAI(const sf::Vector2f& pos);
+	NormalAI::NormalAI(const sf::Vector2f & pos);
 	virtual ~NormalAI() { std::cout << "NormalAI destructor called" << std::endl; }
 
 	virtual void Update(Window* window);
 	virtual void OutOfBounds(Window* window);
-	virtual void Behavior(const float & dt);											//Function to handle AI behavior states e.g shooting,moving etc
-	virtual void Move();
+	virtual void Move(const float & dt);
+	virtual void ShootFunction(const float & dt);
+};
 
+class AggroAI : public AI
+{
+public:
+	AggroAI::AggroAI(const sf::Vector2f & pos);
+	virtual ~AggroAI() { std::cout << "AggroAI destructor called" << std::endl; }
+
+	virtual void Update(Window* window);
+	virtual void OutOfBounds(Window* window);
+	virtual void SetLinearAccel(const float & accelVal_x, const float & accelVal_y);
+	virtual void Move(const float & dt);
+	virtual void ShootFunction(const float & dt);
+
+private:
+	int m_toggle;
+};
+
+
+class BossAI : public AI
+{
+	BossAI(const sf::Vector2f & pos);
+	virtual ~BossAI() { std::cout << "BossAI destructor called" << std::endl; }
+
+	virtual void Update(Window* window);
+	virtual void OutOfBounds(Window* window);
+	virtual void Behavior(const float & dt);
+	virtual void Move(const float & dt);
+	virtual void ShootingFunction(const float & dt);
 };
 
 
@@ -199,6 +229,7 @@ public:
 	virtual void SetDmgVal(const float & dmgVal) { m_dmgVal = dmgVal; }
 	virtual void DealDmg(GameObjects* enemy);
 	virtual void ShootFunction() {};
+	virtual void OutOfBounds(Window* window);
 	
 protected:
 	float m_lifeTime;
@@ -314,8 +345,22 @@ public:
 	virtual void MakeInvulnerable();
 	
 	//Main Functions
+	sf::Vector2f GetPlayerPos() { return m_pos; }
 };
 
+
+class FastAI : public AI
+{
+public:
+	FastAI::FastAI(const sf::Vector2f & pos);
+	virtual ~FastAI() { std::cout << "FastAI destructor called" << std::endl; }
+
+	virtual void Update(Window* window);
+	virtual void OutOfBounds(Window* window);
+	virtual void Move(const float & dt);
+	virtual void SetTarget(SS_Player* player);
+
+};
 /***************************************************************************************
 ****************GAMEOBJECTS FOR ASTEROID GAME(CAN BE USED IN SPACESHOOTER)**************
 ****************************************************************************************/
