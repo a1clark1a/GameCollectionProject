@@ -12,6 +12,7 @@ Game::Game(const std::string winTitle, const sf::Vector2f winSize)
 	,m_isGameOver(false)
 {
 	//TODO Initialize m_mainFont
+	m_mainFont.loadFromFile("Sprites/Fonts/Transformers Movie.ttf");
 	srand(static_cast<unsigned int>(time(0)));
 }
 
@@ -30,4 +31,5 @@ void Game::SetScore(int scoreVal)
 	//TODO allow to save Highscore unto text file
 	
 }
+
 

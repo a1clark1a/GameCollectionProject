@@ -4,16 +4,24 @@
 #include "SpaceShooter.h"
 
 
+
 /*************************SPACESHOOTER***************************/
 SpaceShooter::SpaceShooter(const sf::Vector2f winSize)
 	:Game("SpaceShooter", winSize)
 	, m_specialAmmoRemaining(100)
 	, m_level(0)
 	, m_livesRemaining(4)
+	, m_maxPlayerHealth(200.0f)
 {
 	//TODO 
-	ResetSpawnTimer();
 	m_isGameOver = false;
+	ResetSpawnTimer();
+	m_bgBorderTex->loadFromFile("Sprites/GUI/BGBorder01.png");
+	m_healthBarTex->loadFromFile("Sprites/GUI/HealthBar02.png");
+	m_livesTex->loadFromFile("Sprites/TopDownShips/ship2.png");
+	m_livesBorderTex->loadFromFile("Sprites/GUI/Border04.png");
+	m_equippedONBorderTex->loadFromFile("Sprites/GUI/Box01.png");
+	m_equippedOFFBorderTex->loadFromFile("Sprites/GUI/Box02.png");
 	CreateBackground(&m_background, &m_bgTexture, "Sprites/Background/longBGStars.png", sf::Vector2f(0.0f, 0.0f));
 	CreateBackground(&m_background2, &m_bgTexture, "Sprites/Background/longBGStars.png", sf::Vector2f(0.0f, -800.0f));
 }
@@ -43,8 +51,10 @@ void SpaceShooter::Render()
 	//TODO Call derived class Draw functions 
 	m_windowObj.DrawThis(&m_background);
 	m_windowObj.DrawThis(&m_background2);
-	DrawText();
 	DrawObjects();
+	DrawBorders();
+	DrawHealthBarSprite();
+	DrawText();
 	m_windowObj.Display();
 
 }
@@ -59,17 +69,58 @@ void SpaceShooter::AddObject(GameObjects * object)
 //TODO Create drawable Text for window to tract score, ammo, lives etc
 void SpaceShooter::DrawText()
 {
-	sf::Texture l_livesTexture;
-	l_livesTexture.loadFromFile("Sprites/TopDownShips/ship2.png");
-	for (unsigned int i = 0; i < m_livesRemaining; i++)
-	{
-		sf::Sprite l_livesSprite(l_livesTexture);
-		l_livesSprite.setScale(sf::Vector2f(0.08f, 0.08f));
-		l_livesSprite.setPosition(sf::Vector2f(i * 60.0f, 50.0f));
-		m_windowObj.DrawThis(&l_livesSprite);
-	}
 
+	sf::Sprite l_livesSprite(*m_livesTex);
+	l_livesSprite.setOrigin(l_livesSprite.getTextureRect().width * 0.5f, l_livesSprite.getTextureRect().height * 0.5f);
+	l_livesSprite.setScale(0.08f, 0.08f);
+	l_livesSprite.setPosition(m_livesBorderSprite->getPosition().x, m_livesBorderSprite->getPosition().y);
+	m_windowObj.DrawThis(&l_livesSprite);
 
+	sf::Text l_livesRemText;
+	l_livesRemText.setFont(m_mainFont);
+	l_livesRemText.setString(std::to_string(m_livesRemaining));
+	l_livesRemText.setCharacterSize(30);
+	l_livesRemText.setPosition(m_livesBorderSprite->getPosition().x - 35.0f,m_livesBorderSprite->getPosition().y - 45.0f);
+	m_windowObj.DrawThis(&l_livesRemText);
+
+	sf::Text l_healthTex;
+	l_healthTex.setFont(m_mainFont);
+	l_healthTex.setString("HEALTH");
+	l_healthTex.setCharacterSize(15);
+	l_healthTex.setFillColor(sf::Color::Red);
+	l_healthTex.setPosition(m_healthBarSprite->getPosition().x + 125.0f, m_healthBarSprite->getPosition().y - 30.0f);
+	m_windowObj.DrawThis(&l_healthTex);
+
+	sf::Text l_scoreText;
+	l_scoreText.setFont(m_mainFont);
+	l_scoreText.setString(std::to_string(m_score));
+	l_scoreText.setCharacterSize(30);
+	l_scoreText.setPosition(m_windowObj.GetWindowSize()->x - 150.0f,m_windowObj.GetWindowSize()->y - 100.0f);
+	m_windowObj.DrawThis(&l_scoreText);
+
+	sf::Text l_weap1Text;
+	l_weap1Text.setFont(m_mainFont);
+	l_weap1Text.setString("BLASTER");
+	l_weap1Text.setCharacterSize(11);
+	l_weap1Text.setRotation(45);
+	l_weap1Text.setPosition(m_equippedBorderSprite1->getPosition().x -13.0f,m_equippedBorderSprite1->getPosition().y-25.0f);
+	m_windowObj.DrawThis(&l_weap1Text);
+
+	sf::Text l_weap2Text;
+	l_weap2Text.setFont(m_mainFont);
+	l_weap2Text.setString("LASER");
+	l_weap2Text.setCharacterSize(14);
+	l_weap2Text.setRotation(45);
+	l_weap2Text.setPosition(m_equippedBorderSprite2->getPosition().x - 10.0f, m_equippedBorderSprite2->getPosition().y - 25.0f);
+	m_windowObj.DrawThis(&l_weap2Text);
+
+	sf::Text l_weap3Text;
+	l_weap3Text.setFont(m_mainFont);
+	l_weap3Text.setString("POWER");
+	l_weap3Text.setCharacterSize(13);
+	l_weap3Text.setRotation(45);
+	l_weap3Text.setPosition(m_equippedBorderSprite3->getPosition().x - 11.0f, m_equippedBorderSprite3->getPosition().y - 25.0f);
+	m_windowObj.DrawThis(&l_weap3Text);
 }
 
 //Create a background 
@@ -90,6 +141,18 @@ void SpaceShooter::DrawObjects()
 	{
 		GameObjects* l_current = m_gameObjects[i];
 		l_current->Draw(&m_windowObj);
+	}
+
+	for (int i = 0; i < m_gameObjects.size(); i++)
+	{
+		SS_Player* l_player = dynamic_cast<SS_Player*>(m_gameObjects[i]);
+		if (l_player)
+		{
+			m_weaponEquiped = l_player->GetWeapEquipped();
+			m_playerCurrentHealth = l_player->GetPlayerHealth();
+			std::cout << m_playerCurrentHealth << std::endl;
+		}
+		
 	}
 }
 
@@ -130,7 +193,7 @@ void SpaceShooter::UpdateGameObj()
 	for (int i = 0; i < m_gameObjects.size(); i++)
 	{
 		GameObjects* l_current = m_gameObjects[i];
-		FastAI* l_fastAI = dynamic_cast<FastAI*>(l_current);
+		ChaserAI* l_fastAI = dynamic_cast<ChaserAI*>(l_current);
 		for (int j = 0; j < m_gameObjects.size(); j++)
 		{
 			GameObjects* l_other = m_gameObjects[j];
@@ -147,6 +210,7 @@ void SpaceShooter::UpdateGameObj()
 		}
 	}
 
+	ShowWeaponEquipped();
 }
 
 //Set m_isGameOver state to true then call Destroy() on all GameObjects
@@ -246,7 +310,80 @@ void SpaceShooter::LoopBackground()
 		delete l_temp;*/
 		m_background2.setPosition(sf::Vector2f(0.0f, -800.0f));
 	}
+}
 
+void SpaceShooter::DrawHealthBarSprite()
+{
+	m_healthBarSprite->setTexture(*m_healthBarTex);
+	m_healthBarSprite->setOrigin(0.0f, m_healthBarSprite->getTextureRect().height * 0.5f);
+	m_healthBarSprite->setPosition(20.0f, 750.0f);
+	m_healthBarSprite->setScale(0.2, 0.2f);
+	m_windowObj.DrawThis(m_healthBarSprite);
 
+	m_playerHealthBar->setOrigin(0.0f, 0.0f);
+	m_playerHealthBar->setSize(sf::Vector2f(m_playerCurrentHealth / m_maxPlayerHealth * 100.0f, 24.0f));
+	m_playerHealthBar->setScale(2.35f, 0.60f);
+	m_playerHealthBar->setPosition(56.5f, m_windowObj.GetWindowSize()->y - 53.0f);
+	m_playerHealthBar->setFillColor(sf::Color::Green);
+	m_windowObj.DrawThis(m_playerHealthBar);
 
+	
+}
+void SpaceShooter::DrawBorders()
+{
+	m_bgBorder->setTexture(*m_bgBorderTex);
+	m_bgBorder->setOrigin(m_bgBorder->getTextureRect().width * 0.5f, m_bgBorder->getTextureRect().height * 0.5f);
+	m_bgBorder->setScale(1.1f, 0.5f);
+	m_bgBorder->setPosition(m_windowObj.GetWindowSize()->x * 0.5, m_windowObj.GetWindowSize()->y - 40.0f);
+	m_windowObj.DrawThis(m_bgBorder);
+	
+	m_livesBorderSprite->setTexture(*m_livesBorderTex);
+	m_livesBorderSprite->setOrigin(m_livesBorderSprite->getTextureRect().width * 0.5f, m_livesBorderSprite->getTextureRect().height * 0.5f);
+	m_livesBorderSprite->setScale(0.5f, 0.5f);
+	m_livesBorderSprite->setPosition(90.0f, m_healthBarSprite->getPosition().y - 70.0f);
+	m_windowObj.DrawThis(m_livesBorderSprite);
+
+	
+	m_equippedBorderSprite1->setOrigin(m_equippedBorderSprite1->getTextureRect().width * 0.5f, m_equippedBorderSprite1->getTextureRect().height * 0.5f);
+	m_equippedBorderSprite1->setScale(0.3f, 0.3f);
+	m_equippedBorderSprite1->setPosition(m_windowObj.GetWindowSize()->x - 350.0f, m_windowObj.GetWindowSize()->y - 60.0f);
+	m_windowObj.DrawThis(m_equippedBorderSprite1);
+
+	
+	m_equippedBorderSprite2->setOrigin(m_equippedBorderSprite2->getTextureRect().width * 0.5f, m_equippedBorderSprite2->getTextureRect().height * 0.5f);
+	m_equippedBorderSprite2->setScale(0.3f, 0.3f);
+	m_equippedBorderSprite2->setPosition(m_windowObj.GetWindowSize()->x - 280.0f, m_windowObj.GetWindowSize()->y - 60.0f);
+	m_windowObj.DrawThis(m_equippedBorderSprite2);
+
+	
+	m_equippedBorderSprite3->setOrigin(m_equippedBorderSprite3->getTextureRect().width * 0.5f, m_equippedBorderSprite3->getTextureRect().height * 0.5f);
+	m_equippedBorderSprite3->setScale(0.3f, 0.3f);
+	m_equippedBorderSprite3->setPosition(m_windowObj.GetWindowSize()->x - 210.0f, m_windowObj.GetWindowSize()->y - 60.0f);
+	m_windowObj.DrawThis(m_equippedBorderSprite3);
+
+}
+
+void SpaceShooter::ShowWeaponEquipped()
+{
+	switch (m_weaponEquiped)
+	{
+	case SS_Player::WEAPONTYPE::Fast:
+		m_equippedBorderSprite1->setTexture(*m_equippedONBorderTex);
+		m_equippedBorderSprite2->setTexture(*m_equippedOFFBorderTex);
+		m_equippedBorderSprite3->setTexture(*m_equippedOFFBorderTex);
+		break;
+	case SS_Player::WEAPONTYPE::Laser:
+		m_equippedBorderSprite1->setTexture(*m_equippedOFFBorderTex);
+		m_equippedBorderSprite2->setTexture(*m_equippedONBorderTex);
+		m_equippedBorderSprite3->setTexture(*m_equippedOFFBorderTex);
+		break;
+	case SS_Player::WEAPONTYPE::Power:
+		m_equippedBorderSprite1->setTexture(*m_equippedOFFBorderTex);
+		m_equippedBorderSprite2->setTexture(*m_equippedOFFBorderTex);
+		m_equippedBorderSprite3->setTexture(*m_equippedONBorderTex);
+		break;
+	default: 
+		m_weaponEquiped = SS_Player::WEAPONTYPE::Fast;
+		break;
+	}
 }

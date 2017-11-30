@@ -39,10 +39,12 @@ void Window::Update()
 		{
 			m_isClosed = true;														// When window is closed set m_isDone to true
 		}																			// then the while loop playing the game will end
-		else if (l_event.type == sf::Event::KeyPressed && l_event.key.code == sf::Keyboard::F5)
+		//TODO Learn to set Fullscreen without stretching
+		/*else if (l_event.type == sf::Event::KeyPressed && l_event.key.code == sf::Keyboard::F5)
 		{
 			ToggleFullscreen();														// Call function to toggle Full Screen 
 		}
+		*/
 	}
 	
 
@@ -82,7 +84,6 @@ void Window::Setup(const std::string & winTitle, const sf::Vector2f & winSize)
 void Window::Create()
 {
 	auto l_style = (m_isFullscreen ? sf::Style::Fullscreen : sf::Style::Default);   // Value for auto type variable is based on value of m_isFullScreen
-	m_renderWindow.create
-	({ static_cast<unsigned int>(m_renderWindowSize.x), static_cast<unsigned int>(m_renderWindowSize.y), 32 }, m_renderWindowTitle, l_style);
+	m_renderWindow.create({ static_cast<unsigned int>(m_renderWindowSize.x), static_cast<unsigned int>(m_renderWindowSize.y), 32 }, m_renderWindowTitle, l_style);
 	// create window using the values taken from Constructor parameters passed into Setup()
 }

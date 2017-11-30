@@ -1,11 +1,13 @@
 #pragma once
 #include "Game.h"
-
+#include "Player.h"
+#include "Enemy.h"
+#include "Bullets.h"
 /**************************************************************************************
 **************************SPACESHOOTER : DERIVED FROM GAME*****************************
 ***************************************************************************************/
 
-
+class GameObjects;
 /*************************SPACESHOOTER***************************/
 class SpaceShooter : public Game
 {
@@ -34,11 +36,29 @@ public:
 	void SpawnItem();													// Function to spawn Coins/Ammo/ExtraLife
 	void SetSpawnCount();												// Function to set how many AI and destructible to spawn per level
 	void LoopBackground();
-
+	void DrawHealthBarSprite();
+	void DrawBorders();
+	void ShowWeaponEquipped();
 
 	//SpaceShooter member variables
 private:
+	SS_Player::WEAPONTYPE m_weaponEquiped;
 	sf::RectangleShape m_background2;
+	sf::RectangleShape* m_playerHealthBar = new sf::RectangleShape;
+	sf::Sprite* m_healthBarSprite = new sf::Sprite;
+	sf::Sprite* m_livesBorderSprite = new sf::Sprite;
+	sf::Sprite* m_equippedBorderSprite1 = new sf::Sprite;
+	sf::Sprite* m_equippedBorderSprite2 = new sf::Sprite;
+	sf::Sprite* m_equippedBorderSprite3 = new sf::Sprite;
+	sf::Sprite* m_bgBorder = new sf::Sprite;
+	sf::Texture* m_bgBorderTex = new sf::Texture;
+	sf::Texture* m_healthBarTex = new sf::Texture;
+	sf::Texture* m_livesTex = new sf::Texture;
+	sf::Texture* m_livesBorderTex = new sf::Texture;
+	sf::Texture* m_equippedONBorderTex = new sf::Texture;
+	sf::Texture* m_equippedOFFBorderTex = new sf::Texture;
+	float m_playerCurrentHealth;
+	float m_maxPlayerHealth;
 	unsigned int m_specialAmmoRemaining;
 	unsigned int m_level;
 	unsigned int m_livesRemaining;

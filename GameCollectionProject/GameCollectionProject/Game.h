@@ -31,10 +31,6 @@ public:
 	virtual void GameOver() {};											// Virtual Function to call when game is over, to handle setting of remaining GameObjects' state into destroyed = true
 	virtual void CreateBackground() {};									// Virtual Function to draw the background(be called in Render())
 
-
-	//Main Functions
-	
-
 	//Virtual Helper Functions
 	virtual Window* GetWindow()  { return &m_windowObj; }				// Inline helper function to acces a reference to m_windowObj object
 	
