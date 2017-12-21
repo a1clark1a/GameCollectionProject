@@ -18,8 +18,7 @@ public:
 	virtual void ApplyDrag(float dt) {};
 	virtual void Destroy() { GameObjects::Destroy(); }
 	virtual void SetDmgVal(const float & dmgVal) { m_dmgVal = dmgVal; }
-	virtual void DealDmg(GameObjects* enemy);
-	virtual void ShootFunction() {};
+	virtual void ShootFunction(const float  & dt) {};
 	virtual void OutOfBounds(Window* window);
 
 protected:
@@ -40,32 +39,25 @@ public:
 
 };
 
-class LaserBullet : public Bullet
+class QuadBullets : public Bullet
 {
 public:
-	LaserBullet(const sf::Vector2f & pos, const float & dmgVal);
-	virtual ~LaserBullet();
-
-	virtual void Draw(Window* window);
-	virtual void Update(Window* window);
+	QuadBullets(const sf::Vector2f & pos, const float & dmgVal);
+	virtual ~QuadBullets() { std::cout << "QuadBullet Destructor Called" << std::endl; }
+	
 	virtual void CollidedWith(GameObjects* object);
-	virtual void Destroy();
-	virtual void SetVelocity(float velAmount) {};
+	virtual void Update(Window* window);
 
 private:
-	sf::Vector2f m_spriteSize;
-	sf::Vector2f m_collisionSize;
-	sf::RectangleShape* m_collisionBox = new sf::RectangleShape;
+	float m_rotationRate;
 };
 
 class PowerBomb : public Bullet
 {
 public:
-	PowerBomb(const std::string texturePath, const sf::Vector2f & pos);
-	virtual ~PowerBomb();
+	PowerBomb(const std::string texturePath, const sf::Vector2f & pos, const float & dmgVal);
+	virtual ~PowerBomb() { std::cout << "PowerBomb Destructor called" << std::endl; }
 
-	virtual void Draw(Window* window);
-	virtual void Update(Window* window);
 	virtual void CollidedWith(GameObjects* object);
 	virtual void Destroy();
 
@@ -76,24 +68,29 @@ public:
 class MediumBomb : public PowerBomb
 {
 public:
-	MediumBomb(const sf::Vector2f & pos);
-	virtual ~MediumBomb();
+	MediumBomb(const sf::Vector2f & pos, const float & dmgVal);
+	virtual ~MediumBomb() { std::cout << "MediumBomb Destructor called" << std::endl; }
 
-	virtual void Update();
-	virtual void CollidedWith(GameObjects* object);
+	virtual void Update(Window* window);
+	virtual void CollidedWith(GameObjects* object) { PowerBomb::CollidedWith(object); }
 	virtual void Destroy();
+
+private:
+	float m_rotationRate;
 };
 
 class SmallBomb : public PowerBomb
 {
 public:
-	SmallBomb(const sf::Vector2f & pos);
-	virtual ~SmallBomb();
+	SmallBomb(const sf::Vector2f & pos, const float & dmgVal);
+	virtual ~SmallBomb() { std::cout << "SmallBomb Destructor called" << std::endl; }
 
 	virtual void Update(Window* window);
-	virtual void CollidedWith(GameObjects* object);
+	virtual void CollidedWith(GameObjects* object){ PowerBomb::CollidedWith(object); }
 	virtual void Destroy();
 
+private:
+	float m_rotationRate;
 };
 
 

@@ -26,7 +26,7 @@ public:
 	virtual void DrawShield(Window* window);
 
 	//Helper/Getter Functions
-	float GetPlayerHealth() const { return m_playerHealth; }
+	const float GetPlayerHealth() const { return m_playerHealth; }
 	sf::Vector2f GetPlayerPos() { return m_pos; }
 	WEAPONTYPE GetWeapEquipped() { return m_currentWeap; }
 
@@ -52,7 +52,13 @@ public:
 	virtual void CollidedWith(GameObjects* object);
 	virtual void OutOfBounds(Window* window);
 	virtual void PlayerControls(Window* window);
+	virtual void ShootFunction(const float  & dt);
 
 	//Main Functions
-	void ShootFunction();
+	const unsigned int GetQuadAmmo() const { return m_quadAmmo; }
+	const unsigned int GetPowerAmmo() const { return m_PowerAmmo; }
+private:
+	unsigned int m_quadAmmo;
+	unsigned int m_PowerAmmo;
+
 };

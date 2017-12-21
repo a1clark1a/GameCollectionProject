@@ -15,7 +15,7 @@ public:
 	virtual void Update(Window* window) { GameObjects::Update(window); OutOfBounds(window); }
 	virtual void CollidedWith(GameObjects* object);
 	virtual void OutOfBounds(Window* window);
-	virtual void ShootFunction() {};
+	virtual void ShootFunction(const float & dt) {};
 
 	//Main Functions
 	void TakeDamage(const float dmgVal);

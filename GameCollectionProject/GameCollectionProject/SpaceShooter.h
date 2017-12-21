@@ -12,7 +12,7 @@ class GameObjects;
 class SpaceShooter : public Game
 {
 public:
-	SpaceShooter(const sf::Vector2f winSize);							//TODO(In Future) for save progression feature allow reinitialization of game variables through arguments in constructor
+	SpaceShooter();														//TODO(In Future) for save progression feature allow reinitialization of game variables through arguments in constructor
 	virtual ~SpaceShooter();
 
 	//Redefined Virtual Functions
@@ -28,7 +28,7 @@ public:
 
 	//Helper/Getter Functions
 	virtual void ResetSpawnTimer() { m_timeUntilRespawn = 3.0f; }
-
+	
 	//SpaceShooter Functions
 	void RespawnPlayer();												// Function to spawn player
 	void SpawnAI();														// Function to spawn AI
@@ -50,8 +50,6 @@ private:
 	sf::Sprite* m_equippedBorderSprite1 = new sf::Sprite;
 	sf::Sprite* m_equippedBorderSprite2 = new sf::Sprite;
 	sf::Sprite* m_equippedBorderSprite3 = new sf::Sprite;
-	sf::Sprite* m_bgBorder = new sf::Sprite;
-	sf::Texture* m_bgBorderTex = new sf::Texture;
 	sf::Texture* m_healthBarTex = new sf::Texture;
 	sf::Texture* m_livesTex = new sf::Texture;
 	sf::Texture* m_livesBorderTex = new sf::Texture;
@@ -59,7 +57,8 @@ private:
 	sf::Texture* m_equippedOFFBorderTex = new sf::Texture;
 	float m_playerCurrentHealth;
 	float m_maxPlayerHealth;
-	unsigned int m_specialAmmoRemaining;
+	unsigned int m_quadAmmoRemaining;
+	unsigned int m_PowerBombAmmoRemaining;
 	unsigned int m_level;
 	unsigned int m_livesRemaining;
 	unsigned int m_spawnCount;

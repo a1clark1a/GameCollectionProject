@@ -21,22 +21,6 @@ void Bullet::Update(Window* window)
 	OutOfBounds(window);
 }
 
-void Bullet::DealDmg(GameObjects* object)
-{
-	Enemy* enemy = dynamic_cast<Enemy*>(object);
-	if (enemy->GetEnemyHealth() > 0.0f)
-	{
-		enemy->TakeDamage(m_dmgVal);
-		Destroy();
-	}
-	else
-	{
-		enemy->Destroy();
-		m_owner->SetScore(enemy->GetScoreVal());
-		Destroy();
-	}
-}
-
 void Bullet::OutOfBounds(Window* window)
 {
 	if (m_pos.x < 0.0f)
@@ -60,7 +44,6 @@ void Bullet::OutOfBounds(Window* window)
 /*********************************************************************
 ***************FASTBULLET CLASS : DERIVED FROM BULLET*****************
 *********************************************************************/
-
 FastBullet::FastBullet(const sf::Vector2f & pos, const float & dmgVal, const float & vel)
 	:Bullet("Sprites/Effects/Lasers/laserBlue01.png", pos, dmgVal)
 
@@ -81,7 +64,7 @@ void FastBullet::Update(Window* window)
 //FastBullet's version that takes a collided object and checks if its an enemy
 void FastBullet::CollidedWith(GameObjects* object)
 {
-
+	
 	Enemy* l_enemy = dynamic_cast<Enemy*>(object);
 	if (l_enemy)
 	{
@@ -93,7 +76,7 @@ void FastBullet::CollidedWith(GameObjects* object)
 		}
 		else
 		{
-			DealDmg(l_enemy);
+			l_enemy->TakeDamage(m_dmgVal);
 			Destroy();
 		}
 	}
@@ -102,51 +85,30 @@ void FastBullet::CollidedWith(GameObjects* object)
 /*********************************************************************
 ***************LASERBULLET CLASS : DERIVED FROM BULLET*****************
 *********************************************************************/
-LaserBullet::LaserBullet(const sf::Vector2f & pos, const float & dmgVal)
-	:Bullet("TODO ADD BULLET SPRITE ADDRESS", pos, dmgVal)
+QuadBullets::QuadBullets(const sf::Vector2f & pos, const float & dmgVal)
+	:Bullet("Sprites/Effects/Lasers/laserBlue08.png", pos, dmgVal)
 {
-
+	m_lifeTime = 3.0f;
+	m_collisionRadius = 15.0f;
+	m_sprite.setOrigin(m_sprite.getTextureRect().width * 0.5f, m_sprite.getTextureRect().height * 0.5f);
+	m_rotationRate = static_cast<float>(rand() % 180 + 180);
+	m_rotationRate *= rand() % 2 == 0 ? 1 : -1;
 }
 
-LaserBullet::~LaserBullet()
-{
-	std::cout << "LaserBullet Destructor Called" << std::endl;
-	delete m_collisionBox;
-}
 
-void LaserBullet::Draw(Window* window)
-{
-	m_collisionBox->setSize(m_collisionSize);
-	m_collisionBox->setOrigin(m_collisionSize.x * 0.5f, m_collisionSize.y * 0.5f);
-	m_collisionBox->setPosition(m_pos);
-	m_collisionBox->setFillColor(sf::Color::Transparent);
-	m_collisionBox->setOutlineThickness(2.0f);
-	m_collisionBox->setOutlineColor(sf::Color::Red);
-	window->DrawThis(m_collisionBox);
-	window->DrawThis(&m_sprite);
 
-}
-
-void LaserBullet::Update(Window* window)
+void QuadBullets::Update(Window* window)
 {
+	m_angle += m_rotationRate * window->GetDeltaTime()->asSeconds();
 	Bullet::Update(window);
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-	{
-		m_lifeTime = 2.0f;
-	}
-	else
-	{
-		m_lifeTime -= window->GetDeltaTime()->asSeconds();
-	}
-
 }
 
-void LaserBullet::CollidedWith(GameObjects* object)
+void QuadBullets::CollidedWith(GameObjects* object)
 {
 	Enemy* l_enemy = dynamic_cast<Enemy*>(object);
 	if (l_enemy)
 	{
-		Asteroid* l_asteroid = dynamic_cast<Asteroid*>(l_enemy);
+		Asteroid* l_asteroid = dynamic_cast<Asteroid*>(object);
 		if (l_asteroid)
 		{
 			object->Destroy();
@@ -154,17 +116,114 @@ void LaserBullet::CollidedWith(GameObjects* object)
 		}
 		else
 		{
-			DealDmg(l_enemy);
+			l_enemy->TakeDamage(m_dmgVal);
+			Destroy();
 		}
 	}
 }
 
-void LaserBullet::Destroy()
+/*********************************************************************
+***************POWERBOMB CLASS : DERIVED FROM BULLET*****************
+*********************************************************************/
+PowerBomb::PowerBomb(const std::string texturePath,const sf::Vector2f & pos, const float & dmgVal)
+	:Bullet(texturePath, pos, dmgVal) 
 {
-	//TODO make the sprite slowly vanish before calling Destroy
-	Bullet::Destroy();
+	m_angle = -90.0f;
+	m_lifeTime = 5.0f;
+	m_collisionRadius = 60.0f;
+	m_sprite.setOrigin(m_sprite.getTextureRect().width - 50.0f, m_sprite.getTextureRect().height * 0.5f);
 }
 
+void PowerBomb::CollidedWith(GameObjects* object)
+{
+	Enemy* l_enemy = dynamic_cast<Enemy*>(object);
+	if (l_enemy)
+	{
+		Asteroid* l_asteroid = dynamic_cast<Asteroid*>(object);
+		if (l_asteroid)
+		{
+			object->Destroy();
+			Destroy();
+		}
+		else
+		{
+			l_enemy->TakeDamage(m_dmgVal);
+			Destroy();
+		}
+	}
+}
+
+void PowerBomb::Destroy()
+{
+	for (int i = 0; i < 6; i++)
+	{
+		MediumBomb* l_mediumBomb = new MediumBomb(m_pos, 50.0f);
+		l_mediumBomb->SetAngle(static_cast<float>(rand() % 360));
+		l_mediumBomb->SetVelocity(200.0f);
+		m_owner->AddObject(l_mediumBomb);
+	}
+	GameObjects::Destroy();
+}
+
+/*********************************************************************
+***************MEDIUMBOMB CLASS : DERIVED FROM BULLET*****************
+*********************************************************************/
+MediumBomb::MediumBomb(const sf::Vector2f & pos, const float & dmgVal)
+	:PowerBomb("Sprites/Effects/Lasers/laserBlue10.png", pos, dmgVal)
+{
+	m_lifeTime = 5.0f;
+	m_collisionRadius = 20.0f;
+	m_sprite.setOrigin(m_sprite.getTextureRect().width * 0.5f, m_sprite.getTextureRect().height * 0.5f);
+	m_rotationRate = static_cast<float>(rand() % 180 + 180);
+	m_rotationRate *= rand() % 2 == 0 ? 1 : -1;
+}
+
+void MediumBomb::Update(Window* window)
+{
+	m_angle += m_rotationRate * window->GetDeltaTime()->asSeconds();
+	Bullet::Update(window);
+}
+
+void MediumBomb::Destroy()
+{
+	for (int i = 0; i < 10; i++)
+	{
+		SmallBomb* l_smallBomb = new SmallBomb(m_pos, 20.0f);
+		l_smallBomb->SetAngle(static_cast<float>(rand() % 360));
+		l_smallBomb->SetVelocity(400.0f);
+		m_owner->AddObject(l_smallBomb);
+	}
+	GameObjects::Destroy();
+}
+
+/*********************************************************************
+***************SMALLBOMB CLASS : DERIVED FROM BULLET******************
+*********************************************************************/
+SmallBomb::SmallBomb(const sf::Vector2f & pos, const float & dmgVal)
+	:PowerBomb("Sprites/Effects/Lasers/laserBlue11.png", pos, dmgVal)
+{
+	m_lifeTime = 5.0f;
+	m_sprite.setScale(0.5f, 0.5f);
+	m_collisionRadius = 10.0f;
+	m_sprite.setOrigin(m_sprite.getTextureRect().width * 0.5f, m_sprite.getTextureRect().height * 0.5f);
+	m_rotationRate = static_cast<float>(rand() % 180 + 180);
+	m_rotationRate *= rand() % 2 == 0 ? 1 : -1;
+}
+
+void SmallBomb::Update(Window* window)
+{
+	m_angle += m_rotationRate * window->GetDeltaTime()->asSeconds();
+	Bullet::Update(window);
+}
+
+void SmallBomb::Destroy()
+{
+	GameObjects::Destroy();
+}
+
+/*********************************************************************
+***************ENEMYBULLET CLASS : DERIVED FROM BULLET*****************
+*********************************************************************/
 EnemyBullet::EnemyBullet(const sf::Vector2f & pos, const float & dmgVal, const float & vel)
 	:Bullet("Sprites/Effects/Lasers/laserBlue01.png", pos, dmgVal)
 {
@@ -181,17 +240,7 @@ void EnemyBullet::CollidedWith(GameObjects* object)
 	Player* l_player = dynamic_cast<Player*>(object);
 	if (l_player)
 	{
-		if (l_player->GetPlayerHealth() <= 0.0f)
-		{
-			l_player->Destroy();
-			Destroy();
-
-		}
-		else
-		{
-			std::cout << "called" << std::endl;
-			l_player->TakeDmg(m_dmgVal);
-			Destroy();
-		}
+		l_player->TakeDmg(m_dmgVal);
+		Destroy();
 	}
 }

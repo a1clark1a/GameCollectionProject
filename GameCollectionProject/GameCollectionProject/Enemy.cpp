@@ -14,30 +14,28 @@ void Enemy::CollidedWith(GameObjects* object)
 	Player* l_player = dynamic_cast<Player*>(object);
 	if (l_player)
 	{
-		if (l_player->GetPlayerHealth() > 0)
-		{
-			//Player takes damage 
-			l_player->TakeDmg(m_dmgVal);
-			Destroy();
-
-		}
-		else
-		{
-			l_player->Destroy();
-		}
+		l_player->Destroy();
+		Destroy();
 	}
 }
 
 void Enemy::TakeDamage(const float dmgVal)
 {
 
-	if (m_enemyHealth > 0.0f)
+	if (m_enemyHealth >= dmgVal)
 	{
 		m_enemyHealth -= dmgVal;
+		if (m_enemyHealth <= 0.0f)
+		{
+			m_owner->SetScore(m_scoreVal);
+			Destroy();
+		}
 	}
 	else
 	{
 		Destroy();
+		
+		
 	}
 }
 
@@ -219,7 +217,6 @@ void NormalAI::ShootFunction(const float & dt)
 		}
 		else
 		{
-			std::cout << "This triggered: " << std::endl;
 			m_aiStates = AISTATES::Moving;
 			m_moveStates = rand() % 2 == 0 ? MOVESTATES::Right : MOVESTATES::Left;
 		}

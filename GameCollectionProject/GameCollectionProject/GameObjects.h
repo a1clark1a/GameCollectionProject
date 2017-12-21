@@ -29,14 +29,14 @@ public:
 	virtual void Destroy() { m_gameObjIsDestroyed = true; }					// Virtual Function to set boolean m_gameObjIsDestroyed to true;
 	virtual void CollidedWith(GameObjects* object) {};						// Virtual Function to call when this object collides with an GameObjects object
 	virtual void OutOfBounds(Window* window);								// Virtual Function to call when going object goes out of window
-	virtual void ShootFunction() = 0;										// Virtual Function to be redefined by specific objects to handle shooting
+	virtual void ShootFunction(const float & dt) = 0;										// Virtual Function to be redefined by specific objects to handle shooting
 	
 	//Main Function
 	void SetOwner(Game* owner) { m_owner = owner; };						// Function to to assign value to m_owner
 	void SetPos(const sf::Vector2f& pos) { m_pos = pos; }					// Function to assign value to GameObject object's m_pos
 	void SetAngle(const float angle) { m_angle = angle; }					// Function to assign value to GameObjects object's m_angle
 	void SetCollisionRadius(float radius) { m_collisionRadius = radius; }	// Function to assign value to GameObject object's m_collisionRadius
-	enum class WEAPONTYPE  { Fast, Laser, Power };
+	enum class WEAPONTYPE  { Fast, QuadBlaster, Power };
 
 	//Helper/Getter Functions	
 	bool IsDestroyed() const { return m_gameObjIsDestroyed; }				// Getter function to get GameObject object state

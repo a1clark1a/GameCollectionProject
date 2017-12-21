@@ -7,7 +7,6 @@
 /*********************************************************************
 ***************PLAYER CLASS : DERIVED FROM GAMEOBJECT*****************
 *********************************************************************/
-
 void Player::Draw(Window* window)
 {
 	GameObjects::Draw(window);
@@ -23,9 +22,13 @@ void Player::Update(Window* window)
 //Player version of TakeDmg 
 void Player::TakeDmg(const float & dmgVal)
 {
-	if (m_playerHealth > 0.0f)
+	if (m_playerHealth >= dmgVal)
 	{
 		m_playerHealth -= dmgVal;
+		if (m_playerHealth <= 0.0f)
+		{
+			Destroy();
+		}
 	}
 	else
 	{
@@ -49,7 +52,7 @@ void Player::DrawShield(Window* window)
 		m_invincibilityRing->setFillColor(sf::Color::Transparent);
 		m_invincibilityRing->setOutlineThickness(10.0f * m_invincibilityCooldown / 3.0f + 1.0f);
 		sf::Color l_color = sf::Color::Blue;
-		l_color.a = 255 * m_invincibilityCooldown / 3.0f;
+		l_color.a = static_cast<sf::Uint8>(255 * m_invincibilityCooldown / 3.0f);
 		m_invincibilityRing->setOutlineColor(l_color);
 		m_invincibilityRing->setOrigin(45, 45);
 		m_invincibilityRing->setPosition(m_pos);
@@ -60,7 +63,7 @@ void Player::DrawShield(Window* window)
 		l_sinVal *= 0.5;
 		float l_alpha = l_sinVal * 255;
 		sf::Color l_shipColor = sf::Color::White;
-		l_shipColor.a = l_alpha;
+		l_shipColor.a = (sf::Uint8)l_alpha;
 		m_sprite.setColor(l_shipColor);
 	}
 	else
@@ -77,15 +80,18 @@ void Player::DrawShield(Window* window)
 //SS_Player Constructor 
 //Needs texture address and initial position to initialize player sprite
 SS_Player::SS_Player()
-	:Player("Sprites/TopDownShips/ship2.png", sf::Vector2f(400.0f, 400.0f))
+	:Player("Sprites/TopDownShips/ship3.png", sf::Vector2f(400.0f, 400.0f))
 {
 	m_invincibilityCooldown = 2.0f;
 	m_playerHealth = 200.0f;
+	m_quadAmmo = 60;
+	m_PowerAmmo = 1;
 	m_shootCooldown = 0.2f;
 	m_shooting = false;
 	SetCollisionRadius(40.0f);
-	m_sprite.setScale(0.09f, 0.09f);
-	m_sprite.setOrigin(m_sprite.getTextureRect().width * 0.5f, m_sprite.getTextureRect().height * 0.65f);
+	m_sprite.setScale(0.1f, 0.1f);
+	m_sprite.setOrigin(m_sprite.getTextureRect().width * 0.5f, m_sprite.getTextureRect().height * 0.5f);	
+	
 }
 
 //SS_Player virtual destructor
@@ -149,7 +155,6 @@ void SS_Player::OutOfBounds(Window* window)
 //If no input is pressed call SS_Player version's ApplyDrag
 void SS_Player::PlayerControls(Window* window)
 {
-	m_shooting = false;
 	m_shootCooldown -= window->GetDeltaTime()->asSeconds();
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
@@ -185,15 +190,20 @@ void SS_Player::PlayerControls(Window* window)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
 	{
 		m_shooting = true;
-		ShootFunction();
+		ShootFunction(window->GetDeltaTime()->asSeconds());
 	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
 	{
 		m_currentWeap = WEAPONTYPE::Fast;
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2))
 	{
-		m_currentWeap = WEAPONTYPE::Laser;
+		
+		if (m_currentWeap != WEAPONTYPE::QuadBlaster)
+		{
+			m_currentWeap = WEAPONTYPE::QuadBlaster;
+		}
+		
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3))
 	{
@@ -201,42 +211,54 @@ void SS_Player::PlayerControls(Window* window)
 	}
 	else
 	{
-		ApplyDrag(window->GetDeltaTime()->asSeconds(), 10.0f);
-
+		 ApplyDrag(window->GetDeltaTime()->asSeconds(), 10.0f);
+		 m_shooting = false;
 	}
-
+	
+	
 }
 
 //SS_Player version shoot bullets based on which weapon type equipped
-void SS_Player::ShootFunction()
+void SS_Player::ShootFunction(const float  & dt)
 {
 	switch (m_currentWeap)
 	{
 	case WEAPONTYPE::Fast:
 		if (m_shooting && m_shootCooldown <= 0.0f)
 		{
-
-			FastBullet* l_fastBullet1 = new FastBullet(sf::Vector2f(m_pos.x + 30.0f, m_pos.y - 30), 10.0f, 500.0f);
-			FastBullet* l_fastBullet2 = new FastBullet(sf::Vector2f(m_pos.x - 30.0f, m_pos.y - 30), 10.0f, 500.0f);
-			m_owner->AddObject(l_fastBullet1);
-			m_owner->AddObject(l_fastBullet2);
-			m_shootCooldown = 0.1f;
-			break;
+			for (int i = 0; i < 2; i++)
+			{
+				FastBullet* l_fastBullet = new FastBullet(sf::Vector2f(m_pos.x + ( i < 1 ? 15.0f : -15.0f), m_pos.y - 20), 10.0f, 500.0f);
+				m_owner->AddObject(l_fastBullet);
+				m_shootCooldown = 0.1f;
+			}
 		}
-
-	case WEAPONTYPE::Laser:
-		if (m_shooting && m_shootCooldown <= 0.0f)
+		break;
+	case WEAPONTYPE::QuadBlaster:
+		if (m_shooting && m_shootCooldown <= 0.0f && m_quadAmmo > 0)
 		{
-			//TODO shoot laser
-			break;
+			for (int i = 0; i < 4; i++)
+			{
+				QuadBullets* l_quadBullets = new QuadBullets(sf::Vector2f(m_pos.x, m_pos.y - 30.0f), 20.0f);
+				l_quadBullets->SetAngle(m_angle - 15.0f + (i < 2 ? -15.0f : 15.0f) * i);
+				l_quadBullets->SetVelocity(800.0f);
+				m_owner->AddObject(l_quadBullets);
+				m_shootCooldown = 0.5f;
+				m_quadAmmo--;
+			}
+			
 		}
-
+		break;
 	case WEAPONTYPE::Power:
-		if (m_shooting && m_shootCooldown <= 0.0f)
+		if (m_shooting && m_shootCooldown <= 0.0f && m_PowerAmmo > 0)
 		{
-			//TODO shoot Powerd
-			break;
+			PowerBomb* l_PowerBomb = new PowerBomb("Sprites/Effects/Lasers/blueflame_big.png", sf::Vector2f(m_pos.x, m_pos.y - 30.0f), 100.0f);
+			l_PowerBomb->SetLinearAccel(100.0f);
+			m_owner->AddObject(l_PowerBomb);
+			m_shootCooldown = 5.0f;
+			m_PowerAmmo--;
 		}
+		break;
 
 	default: m_currentWeap = WEAPONTYPE::Fast;
 		break;
