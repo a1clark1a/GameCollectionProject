@@ -1,13 +1,11 @@
 #pragma once
-#include "Game.h"
 #include "Player.h"
 #include "Enemy.h"
-#include "Bullets.h"
 /**************************************************************************************
 **************************SPACESHOOTER : DERIVED FROM GAME*****************************
 ***************************************************************************************/
 
-class GameObjects;
+
 /*************************SPACESHOOTER***************************/
 class SpaceShooter : public Game
 {
@@ -42,6 +40,9 @@ public:
 
 	//SpaceShooter member variables
 private:
+	virtual void Setup();
+	void LoadTexture();
+
 	SS_Player::WEAPONTYPE m_weaponEquiped;
 	sf::RectangleShape m_background2;
 	sf::RectangleShape* m_playerHealthBar = new sf::RectangleShape;

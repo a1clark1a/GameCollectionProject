@@ -1,15 +1,16 @@
 #pragma once
 #include "Window.h"
+#include "Game.h"
 #include "math.h"
 #define DEG_TO_RAD (0.0174532925f)
 
 
-class Game;																	 //Forward Class Declaration
+/******Forward Class Declaration*******/	
 class SS_Player;
 
-/*********************************************************************
-***************************ABSTRACT BASE CLASS************************
-*********************************************************************/
+/*****************************************************************
+***********************ABSTRACT BASE CLASS************************
+*****************************************************************/
 class GameObjects
 {
 public:
@@ -27,9 +28,9 @@ public:
 	virtual void SetLinearAccel(const float & accelVal);					// virutal Function  to allow forward and backward acceleration
 	virtual void SetSideAccel(const float & accelVal);
 	virtual void Destroy() { m_gameObjIsDestroyed = true; }					// Virtual Function to set boolean m_gameObjIsDestroyed to true;
-	virtual void CollidedWith(GameObjects* object) {};						// Virtual Function to call when this object collides with an GameObjects object
+	virtual void CollidedWith(GameObjects* object) = 0;						// Virtual Function to call when this object collides with an GameObjects object
 	virtual void OutOfBounds(Window* window);								// Virtual Function to call when going object goes out of window
-	virtual void ShootFunction(const float & dt) = 0;										// Virtual Function to be redefined by specific objects to handle shooting
+	virtual void ShootFunction(const float & dt) = 0;						// Virtual Function to be redefined by specific objects to handle shooting
 	
 	//Main Function
 	void SetOwner(Game* owner) { m_owner = owner; };						// Function to to assign value to m_owner
@@ -60,25 +61,11 @@ protected:
 	float m_collisionRadius;												// The CollisionSphere's Radius
 	bool m_gameObjIsDestroyed;												// A GameObject object's state
 	
-
+private:
+	void Setup(const std::string texturePath);								//Function for setting up gameobject variables
 };
 
-/**************BASE ITEM CLASS:: DERIVED FROM GAMEOBJECTS**********/
-//ABSTRACT CLASS
-class Item : public GameObjects
-{
-public:
-	Item(const std::string texturePath, const sf::Vector2f & pos);
-	virtual ~Item();
 
-	virtual void Draw(Window* window);
-	virtual void Update(Window* window);
-	virtual void CollidedWith(GameObjects* object) = 0;
-	virtual void ShootFunction() {};
-
-protected:
-	float m_lifeTime;
-};
 
 
 

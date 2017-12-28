@@ -1,5 +1,5 @@
 #pragma once
-#include "GameObjects.h"
+#include "Player.h"
 
 /**************BASE ENEMY CLASS:: DERIVED FROM GAMEOBJECTS**********/
 
@@ -26,6 +26,7 @@ public:
 	const unsigned int GetScoreVal() const { return m_scoreVal; }
 
 protected:
+	virtual void Setup() = 0;
 	unsigned int m_scoreVal;
 	float m_maxHealth;
 	float m_enemyHealth;
@@ -47,11 +48,13 @@ public:
 	virtual void Move(const float & dt) = 0;
 	virtual void ShootFunction(const float & dt) {};
 	virtual void DrawHealthBar(Window* window);
+	virtual void Destroy() = 0;
 
 	enum class AISTATES { Moving, Shooting };
 	enum class MOVESTATES { Forward, Left, Right, Pause };
 
 protected:
+	virtual void Setup() = 0;
 	AISTATES m_aiStates;
 	MOVESTATES m_moveStates;
 	float m_moveInterval;
@@ -67,10 +70,15 @@ public:
 	NormalAI::NormalAI(const sf::Vector2f & pos);
 	virtual ~NormalAI() { std::cout << "NormalAI destructor called" << std::endl; }
 
+	
 	virtual void Update(Window* window);
 	virtual void OutOfBounds(Window* window);
 	virtual void Move(const float & dt);
 	virtual void ShootFunction(const float & dt);
+	virtual void Destroy();
+
+protected:
+	virtual void Setup();
 };
 
 class AggroAI : public AI
@@ -84,6 +92,10 @@ public:
 	virtual void SetLinearAccel(const float & accelVal_x, const float & accelVal_y);
 	virtual void Move(const float & dt);
 	virtual void ShootFunction(const float & dt);
+	virtual void Destroy();
+
+protected:
+	virtual void Setup();
 
 private:
 	int m_toggle;
@@ -99,6 +111,10 @@ public:
 	virtual void OutOfBounds(Window* window);
 	virtual void SetTarget(SS_Player* player);
 	virtual void Move(const float & dt) {};
+	virtual void Destroy();
+
+protected:
+	virtual void Setup();
 
 private:
 	float m_rotationRate;
@@ -115,6 +131,10 @@ class BossAI : public AI
 	virtual void Behavior(const float & dt);
 	virtual void Move(const float & dt);
 	virtual void ShootingFunction(const float & dt);
+	virtual void Destroy();
+
+protected:
+	virtual void Setup();
 };
 
 /**************BASE ASTEROID CLASS:: DERIVED FROM GAMEOBJECTS**********/
@@ -128,6 +148,10 @@ public:
 	virtual void Draw(Window* window) { GameObjects::Draw(window); }
 	virtual void Update(Window* window);
 	virtual void ApplyDrag(float dt) = 0;
+	virtual void Destroy() = 0;
+
+protected:
+	virtual void Setup();
 
 private:
 	float m_rotationRate;
@@ -141,6 +165,9 @@ public:
 	virtual ~LargeAsteroid() { std::cout << "LargeAsteroid Destructor called" << std::endl; }
 	virtual void Destroy();
 	virtual void ApplyDrag(float dt) {};
+
+protected:
+	virtual void Setup();
 };
 
 class MediumAsteroid : public Asteroid
@@ -150,6 +177,9 @@ public:
 	virtual ~MediumAsteroid() { std::cout << "MediumAsteroid Destructor called" << std::endl; }
 	virtual void Destroy();
 	virtual void ApplyDrag(float dt) {};
+
+protected:
+	virtual void Setup();
 };
 
 class SmallAsteroid : public Asteroid
@@ -158,4 +188,8 @@ public:
 	SmallAsteroid(const sf::Vector2f & pos);
 	virtual ~SmallAsteroid() { std::cout << "SmallAsteroid Destructor called" << std::endl; }
 	virtual void ApplyDrag(float dt) {};
+	virtual void Destroy();
+
+protected:
+	virtual void Setup();
 };

@@ -1,5 +1,4 @@
 #include "GameObjects.h"
-#include "Game.h"
 
 /*********************************************************************
 **********************ABSTRACT BASE CLASS*****************************
@@ -8,15 +7,9 @@
 //PUBLIC MEMBERS//
 //Constructor to initialize GameObject object's texture and initial position
 GameObjects::GameObjects(const std::string texturePath, const sf::Vector2f& pos)
-	:m_gameObjIsDestroyed(false)
-	,m_pos(pos)
-	,m_collisionRadius(0.0f)
-	,m_angle(0.0f)
-	
+	:m_pos(pos)
 {
-	m_texture.loadFromFile(texturePath);
-	m_sprite.setTexture(m_texture);
-	m_sprite.setOrigin(m_sprite.getTextureRect().width * 0.5f, m_sprite.getTextureRect().height * 0.5f);
+	Setup(texturePath);
 }
 
 //Virtual Destructor
@@ -26,7 +19,20 @@ GameObjects::~GameObjects()
 	delete CollisionSphere;
 }
 
-//Virtual Functions
+			/***************************
+			******Virtual Functions*****
+			***************************/
+
+//GameObjects version set texture and origin
+void GameObjects::Setup(const std::string texturePath)
+{
+	m_gameObjIsDestroyed = false;
+	m_collisionRadius = 0.0f;
+	m_angle = 0.0f;
+	m_texture.loadFromFile(texturePath);
+	m_sprite.setTexture(m_texture);
+	m_sprite.setOrigin(m_sprite.getTextureRect().width * 0.5f, m_sprite.getTextureRect().height * 0.5f);
+}
 
 //GameObjects version draws a CollisionSphere on each object
 void GameObjects::Draw(Window* window)
@@ -63,13 +69,11 @@ void GameObjects::SetVelocity(const float & velAmount)
 	{
 		m_vel = sf::Vector2f(0.0f, 0.0f);
 	}
-
 }
 
 //GameObjects version Function to set an objects velocity and its max possible velocity 
 void GameObjects::MaxVelocity(const float & maxSpeed)
 {
-	
 	// set the speed by getting the square root of an objects velocity vector
 	float l_speed = sqrt(m_vel.x * m_vel.x + m_vel.y * m_vel.y);
 
@@ -113,7 +117,6 @@ void GameObjects::SetAccel(const float & accelVal)
 	{
 		m_accel = sf::Vector2f(0.0f, 0.0f);
 	}
-
 }
 
 //GameObjects version to accelerate player forward or backward in a more linear direction

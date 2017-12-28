@@ -1,5 +1,11 @@
 #pragma once
 #include "GameObjects.h"
+#include "Enemy.h"  //Temporary must remove after TEST is removed
+#include "Items.h" //Temporary must remove after TEST is removed
+#include "Bullets.h"
+
+/******Forward Class Declaration*******/
+class Window;
 
 /**************************************************************************************
 *********************PLAYER CLASSES : DERIVED FROM GAMEOBJECTS*************************
@@ -27,15 +33,16 @@ public:
 
 	//Helper/Getter Functions
 	const float GetPlayerHealth() const { return m_playerHealth; }
+	float GetInvincibilityCD() { return m_invincibilityCooldown; }
 	sf::Vector2f GetPlayerPos() { return m_pos; }
-	WEAPONTYPE GetWeapEquipped() { return m_currentWeap; }
+	
 
 protected:
+	virtual void Setup() = 0;
 	bool m_shooting;													// A player's shooting state	
 	float m_invincibilityCooldown;										// A player's invincibility cooldown value
 	float m_shootCooldown;												// A player's shooting cooldown value
 	float m_playerHealth;
-	WEAPONTYPE m_currentWeap;
 	sf::CircleShape* m_invincibilityRing = new sf::CircleShape;
 };
 
@@ -46,6 +53,7 @@ public:
 	SS_Player();
 	virtual ~SS_Player();
 
+	
 	virtual void Draw(Window* window);
 	virtual void Update(Window* window);
 	virtual void Destroy();
@@ -54,9 +62,17 @@ public:
 	virtual void PlayerControls(Window* window);
 	virtual void ShootFunction(const float  & dt);
 
-	//Main Functions
+	//Getter Functions/Helper
 	const unsigned int GetQuadAmmo() const { return m_quadAmmo; }
 	const unsigned int GetPowerAmmo() const { return m_PowerAmmo; }
+	void SetQuadAmmo(unsigned int val) { m_quadAmmo += val; }
+	void SetPowerAmmo(unsigned int val) { m_PowerAmmo += val; }
+	WEAPONTYPE GetWeapEquipped() { return m_currentWeap; }
+
+protected:
+	virtual void Setup();
+	WEAPONTYPE m_currentWeap;
+
 private:
 	unsigned int m_quadAmmo;
 	unsigned int m_PowerAmmo;

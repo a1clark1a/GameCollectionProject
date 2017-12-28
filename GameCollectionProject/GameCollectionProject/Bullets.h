@@ -1,5 +1,7 @@
 #pragma once
-#include "GameObjects.h"
+#include "Enemy.h"
+#include "Player.h"
+
 
 /**************BASE BULLET CLASS:: DERIVED FROM GAMEOBJECTS**********/
 
@@ -22,6 +24,7 @@ public:
 	virtual void OutOfBounds(Window* window);
 
 protected:
+	virtual void Setup() = 0;
 	float m_lifeTime;
 	float m_dmgVal;
 
@@ -36,6 +39,8 @@ public:
 	virtual void CollidedWith(GameObjects* object);
 	virtual void Update(Window* window);
 
+protected:
+	virtual void Setup();
 
 };
 
@@ -47,6 +52,9 @@ public:
 	
 	virtual void CollidedWith(GameObjects* object);
 	virtual void Update(Window* window);
+
+protected:
+	virtual void Setup();
 
 private:
 	float m_rotationRate;
@@ -61,8 +69,8 @@ public:
 	virtual void CollidedWith(GameObjects* object);
 	virtual void Destroy();
 
-
-
+protected:
+	virtual void Setup();
 };
 
 class MediumBomb : public PowerBomb
@@ -74,6 +82,9 @@ public:
 	virtual void Update(Window* window);
 	virtual void CollidedWith(GameObjects* object) { PowerBomb::CollidedWith(object); }
 	virtual void Destroy();
+
+protected:
+	virtual void Setup();
 
 private:
 	float m_rotationRate;
@@ -89,6 +100,9 @@ public:
 	virtual void CollidedWith(GameObjects* object){ PowerBomb::CollidedWith(object); }
 	virtual void Destroy();
 
+protected:
+	virtual void Setup();
+
 private:
 	float m_rotationRate;
 };
@@ -102,11 +116,7 @@ public:
 
 	virtual void CollidedWith(GameObjects* object);
 
+protected:
+	virtual void Setup();
 };
 
-class EnemyLaserBullet : public Bullet
-{
-public:
-	EnemyLaserBullet(const sf::Vector2f & pos);
-	virtual ~EnemyLaserBullet() { std::cout << "EnemyLaserBullet Destructor called" << std::endl; }
-};

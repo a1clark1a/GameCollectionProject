@@ -1,8 +1,4 @@
-#include "GameObjects.h"
 #include "Player.h"
-#include "Game.h"
-#include "Enemy.h"
-#include "Bullets.h"
 
 /*********************************************************************
 ***************PLAYER CLASS : DERIVED FROM GAMEOBJECT*****************
@@ -80,7 +76,19 @@ void Player::DrawShield(Window* window)
 //SS_Player Constructor 
 //Needs texture address and initial position to initialize player sprite
 SS_Player::SS_Player()
-	:Player("Sprites/TopDownShips/ship3.png", sf::Vector2f(400.0f, 400.0f))
+	:Player("Sprites/TopDownShips/ship3.png", sf::Vector2f(800.0f,450.0f))
+{	
+	Setup();
+}
+
+//SS_Player virtual destructor
+SS_Player::~SS_Player()
+{
+	std::cout << "SS_Player's Destructor called" << std::endl;
+}
+
+//SS_Player version Setup function
+void SS_Player::Setup()
 {
 	m_invincibilityCooldown = 2.0f;
 	m_playerHealth = 200.0f;
@@ -90,14 +98,7 @@ SS_Player::SS_Player()
 	m_shooting = false;
 	SetCollisionRadius(40.0f);
 	m_sprite.setScale(0.1f, 0.1f);
-	m_sprite.setOrigin(m_sprite.getTextureRect().width * 0.5f, m_sprite.getTextureRect().height * 0.5f);	
-	
-}
-
-//SS_Player virtual destructor
-SS_Player::~SS_Player()
-{
-	std::cout << "SS_Player's Destructor called" << std::endl;
+	m_sprite.setOrigin(m_sprite.getTextureRect().width * 0.5f, m_sprite.getTextureRect().height * 0.5f);
 }
 
 //SS_Player version Draw function
@@ -145,9 +146,9 @@ void SS_Player::OutOfBounds(Window* window)
 	{
 		m_pos.y = 50.0f;
 	}
-	else if (m_pos.y > window->GetWindowSize()->y - 220.0f)
+	else if (m_pos.y > window->GetWindowSize()->y - 50.0f )
 	{
-		m_pos.y = window->GetWindowSize()->y - 220.0f;
+		m_pos.y = window->GetWindowSize()->y-50.0f;
 	}
 }
 
@@ -170,6 +171,14 @@ void SS_Player::PlayerControls(Window* window)
 			ChaserAI* test3 = new ChaserAI(sf::Vector2f(400.0f, 350.0f));
 			m_owner->AddObject(test3);
 			m_shootCooldown = 0.5f;
+			GoldCoin* test4 = new GoldCoin(sf::Vector2f(static_cast<float>(rand() % 300 + 200), 150.0f));
+			m_owner->AddObject(test4);
+			SilverCoin* test5 = new SilverCoin(sf::Vector2f(static_cast<float>(rand() % 300 + 200), 150.0f));
+			m_owner->AddObject(test5);
+			QuadAmmo* test6 = new QuadAmmo(sf::Vector2f(static_cast<float>(rand() % 300 + 200), 150.0f));
+			m_owner->AddObject(test6);
+			PowerAmmo* test7 = new PowerAmmo(sf::Vector2f(static_cast<float>(rand() % 300 + 200), 150.0f));
+			m_owner->AddObject(test7);
 		}
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
@@ -192,30 +201,23 @@ void SS_Player::PlayerControls(Window* window)
 		m_shooting = true;
 		ShootFunction(window->GetDeltaTime()->asSeconds());
 	}
+	else
+	{
+		ApplyDrag(window->GetDeltaTime()->asSeconds(), 10.0f);
+		m_shooting = false;
+	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
 	{
 		m_currentWeap = WEAPONTYPE::Fast;
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2))
 	{
-		
-		if (m_currentWeap != WEAPONTYPE::QuadBlaster)
-		{
-			m_currentWeap = WEAPONTYPE::QuadBlaster;
-		}
-		
+		m_currentWeap = WEAPONTYPE::QuadBlaster;
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3))
 	{
 		m_currentWeap = WEAPONTYPE::Power;
 	}
-	else
-	{
-		 ApplyDrag(window->GetDeltaTime()->asSeconds(), 10.0f);
-		 m_shooting = false;
-	}
-	
-	
 }
 
 //SS_Player version shoot bullets based on which weapon type equipped
@@ -228,7 +230,7 @@ void SS_Player::ShootFunction(const float  & dt)
 		{
 			for (int i = 0; i < 2; i++)
 			{
-				FastBullet* l_fastBullet = new FastBullet(sf::Vector2f(m_pos.x + ( i < 1 ? 15.0f : -15.0f), m_pos.y - 20), 10.0f, 500.0f);
+				FastBullet* l_fastBullet = new FastBullet(sf::Vector2f(m_pos.x + ( i < 1 ? 15.0f : -15.0f), m_pos.y - 20), 10.0f, 700.0f);
 				m_owner->AddObject(l_fastBullet);
 				m_shootCooldown = 0.1f;
 			}

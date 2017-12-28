@@ -40,11 +40,11 @@ void Window::Update()
 			m_isClosed = true;														// When window is closed set m_isDone to true
 		}																			// then the while loop playing the game will end
 		//TODO Learn to set Fullscreen without stretching
-		/*else if (l_event.type == sf::Event::KeyPressed && l_event.key.code == sf::Keyboard::F5)
+		else if (l_event.type == sf::Event::KeyPressed && l_event.key.code == sf::Keyboard::F5)
 		{
 			ToggleFullscreen();														// Call function to toggle Full Screen 
 		}
-		*/
+		
 	}
 	
 

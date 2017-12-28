@@ -1,27 +1,14 @@
+#include "SpaceShooter.h"
+
 /**************************************************************************************
 *********************************SPACESHOOTER CLASS************************************
 ***************************************************************************************/
-#include "SpaceShooter.h"
 
-
-
-/*************************SPACESHOOTER***************************/
+//SpaceShooter Constructor - create SpaceShooterGame
 SpaceShooter::SpaceShooter()
-	:Game("SpaceShooter", sf::Vector2f(1000.0f,900.0f))
-	, m_level(0)
-	, m_livesRemaining(4)
-	, m_maxPlayerHealth(200.0f)
+	:Game("SpaceShooter", sf::Vector2f(1600.0f,900.0f))
 {
-	//TODO 
-	m_isGameOver = false;
-	ResetSpawnTimer();
-	m_healthBarTex->loadFromFile("Sprites/GUI/HealthBar02.png");
-	m_livesTex->loadFromFile("Sprites/TopDownShips/ship3.png");
-	m_livesBorderTex->loadFromFile("Sprites/GUI/Border04.png");
-	m_equippedONBorderTex->loadFromFile("Sprites/GUI/Box03.png");
-	m_equippedOFFBorderTex->loadFromFile("Sprites/GUI/Box04.png");
-	CreateBackground(&m_background, &m_bgTexture, "Sprites/Background/longBGStars.png", sf::Vector2f(0.0f, 0.0f));
-	CreateBackground(&m_background2, &m_bgTexture, "Sprites/Background/longBGStars.png", sf::Vector2f(0.0f, -m_windowObj.GetWindowSize()->y));
+	Setup();
 }
 
 SpaceShooter::~SpaceShooter()
@@ -320,14 +307,14 @@ void SpaceShooter::DrawHealthBarSprite()
 {
 	m_healthBarSprite->setTexture(*m_healthBarTex);
 	m_healthBarSprite->setOrigin(0.0f, m_healthBarSprite->getTextureRect().height * 0.5f);
-	m_healthBarSprite->setPosition(20.0f, m_windowObj.GetWindowSize()->y - 50.0f);
+	m_healthBarSprite->setPosition(m_livesBorderSprite->getPosition().x + 50.0f, m_livesBorderSprite->getPosition().y);
 	m_healthBarSprite->setScale(0.2f, 0.2f);
 	m_windowObj.DrawThis(m_healthBarSprite);
 
 	m_playerHealthBar->setOrigin(0.0f, 0.0f);
 	m_playerHealthBar->setSize(sf::Vector2f(m_playerCurrentHealth / m_maxPlayerHealth * 100.0f, 24.0f));
 	m_playerHealthBar->setScale(2.35f, 0.60f);
-	m_playerHealthBar->setPosition(56.5f, m_windowObj.GetWindowSize()->y - 53.0f);
+	m_playerHealthBar->setPosition(m_livesBorderSprite->getPosition().x + 84, m_livesBorderSprite->getPosition().y - 3.0f);
 	m_playerHealthBar->setFillColor(sf::Color::Green);
 	m_windowObj.DrawThis(m_playerHealthBar);
 
@@ -338,24 +325,24 @@ void SpaceShooter::DrawBorders()
 	m_livesBorderSprite->setTexture(*m_livesBorderTex);
 	m_livesBorderSprite->setOrigin(m_livesBorderSprite->getTextureRect().width * 0.5f, m_livesBorderSprite->getTextureRect().height * 0.5f);
 	m_livesBorderSprite->setScale(0.5f, 0.5f);
-	m_livesBorderSprite->setPosition(90.0f, m_healthBarSprite->getPosition().y - 70.0f);
+	m_livesBorderSprite->setPosition(90.0f, 70.0f);
 	m_windowObj.DrawThis(m_livesBorderSprite);
 
 	m_equippedBorderSprite1->setOrigin(m_equippedBorderSprite1->getTextureRect().width * 0.5f, m_equippedBorderSprite1->getTextureRect().height * 0.5f);
 	m_equippedBorderSprite1->setScale(0.25f, 0.25f);
-	m_equippedBorderSprite1->setPosition(m_windowObj.GetWindowSize()->x - 350.0f, m_windowObj.GetWindowSize()->y - 60.0f);
+	m_equippedBorderSprite1->setPosition(50.0f,200);
 	m_windowObj.DrawThis(m_equippedBorderSprite1);
 
 	
 	m_equippedBorderSprite2->setOrigin(m_equippedBorderSprite2->getTextureRect().width * 0.5f, m_equippedBorderSprite2->getTextureRect().height * 0.5f);
 	m_equippedBorderSprite2->setScale(0.25f, 0.25f);
-	m_equippedBorderSprite2->setPosition(m_windowObj.GetWindowSize()->x - 280.0f, m_windowObj.GetWindowSize()->y - 60.0f);
+	m_equippedBorderSprite2->setPosition(50.0f, 300);
 	m_windowObj.DrawThis(m_equippedBorderSprite2);
 
 	
 	m_equippedBorderSprite3->setOrigin(m_equippedBorderSprite3->getTextureRect().width * 0.5f, m_equippedBorderSprite3->getTextureRect().height * 0.5f);
 	m_equippedBorderSprite3->setScale(0.25f, 0.25f);
-	m_equippedBorderSprite3->setPosition(m_windowObj.GetWindowSize()->x - 210.0f, m_windowObj.GetWindowSize()->y - 60.0f);
+	m_equippedBorderSprite3->setPosition(50.0f, 400.0f);
 	m_windowObj.DrawThis(m_equippedBorderSprite3);
 
 }
@@ -383,4 +370,25 @@ void SpaceShooter::ShowWeaponEquipped()
 		m_weaponEquiped = SS_Player::WEAPONTYPE::Fast;
 		break;
 	}
+}
+
+void SpaceShooter::Setup()
+{
+	m_level = 0;
+	m_livesRemaining = 4;
+	m_maxPlayerHealth = 200.0f;
+	ResetSpawnTimer();
+	CreateBackground(&m_background, &m_bgTexture, "Sprites/Background/longBGStars.png", sf::Vector2f(0.0f, 0.0f));
+	CreateBackground(&m_background2, &m_bgTexture, "Sprites/Background/longBGStars.png", sf::Vector2f(0.0f, -m_windowObj.GetWindowSize()->y));
+	LoadTexture();
+}
+
+void SpaceShooter::LoadTexture()
+{
+	m_healthBarTex->loadFromFile("Sprites/GUI/HealthBar02.png");
+	m_livesTex->loadFromFile("Sprites/TopDownShips/ship3.png");
+	m_livesBorderTex->loadFromFile("Sprites/GUI/Border04.png");
+	m_equippedONBorderTex->loadFromFile("Sprites/GUI/Box03.png");
+	m_equippedOFFBorderTex->loadFromFile("Sprites/GUI/Box04.png");
+	
 }

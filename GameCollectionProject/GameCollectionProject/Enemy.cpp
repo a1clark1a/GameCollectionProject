@@ -1,8 +1,4 @@
-#include "GameObjects.h"
-#include "Player.h"
 #include "Enemy.h"
-#include "Game.h"
-#include "Bullets.h"
 
 /*********************************************************************
 ****************ENEMY CLASS : DERIVED FROM GAMEOBJECTS****************
@@ -12,7 +8,7 @@
 void Enemy::CollidedWith(GameObjects* object)
 {
 	Player* l_player = dynamic_cast<Player*>(object);
-	if (l_player)
+	if (l_player && l_player->GetInvincibilityCD() < 0.0f)
 	{
 		l_player->Destroy();
 		Destroy();
@@ -34,8 +30,6 @@ void Enemy::TakeDamage(const float dmgVal)
 	else
 	{
 		Destroy();
-		
-		
 	}
 }
 
@@ -111,6 +105,11 @@ void AI::DrawHealthBar(Window* window)
 
 NormalAI::NormalAI(const sf::Vector2f & pos)
 	:AI("Sprites/Enemies/enemyBlack2.png", pos)
+{
+	Setup();
+}
+
+void NormalAI::Setup()
 {
 	m_moveInterval = 5.0f;
 	m_pauseTimer = 3.0f;
@@ -223,13 +222,23 @@ void NormalAI::ShootFunction(const float & dt)
 	}
 }
 
+//NormalAI's version of Destroy, spawn an item at random or no item then destroy
+void NormalAI::Destroy()
+{
+	GameObjects::Destroy();
+}
+
 /*********************************************************************
 *******************AGGROAI CLASS : DERIVED FROM AI********************
 *********************************************************************/
 AggroAI::AggroAI(const sf::Vector2f & pos)
 	:AI("Sprites/Enemies/enemyGreen1.png", pos)
 {
-	//SETUP here
+	Setup();
+}
+
+void AggroAI::Setup()
+{
 	m_maxHealth = 50.0f;
 	m_scoreVal = 150;
 	m_enemyHealth = m_maxHealth;
@@ -339,14 +348,25 @@ void AggroAI::ShootFunction(const float & dt)
 	}
 }
 
+//AggroAI's version of Destroy, spawn an item at random or no item then destroy
+void AggroAI::Destroy()
+{
+
+	GameObjects::Destroy();
+}
+
 /*********************************************************************
-*******************FASTAI CLASS : DERIVED FROM AI********************
+*******************CHASERAI CLASS : DERIVED FROM AI********************
 *********************************************************************/
 
 ChaserAI::ChaserAI(const sf::Vector2f & pos)
 	:AI("Sprites/Enemies/ufoYellow.png", pos)
 {
-	//TODO Setup here
+	Setup();
+}
+
+void ChaserAI::Setup()
+{
 	SetCollisionRadius(30.0f);
 	m_sprite.setScale(0.5f, 0.5f);
 	m_dmgVal = 10.0f;
@@ -398,6 +418,12 @@ void ChaserAI::SetTarget(SS_Player* player)
 
 }
 
+//ChaserAI's version of Destroy, spawn an item at random or no item then destroy
+void ChaserAI::Destroy()
+{
+
+	GameObjects::Destroy();
+}
 
 /*********************************************************************
 ****************ASTEROID CLASS : DERIVED FROM ENEMY*******************
@@ -405,10 +431,7 @@ void ChaserAI::SetTarget(SS_Player* player)
 Asteroid::Asteroid(const std::string texturePath, const sf::Vector2f & pos)
 	:Enemy(texturePath, pos)
 {
-	m_destroyDelay = 2.0f;
-	m_rotationRate = static_cast<float>(rand() % 45 + 45);				// between 45 - 90
-	m_rotationRate *= rand() % 2 == 0 ? 1 : -1;							// chooses if its negative or positive
-	SetLinearAccel(-10.0f);
+	Setup();
 }
 
 void Asteroid::Update(Window* window)
@@ -420,6 +443,14 @@ void Asteroid::Update(Window* window)
 
 }
 
+void Asteroid::Setup()
+{
+	m_destroyDelay = 2.0f;
+	m_rotationRate = static_cast<float>(rand() % 45 + 45);				// between 45 - 90
+	m_rotationRate *= rand() % 2 == 0 ? 1 : -1;							// chooses if its negative or positive
+	SetLinearAccel(-10.0f);
+}
+
 /*********************************************************************
 *************LARGE ASTEROID CLASS : DERIVED FROM ASTEROID*************
 *********************************************************************/
@@ -427,9 +458,7 @@ void Asteroid::Update(Window* window)
 LargeAsteroid::LargeAsteroid(const sf::Vector2f & pos)
 	:Asteroid("Sprites/Meteors/meteorBrown_big4.png", pos)
 {
-	m_dmgVal = 15.0f;
-	m_scoreVal = 10;
-	SetCollisionRadius(50);
+	
 }
 
 void LargeAsteroid::Destroy()
@@ -446,6 +475,13 @@ void LargeAsteroid::Destroy()
 	GameObjects::Destroy();
 }
 
+void LargeAsteroid::Setup()
+{
+	m_dmgVal = 15.0f;
+	m_scoreVal = 10;
+	SetCollisionRadius(50);
+}
+
 /*********************************************************************
 *************MEDIUM ASTEROID CLASS : DERIVED FROM ASTEROID************
 *********************************************************************/
@@ -453,9 +489,7 @@ void LargeAsteroid::Destroy()
 MediumAsteroid::MediumAsteroid(const sf::Vector2f & pos)
 	:Asteroid("Sprites/Meteors/meteorBrown_med3.png", pos)
 {
-	m_dmgVal = 10.0f;
-	m_scoreVal = 50;
-	SetCollisionRadius(20);
+	Setup();
 }
 
 void MediumAsteroid::Destroy()
@@ -471,6 +505,13 @@ void MediumAsteroid::Destroy()
 	GameObjects::Destroy();
 }
 
+void MediumAsteroid::Setup()
+{
+	m_dmgVal = 10.0f;
+	m_scoreVal = 50;
+	SetCollisionRadius(20);
+}
+
 /*********************************************************************
 **************SMALL ASTEROID CLASS : DERIVED FROM ASTEROID************
 *********************************************************************/
@@ -478,7 +519,18 @@ void MediumAsteroid::Destroy()
 SmallAsteroid::SmallAsteroid(const sf::Vector2f & pos)
 	:Asteroid("Sprites/Meteors/meteorBrown_tiny1.png", pos)
 {
+	Setup();
+}
+
+void SmallAsteroid::Setup()
+{
 	m_dmgVal = 5.0f;
 	m_scoreVal = 100;
 	SetCollisionRadius(10);
+}
+
+void SmallAsteroid::Destroy()
+{
+
+	GameObjects::Destroy();
 }

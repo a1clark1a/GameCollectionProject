@@ -4,6 +4,7 @@
   SoundManager.cpp
   Player.cpp
   Main.cpp
+  Items.cpp
   GameObjects.cpp
   Game.cpp
   Enemy.cpp

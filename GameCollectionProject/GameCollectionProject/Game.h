@@ -1,10 +1,10 @@
 #pragma once
 #include <SFML\Audio.hpp>
 #include "Window.h"
-#include "GameObjects.h"
 #include <vector>
 
-//TODO Create a base class game engine to be used to derive other game engines specifically for each game
+/******Forward Class Declaration*******/
+class GameObjects;
 
 /*********************************************************************
 **********************ABSTRACT BASE CLASS*****************************
@@ -36,8 +36,8 @@ public:
 	
 	//REMINDER Members in this section are public ONLY INSIDE a derived class otherwise PRIVATE
 protected:
-
-	// Create a Window object to be accessed by derived classes to be able to draw object in window
+	virtual void Setup();
+	virtual void LoadTexture();
 	Window m_windowObj ;													// Object used to access Window members
 	std::vector<GameObjects*> m_gameObjects;								// A vector container of pointers to a gameobject. 
 	sf::Font m_mainFont;													// Use one type of font for all games(for now) to be initialized in constructor
