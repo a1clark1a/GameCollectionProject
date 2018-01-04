@@ -1,10 +1,8 @@
 #pragma once
 #include "Player.h"
 
-/**************BASE ENEMY CLASS:: DERIVED FROM GAMEOBJECTS**********/
-
-//ABSTRACT CLASS
-class Enemy : public GameObjects
+/**************ABSTRACT BASE ENEMY CLASS:: DERIVED FROM GAMEOBJECTS**********/
+class Enemy : public GameObjects										
 {
 public:
 	Enemy(const std::string texturePath, const sf::Vector2f & pos)
@@ -15,7 +13,6 @@ public:
 	virtual void Update(Window* window) { GameObjects::Update(window); OutOfBounds(window); }
 	virtual void CollidedWith(GameObjects* object);
 	virtual void OutOfBounds(Window* window);
-	virtual void ShootFunction(const float & dt) {};
 
 	//Main Functions
 	void TakeDamage(const float dmgVal);
@@ -32,11 +29,11 @@ protected:
 	float m_enemyHealth;
 	float m_dmgVal;
 	float m_destroyDelay;
+	
 };
 
-/**************BASE AI CLASS:: DERIVED FROM ENEMY**********/
-//ABSTRACT CLASS
-class AI : public Enemy
+/**************ABSTRACT BASE AI CLASS:: DERIVED FROM ENEMY**********/
+class AI : public Enemy													
 {
 public:
 	AI::AI(const std::string texturePath, const sf::Vector2f & pos)
@@ -48,7 +45,7 @@ public:
 	virtual void Move(const float & dt) = 0;
 	virtual void ShootFunction(const float & dt) {};
 	virtual void DrawHealthBar(Window* window);
-	virtual void Destroy() = 0;
+	virtual void Destroy();
 
 	enum class AISTATES { Moving, Shooting };
 	enum class MOVESTATES { Forward, Left, Right, Pause };
@@ -75,7 +72,6 @@ public:
 	virtual void OutOfBounds(Window* window);
 	virtual void Move(const float & dt);
 	virtual void ShootFunction(const float & dt);
-	virtual void Destroy();
 
 protected:
 	virtual void Setup();
@@ -92,7 +88,6 @@ public:
 	virtual void SetLinearAccel(const float & accelVal_x, const float & accelVal_y);
 	virtual void Move(const float & dt);
 	virtual void ShootFunction(const float & dt);
-	virtual void Destroy();
 
 protected:
 	virtual void Setup();
@@ -111,7 +106,6 @@ public:
 	virtual void OutOfBounds(Window* window);
 	virtual void SetTarget(SS_Player* player);
 	virtual void Move(const float & dt) {};
-	virtual void Destroy();
 
 protected:
 	virtual void Setup();
@@ -137,9 +131,8 @@ protected:
 	virtual void Setup();
 };
 
-/**************BASE ASTEROID CLASS:: DERIVED FROM GAMEOBJECTS**********/
-//ABSTRACT CLASS
-class Asteroid : public Enemy
+/**************ABSTRACT BASE ASTEROID CLASS:: DERIVED FROM GAMEOBJECTS**********/
+class Asteroid : public Enemy											
 {
 public:
 	Asteroid(const std::string texturePath, const sf::Vector2f & pos);

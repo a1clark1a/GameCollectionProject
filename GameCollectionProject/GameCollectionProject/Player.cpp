@@ -12,7 +12,7 @@ void Player::Draw(Window* window)
 void Player::Update(Window* window)
 {
 	GameObjects::Update(window);
-	MaxVelocity(500);
+	VelocityLimiter(500);
 }
 
 //Player version of TakeDmg 
@@ -121,7 +121,7 @@ void SS_Player::Update(Window* window)
 void SS_Player::Destroy()
 {
 	GameObjects::Destroy();
-	m_owner->ResetSpawnTimer();
+	//m_owner->ResetSpawnTimer();
 }
 
 //SS_Player version that checks if an enemy collides to player then destroy if health < enemy dmg

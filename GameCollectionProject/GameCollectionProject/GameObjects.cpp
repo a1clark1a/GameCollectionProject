@@ -72,7 +72,7 @@ void GameObjects::SetVelocity(const float & velAmount)
 }
 
 //GameObjects version Function to set an objects velocity and its max possible velocity 
-void GameObjects::MaxVelocity(const float & maxSpeed)
+void GameObjects::VelocityLimiter(const float & maxSpeed)
 {
 	// set the speed by getting the square root of an objects velocity vector
 	float l_speed = sqrt(m_vel.x * m_vel.x + m_vel.y * m_vel.y);

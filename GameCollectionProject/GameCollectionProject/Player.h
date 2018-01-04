@@ -11,9 +11,8 @@ class Window;
 *********************PLAYER CLASSES : DERIVED FROM GAMEOBJECTS*************************
 ***************************************************************************************/
 
-/**************BASE PLAYER CLASS:: DERIVED FROM GAMEOBJECTS**********/
-//AN ABSTRACT CLASS
-class Player : public GameObjects
+/**************ABSTRACT BASE PLAYER CLASS:: DERIVED FROM GAMEOBJECTS**********/
+class Player : public GameObjects										
 {
 public:
 	Player(const std::string texturePath, const sf::Vector2f & pos)

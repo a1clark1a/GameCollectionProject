@@ -99,6 +99,32 @@ void AI::DrawHealthBar(Window* window)
 	window->DrawThis(m_enemyHealthBar);
 }
 
+void AI::Destroy()
+{
+	bool l_shouldSpawn = rand() % 2 == 0 ? true : false;
+	//Spawn ammo from killing AI;
+	if (l_shouldSpawn)
+	{
+		Item* l_item;
+		int l_randNum = rand() % 2;					
+		switch (l_randNum)
+		{
+		case 0:
+			l_item = new QuadAmmo(m_pos);
+			m_owner->AddObject(l_item);
+			break;
+		case 1:
+			l_item = new PowerAmmo(m_pos);
+			m_owner->AddObject(l_item);
+			break;
+		default:
+			l_randNum = 0;
+			break;
+		}
+	}
+	GameObjects::Destroy();
+}
+
 /*********************************************************************
 *****************NORMALAI CLASS : DERIVED FROM AI*********************
 *********************************************************************/
@@ -126,7 +152,7 @@ void NormalAI::Setup()
 void NormalAI::Update(Window* window)
 {
 	GameObjects::Update(window);
-	MaxVelocity(100.0f);
+	VelocityLimiter(100.0f);
 	Behavior(window->GetDeltaTime()->asSeconds());
 	OutOfBounds(window);
 	
@@ -222,12 +248,6 @@ void NormalAI::ShootFunction(const float & dt)
 	}
 }
 
-//NormalAI's version of Destroy, spawn an item at random or no item then destroy
-void NormalAI::Destroy()
-{
-	GameObjects::Destroy();
-}
-
 /*********************************************************************
 *******************AGGROAI CLASS : DERIVED FROM AI********************
 *********************************************************************/
@@ -251,7 +271,7 @@ void AggroAI::Setup()
 void AggroAI::Update(Window* window)
 {
 	GameObjects::Update(window);
-	MaxVelocity(100.0f);
+	VelocityLimiter(100.0f);
 	Behavior(window->GetDeltaTime()->asSeconds());
 	OutOfBounds(window);
 }
@@ -348,12 +368,6 @@ void AggroAI::ShootFunction(const float & dt)
 	}
 }
 
-//AggroAI's version of Destroy, spawn an item at random or no item then destroy
-void AggroAI::Destroy()
-{
-
-	GameObjects::Destroy();
-}
 
 /*********************************************************************
 *******************CHASERAI CLASS : DERIVED FROM AI********************
@@ -376,13 +390,14 @@ void ChaserAI::Setup()
 	m_scoreVal = 150;
 	m_rotationRate = static_cast<float>(rand() % 45 + 45);				// between 45 - 90
 	m_rotationRate *= rand() % 2 == 0 ? 1 : -1;							// chooses if its negative or positive
+	
 }
 
 void ChaserAI::Update(Window* window)
 {
 	m_angle += m_rotationRate * window->GetDeltaTime()->asSeconds();
 	GameObjects::Update(window);
-	MaxVelocity(200.0f);
+	VelocityLimiter(200.0f);
 	OutOfBounds(window);
 }
 
@@ -418,13 +433,6 @@ void ChaserAI::SetTarget(SS_Player* player)
 
 }
 
-//ChaserAI's version of Destroy, spawn an item at random or no item then destroy
-void ChaserAI::Destroy()
-{
-
-	GameObjects::Destroy();
-}
-
 /*********************************************************************
 ****************ASTEROID CLASS : DERIVED FROM ENEMY*******************
 *********************************************************************/
@@ -439,7 +447,7 @@ void Asteroid::Update(Window* window)
 	m_angle += m_rotationRate * window->GetDeltaTime()->asSeconds();	//continously rotate an asteroid by rotation rate * time
 	GameObjects::Update(window);
 	Enemy::OutOfBounds(window);
-	MaxVelocity(500);
+	VelocityLimiter(500);
 
 }
 
@@ -485,7 +493,6 @@ void LargeAsteroid::Setup()
 /*********************************************************************
 *************MEDIUM ASTEROID CLASS : DERIVED FROM ASTEROID************
 *********************************************************************/
-
 MediumAsteroid::MediumAsteroid(const sf::Vector2f & pos)
 	:Asteroid("Sprites/Meteors/meteorBrown_med3.png", pos)
 {

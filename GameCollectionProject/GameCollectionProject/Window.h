@@ -5,7 +5,6 @@
 #include "time.h"
 
 //Window Class Header for creating specific windows depending on game being played
-
 class Window
 {
 public:

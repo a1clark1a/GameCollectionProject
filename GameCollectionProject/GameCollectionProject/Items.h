@@ -1,22 +1,20 @@
 #pragma once
 #include "Player.h"
 
-/**************BASE ITEM CLASS:: DERIVED FROM GAMEOBJECTS**********/
-//ABSTRACT CLASS
+/**************ABSTRACT BASE ITEM CLASS:: DERIVED FROM GAMEOBJECTS**********/
 class Item : public GameObjects
 {
 public:
-	Item(const std::string texturePath, const sf::Vector2f & pos)
-		:GameObjects(texturePath, pos) {};
+	Item(const std::string texturePath, const sf::Vector2f & pos);
 	virtual ~Item() { std::cout << "Items Destructor called" << std::endl; }
 
 	virtual void Update(Window* window);
-	virtual void CollidedWith(GameObjects* object) {};
+	virtual void CollidedWith(GameObjects* object) = 0;
 	virtual void OutOfBounds(Window* window);
-	virtual void ShootFunction(const float & dt) {};
 
 protected:
-	virtual void Setup() = 0;
+	virtual void Setup() { m_moveSpd = static_cast<float>(rand() % -5 + -5); };
+	float m_moveSpd;
 	float m_lifeTime;
 };
 

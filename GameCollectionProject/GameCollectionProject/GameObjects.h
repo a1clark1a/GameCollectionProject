@@ -22,7 +22,7 @@ public:
 	virtual void Draw(Window* window);										// Virtual Function to draw a transparent collision sphere around object for collision detection
 	virtual void Update(Window* window);									// Virtual Function responsible to velocity values etc and checking of objects position
 	virtual void SetVelocity(const float & velAmount);						// Virtual Function to set velocity of a game object
-	virtual void MaxVelocity(const float & maxSpeed);						// Virtual Function to determine maximum velocity for each object(to be called in MoveObject())
+	virtual void VelocityLimiter(const float & maxSpeed);					// Virtual Function to determine maximum velocity for each object(to be called in MoveObject())
 	virtual void ApplyDrag(const float & dt, const float & dragVal);		// Virtual Function to apply some dragging to objects(to be called in MoveObject())
 	virtual void SetAccel(const float & accelVal);							// virtual Function to set acceleration rate
 	virtual void SetLinearAccel(const float & accelVal);					// virutal Function  to allow forward and backward acceleration
@@ -30,7 +30,6 @@ public:
 	virtual void Destroy() { m_gameObjIsDestroyed = true; }					// Virtual Function to set boolean m_gameObjIsDestroyed to true;
 	virtual void CollidedWith(GameObjects* object) = 0;						// Virtual Function to call when this object collides with an GameObjects object
 	virtual void OutOfBounds(Window* window);								// Virtual Function to call when going object goes out of window
-	virtual void ShootFunction(const float & dt) = 0;						// Virtual Function to be redefined by specific objects to handle shooting
 	
 	//Main Function
 	void SetOwner(Game* owner) { m_owner = owner; };						// Function to to assign value to m_owner

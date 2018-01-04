@@ -25,9 +25,6 @@ public:
 	virtual void AddObject(GameObjects * object) = 0;					// Pure Virtual Function to be redefined in each respective derived class
 	virtual void SetScore(int scoreVal);								// Function to add Score( maybe redefined to set specific score variable based on game(to be drawn by DrawText())
 	virtual void DrawText() = 0;										// Pure Virtual Function to draw the score text, level text, ammo count etc on window(be called in Render())
-	virtual void DrawObjects() = 0;										// Virtual Function to draw game objects(be called in Render())
-	virtual void ResetSpawnTimer() {};									// VirtualFunction to reset spawn timer
-	virtual void UpdateGameObj() {};									// Virtual Function to update each and every game object(if using GameObject)(to be called in Update())
 	virtual void GameOver() {};											// Virtual Function to call when game is over, to handle setting of remaining GameObjects' state into destroyed = true
 	virtual void CreateBackground() {};									// Virtual Function to draw the background(be called in Render())
 
@@ -44,7 +41,7 @@ protected:
 	sf::RectangleShape m_background;
 	sf::Texture m_bgTexture;
 	unsigned int m_score;													// Game score variable
-	unsigned int m_highScore = 0;											// Highscore variable 
+	unsigned int m_highScore;												// Highscore variable 
 	bool m_isGameOver;														// A Game's gameover state
 	float m_timeUntilRespawn;
 	

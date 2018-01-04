@@ -3,12 +3,19 @@
 /*********************************************************************
 *****************ITEM CLASS : DERIVED FROM GAMEOBJECT*****************
 *********************************************************************/
+Item::Item(const std::string texturePath, const sf::Vector2f & pos)
+	:GameObjects(texturePath, pos)
+{
+	Setup();
+}
+
 
 //Item's version Update that decreases item lifetime overtime
 void Item::Update(Window* window)
 {
 	m_lifeTime -= window->GetDeltaTime()->asSeconds();
-	SetLinearAccel(-10.0f);
+	SetLinearAccel(m_moveSpd);
+	VelocityLimiter(50.0f);
 	GameObjects::Update(window);
 	if (m_lifeTime <= 0.0f)
 	{
@@ -60,9 +67,10 @@ void GoldCoin::CollidedWith(GameObjects* object)
 //GoldCoin's version of Setup
 void GoldCoin::Setup()
 {
-	m_lifeTime = 10.0f;
+	m_lifeTime = 20.0f;
 	m_scoreVal = 500;
-	m_collisionRadius = 10.0f;
+	m_sprite.setScale(0.5f, 0.5f);
+	m_collisionRadius = 20.0f;
 }
 
 /*********************************************************************
@@ -88,9 +96,10 @@ void SilverCoin::CollidedWith(GameObjects* object)
 //SilverCoin's version of Setup
 void SilverCoin::Setup()
 {
-	m_lifeTime = 10.0f;
+	m_lifeTime = 20.0f;
 	m_scoreVal = 300;
-	m_collisionRadius = 10.0f;
+	m_sprite.setScale(0.5f, 0.5f);
+	m_collisionRadius = 20.0f;
 }
 
 /*********************************************************************
@@ -116,7 +125,7 @@ void QuadAmmo::CollidedWith(GameObjects* object)
 //QuadAmmo's version of Setup
 void QuadAmmo::Setup()
 {
-	m_lifeTime = 10.0f;
+	m_lifeTime = 20.0f;
 	m_ammoVal = 20;
 	m_collisionRadius = 10.0f;
 }
@@ -144,7 +153,7 @@ void PowerAmmo::CollidedWith(GameObjects* object)
 //PowerAmmo's version of Setup
 void PowerAmmo::Setup()
 {
-	m_lifeTime = 10.0f;
+	m_lifeTime = 20.0f;
 	m_ammoVal = 1;
 	m_collisionRadius = 10.0f;
 }

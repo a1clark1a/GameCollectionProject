@@ -3,12 +3,18 @@
 /*********************************************************************
 ***************BULLET CLASS : DERIVED FROM GAMEOBJECT*****************
 *********************************************************************/
+Bullet::Bullet(const std::string texturePath, const sf::Vector2f & pos, const float & dmgVal)
+	:GameObjects(texturePath, pos)
+{
+	SetDmgVal(dmgVal);
+	
+}
 
 //Bullet version's Update that calls GameObject's update and decreases a bullets lifetime overtime
 void Bullet::Update(Window* window)
 {
 	GameObjects::Update(window);
-	MaxVelocity(500);
+	VelocityLimiter(1000);
 	m_lifeTime -= window->GetDeltaTime()->asSeconds();
 	if (m_lifeTime <= 0.0f)
 	{
@@ -247,7 +253,14 @@ void SmallBomb::Setup()
 ***************ENEMYBULLET CLASS : DERIVED FROM BULLET*****************
 *********************************************************************/
 EnemyBullet::EnemyBullet(const sf::Vector2f & pos, const float & dmgVal, const float & vel)
-	:Bullet("Sprites/Effects/Lasers/laserBlue01.png", pos, dmgVal)
+	:Bullet("Sprites/Effects/Lasers/laserBlue01.png", pos, dmgVal)    
+{
+	SetLinearAccel(vel);
+	Setup();
+}
+
+EnemyBullet::EnemyBullet(const std::string texturePath, const sf::Vector2f & pos, const float & dmgVal, const float & vel)
+	:Bullet(texturePath, pos, dmgVal)
 {
 	SetLinearAccel(vel);
 	Setup();

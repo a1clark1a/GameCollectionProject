@@ -24,15 +24,13 @@ public:
 	virtual void CreateBackground
 	(sf::RectangleShape* bg, sf::Texture* bgText, const std::string texturePath, const sf::Vector2f Position);
 
-	//Helper/Getter Functions
-	virtual void ResetSpawnTimer() { m_timeUntilRespawn = 3.0f; }
-	
 	//SpaceShooter Functions
 	void RespawnPlayer();												// Function to spawn player
+	void ResetSpawnTimer() { m_timeUntilRespawn = 3.0f; }
 	void SpawnAI();														// Function to spawn AI
 	void SpawnDestructibles();											// Function to spawn destructibles
 	void SpawnItem();													// Function to spawn Coins/Ammo/ExtraLife
-	void SetSpawnCount();												// Function to set how many AI and destructible to spawn per level
+	void SpawnSystem();												// Function to set how many AI and destructible to spawn per level
 	void LoopBackground();
 	void DrawHealthBarSprite();
 	void DrawBorders();

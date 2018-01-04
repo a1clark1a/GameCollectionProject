@@ -23,7 +23,6 @@ SpaceShooter::~SpaceShooter()
 void SpaceShooter::Update(float dt)
 {
 	Game::Update();									//Call Base Game Update using scope resolution operator
-	LoopBackground();								//Call outside of if to make sure the background loops even if game is over
 	if (!m_isGameOver)
 	{
 		UpdateGameObj();
@@ -32,15 +31,16 @@ void SpaceShooter::Update(float dt)
 
 void SpaceShooter::Render()
 {
-	m_windowObj.Clear();
-	//TODO Call derived class Draw functions 
-	m_windowObj.DrawThis(&m_background);
-	m_windowObj.DrawThis(&m_background2);
+	m_windowObj.Clear();						//Clear window first
+	//DRAW THINGS BELOW HERE
+	LoopBackground();							
+	ShowWeaponEquipped();
 	DrawObjects();
 	DrawBorders();
 	DrawHealthBarSprite();
 	DrawText();
-	m_windowObj.Display();
+
+	m_windowObj.Display();						//Display everything
 
 }
 
@@ -185,10 +185,15 @@ void SpaceShooter::UpdateGameObj()
 		GameObjects* l_current = m_gameObjects[i];
 		if (l_current->IsDestroyed())
 		{
-
+			SS_Player* l_player = dynamic_cast<SS_Player*>(l_current);
+			if (l_player)
+			{
+				ResetSpawnTimer();
+			}
 			delete l_current;
 			m_gameObjects.erase(m_gameObjects.begin() + i);
 		}
+		
 
 	}
 
@@ -196,24 +201,31 @@ void SpaceShooter::UpdateGameObj()
 	for (int i = 0; i < m_gameObjects.size(); i++)
 	{
 		GameObjects* l_current = m_gameObjects[i];
-		ChaserAI* l_fastAI = dynamic_cast<ChaserAI*>(l_current);
 		for (int j = 0; j < m_gameObjects.size(); j++)
 		{
 			GameObjects* l_other = m_gameObjects[j];
-			SS_Player* l_player = dynamic_cast<SS_Player*>(l_other);
-			
 			if (l_current->IsColliding(l_other))
 			{
 				l_current->CollidedWith(l_other);
 			}
-			if (l_fastAI && l_player)
+		}
+	}
+
+	//Loop through m_gameObjects to find the player to for chaserAI to target
+	for (int i = 0; i < m_gameObjects.size(); i++)
+	{
+		ChaserAI* l_chaserAI = dynamic_cast<ChaserAI*>(m_gameObjects[i]);
+		for (int j = 0; j < m_gameObjects.size(); j++)
+		{
+			SS_Player* l_player = dynamic_cast<SS_Player*>(m_gameObjects[j]);
+			if (l_chaserAI && l_player)
 			{
-				l_fastAI->SetTarget(l_player);
+				l_chaserAI->SetTarget(l_player);
 			}
 		}
 	}
 
-	ShowWeaponEquipped();
+	
 }
 
 //Set m_isGameOver state to true then call Destroy() on all GameObjects
@@ -232,7 +244,6 @@ void SpaceShooter::GameOver()
 //Spawn player after every death, checking for m_livesRemaining
 void SpaceShooter::RespawnPlayer()
 {
-
 	if (m_livesRemaining > 0)
 	{
 		m_livesRemaining--;
@@ -243,49 +254,83 @@ void SpaceShooter::RespawnPlayer()
 	{
 		GameOver();
 	}
-
 }
 
+//Function to create AI 
 void SpaceShooter::SpawnAI()
 {
-	//TODO Function to create AI 
+	int l_randNum = rand() % 4;
+	AI *l_ai;
+	switch (l_randNum)
+	{
+	case 0:
+		l_ai = new NormalAI(sf::Vector2f(static_cast<float>(rand() % 50 + 950), -200.0f + 100.0f));
+		AddObject(l_ai);
+		break;
+	case 1:
+		l_ai = new AggroAI(sf::Vector2f(static_cast<float>(rand() % 50 + 950), -200.0f + 100.0f));
+		AddObject(l_ai);
+		break;
+	case 3:
+		l_ai = new ChaserAI(sf::Vector2f(static_cast<float>(rand() % 50 + 950), -200.0f + 100.0f));
+		AddObject(l_ai);
+		break;
+	default:
+		l_randNum = 0;
+		break;
+	}
 }
 
 //Function to spawn destructible objects( Can Call Spawn Item)
 void SpaceShooter::SpawnDestructibles()
 {
-	//Divides the spawncount by 2 and spawns a destructible by quotient
-	for (unsigned int i = 0; i < (m_spawnCount / 2); i++)
+	int l_randNum = rand() % 2;										//local randomizer
+	Asteroid* l_asteroid;
+	switch(l_randNum)
 	{
-		Asteroid* asteroid;
-		int l_randNum = rand() % 2;
-
-		//Before spawn a rand number chooses which destructible to spawn or to cal SpawnItem() function
-		if (l_randNum == 0)
-		{
-			asteroid = new MediumAsteroid(sf::Vector2f(static_cast<float>(rand() % 1000), -200.0f));
-			AddObject(asteroid);
-		}
-		else if (l_randNum == 1)
-		{
-			SpawnItem();
-		}
-		else
-		{
-			asteroid = new LargeAsteroid(sf::Vector2f(static_cast<float>(rand() % 1000), -200.0f));
-			AddObject(asteroid);
-		}
+	case 0:
+		l_asteroid = new MediumAsteroid(sf::Vector2f(static_cast<float>(rand() % 1000), -200.0f));
+		AddObject(l_asteroid);
+		break;
+	case 1:
+		l_asteroid = new LargeAsteroid(sf::Vector2f(static_cast<float>(rand() % 1000), -200.0f));
+		AddObject(l_asteroid);
 	}
 }
 
 void SpaceShooter::SpawnItem()
 {
-	//TODO Function to spawn items to be picked up
+	int l_randNum = rand() % 4;										//local randomizer
+	Item* l_item;
+	switch (l_randNum)
+	{
+	case 0:
+		 l_item = new GoldCoin(sf::Vector2f(static_cast<float>(rand() % 50 + 950), -200.0f + 100.0f));
+		AddObject(l_item);
+		break;
+	case 1:
+		l_item= new SilverCoin(sf::Vector2f(static_cast<float>(rand() % 50 + 950), -200.0f + 100.0f));
+		AddObject(l_item);
+		break;
+	case 2:
+		l_item = new QuadAmmo(sf::Vector2f(static_cast<float>(rand() % 50 + 950), -200.0f + 100.0f));
+		AddObject(l_item);
+		break;
+	case 3:
+		l_item = new PowerAmmo(sf::Vector2f(static_cast<float>(rand() % 50 + 950), -200.0f + 100.0f));
+		AddObject(l_item);
+		break;
+	default:
+		l_randNum = 0;
+		break;
+	}
 }
 
-void SpaceShooter::SetSpawnCount()
+//Gameplay behaviour to handle how objects spawn in game
+void SpaceShooter::SpawnSystem()
 {
-	//TODO Function to call to set how many AI to spawn
+	
+
 }
 
 //A Function to loop the background 
@@ -301,6 +346,8 @@ void SpaceShooter::LoopBackground()
 	{
 		m_background2.setPosition(sf::Vector2f(0.0f, -m_windowObj.GetWindowSize()->y));
 	}
+	m_windowObj.DrawThis(&m_background);
+	m_windowObj.DrawThis(&m_background2);
 }
 
 void SpaceShooter::DrawHealthBarSprite()
