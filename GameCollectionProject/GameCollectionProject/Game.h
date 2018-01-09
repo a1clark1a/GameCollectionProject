@@ -43,7 +43,7 @@ protected:
 	unsigned int m_score;													// Game score variable
 	unsigned int m_highScore;												// Highscore variable 
 	bool m_isGameOver;														// A Game's gameover state
-	float m_timeUntilRespawn;
+	
 	
 
 	//REMINDER Members in this section are unaccessible outside

@@ -68,6 +68,14 @@ void Player::DrawShield(Window* window)
 	}
 }
 
+void Player::AddToPlayerHealth(const float & healthVal)
+{
+	m_playerHealth += healthVal;
+	if (m_playerHealth > 200.0f)
+	{
+		m_playerHealth = 200.0f;
+	}
+}
 
 /*********************************************************************
 ***************SS_PLAYER CLASS : DERIVED FROM PLAYER******************
@@ -161,25 +169,6 @@ void SS_Player::PlayerControls(Window* window)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 	{
 		SetLinearAccel(800);
-		//TEST
-		if (m_shootCooldown <= 0.0f)
-		{
-			NormalAI* test = new NormalAI(sf::Vector2f(static_cast<float>(rand() % 700 + 200), -50.0f));
-			AggroAI* test2 = new AggroAI(sf::Vector2f(400.0f, 50.0f));
-			m_owner->AddObject(test);
-			m_owner->AddObject(test2);
-			ChaserAI* test3 = new ChaserAI(sf::Vector2f(400.0f, 350.0f));
-			m_owner->AddObject(test3);
-			m_shootCooldown = 0.5f;
-			GoldCoin* test4 = new GoldCoin(sf::Vector2f(static_cast<float>(rand() % 300 + 200), 150.0f));
-			m_owner->AddObject(test4);
-			SilverCoin* test5 = new SilverCoin(sf::Vector2f(static_cast<float>(rand() % 300 + 200), 150.0f));
-			m_owner->AddObject(test5);
-			QuadAmmo* test6 = new QuadAmmo(sf::Vector2f(static_cast<float>(rand() % 300 + 200), 150.0f));
-			m_owner->AddObject(test6);
-			PowerAmmo* test7 = new PowerAmmo(sf::Vector2f(static_cast<float>(rand() % 300 + 200), 150.0f));
-			m_owner->AddObject(test7);
-		}
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
 	{
@@ -192,9 +181,6 @@ void SS_Player::PlayerControls(Window* window)
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 	{
 		SetSideAccel(150);
-		//TEST
-		//LargeAsteroid* test = new LargeAsteroid(sf::Vector2f(static_cast<float>(rand() % 400),50.0f));
-		//m_owner->AddObject(test);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
 	{
@@ -248,7 +234,6 @@ void SS_Player::ShootFunction(const float  & dt)
 				m_shootCooldown = 0.5f;
 				m_quadAmmo--;
 			}
-			
 		}
 		break;
 	case WEAPONTYPE::Power:
@@ -261,11 +246,6 @@ void SS_Player::ShootFunction(const float  & dt)
 			m_PowerAmmo--;
 		}
 		break;
-
-	default: m_currentWeap = WEAPONTYPE::Fast;
-		break;
-
-
 	}
 }
 

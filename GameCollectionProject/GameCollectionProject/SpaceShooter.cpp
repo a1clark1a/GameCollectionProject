@@ -13,8 +13,6 @@ SpaceShooter::SpaceShooter()
 
 SpaceShooter::~SpaceShooter()
 {
-	std::cout << "DERIVED CLASS(SpaceShooter) DESTRUCTOR CALLED" << std::endl;
-
 }
 
 
@@ -25,6 +23,7 @@ void SpaceShooter::Update(float dt)
 	Game::Update();									//Call Base Game Update using scope resolution operator
 	if (!m_isGameOver)
 	{
+		SpawnSystem();
 		UpdateGameObj();
 	}
 }
@@ -51,10 +50,9 @@ void SpaceShooter::AddObject(GameObjects * object)
 	m_gameObjects.push_back(object);
 }
 
-//TODO Create drawable Text for window to tract score, ammo, lives etc
+//Drawable Text for window to tract score, ammo, lives etc
 void SpaceShooter::DrawText()
 {
-
 	sf::Sprite l_livesSprite(*m_livesTex);
 	l_livesSprite.setOrigin(l_livesSprite.getTextureRect().width * 0.5f, l_livesSprite.getTextureRect().height * 0.5f);
 	l_livesSprite.setScale(0.1f, 0.1f);
@@ -188,7 +186,7 @@ void SpaceShooter::UpdateGameObj()
 			SS_Player* l_player = dynamic_cast<SS_Player*>(l_current);
 			if (l_player)
 			{
-				ResetSpawnTimer();
+				ResetPlayerSpawnTimer();
 			}
 			delete l_current;
 			m_gameObjects.erase(m_gameObjects.begin() + i);
@@ -225,7 +223,6 @@ void SpaceShooter::UpdateGameObj()
 		}
 	}
 
-	
 }
 
 //Set m_isGameOver state to true then call Destroy() on all GameObjects
@@ -259,24 +256,21 @@ void SpaceShooter::RespawnPlayer()
 //Function to create AI 
 void SpaceShooter::SpawnAI()
 {
-	int l_randNum = rand() % 4;
+	int l_randNum = rand() % 3;
 	AI *l_ai;
 	switch (l_randNum)
 	{
 	case 0:
-		l_ai = new NormalAI(sf::Vector2f(static_cast<float>(rand() % 50 + 950), -200.0f + 100.0f));
+		l_ai = new NormalAI(sf::Vector2f(static_cast<float>(rand() % 900 + 200), -200.0f + 10.0f));
 		AddObject(l_ai);
 		break;
 	case 1:
-		l_ai = new AggroAI(sf::Vector2f(static_cast<float>(rand() % 50 + 950), -200.0f + 100.0f));
+		l_ai = new AggroAI(sf::Vector2f(static_cast<float>(rand() % 900 + 200), -200.0f + 10.0f));
 		AddObject(l_ai);
 		break;
-	case 3:
-		l_ai = new ChaserAI(sf::Vector2f(static_cast<float>(rand() % 50 + 950), -200.0f + 100.0f));
+	case 2:
+		l_ai = new ChaserAI(sf::Vector2f(static_cast<float>(rand() % 900 + 200), -200.0f + 10.0f));
 		AddObject(l_ai);
-		break;
-	default:
-		l_randNum = 0;
 		break;
 	}
 }
@@ -289,39 +283,40 @@ void SpaceShooter::SpawnDestructibles()
 	switch(l_randNum)
 	{
 	case 0:
-		l_asteroid = new MediumAsteroid(sf::Vector2f(static_cast<float>(rand() % 1000), -200.0f));
+		l_asteroid = new MediumAsteroid(sf::Vector2f(static_cast<float>(rand() % 900 + 100), -200.0f));
 		AddObject(l_asteroid);
 		break;
 	case 1:
-		l_asteroid = new LargeAsteroid(sf::Vector2f(static_cast<float>(rand() % 1000), -200.0f));
+		l_asteroid = new LargeAsteroid(sf::Vector2f(static_cast<float>(rand() % 900 + 100), -200.0f));
 		AddObject(l_asteroid);
 	}
 }
 
 void SpaceShooter::SpawnItem()
 {
-	int l_randNum = rand() % 4;										//local randomizer
+	int l_randNum = rand() % 5;										//local randomizer
 	Item* l_item;
 	switch (l_randNum)
 	{
 	case 0:
-		 l_item = new GoldCoin(sf::Vector2f(static_cast<float>(rand() % 50 + 950), -200.0f + 100.0f));
+		 l_item = new GoldCoin(sf::Vector2f(static_cast<float>(rand() % 800 + 100), -100.0f + -10.0f));
 		AddObject(l_item);
 		break;
 	case 1:
-		l_item= new SilverCoin(sf::Vector2f(static_cast<float>(rand() % 50 + 950), -200.0f + 100.0f));
+		l_item= new SilverCoin(sf::Vector2f(static_cast<float>(rand() % 800 + 100), -100.0f + -10.0f));
 		AddObject(l_item);
 		break;
 	case 2:
-		l_item = new QuadAmmo(sf::Vector2f(static_cast<float>(rand() % 50 + 950), -200.0f + 100.0f));
+		l_item = new QuadAmmo(sf::Vector2f(static_cast<float>(rand() % 800 + 100), -100.0f + -10.0f));
 		AddObject(l_item);
 		break;
 	case 3:
-		l_item = new PowerAmmo(sf::Vector2f(static_cast<float>(rand() % 50 + 950), -200.0f + 100.0f));
+		l_item = new PowerAmmo(sf::Vector2f(static_cast<float>(rand() % 800 + 100), -100.0f + -10.0f));
 		AddObject(l_item);
 		break;
-	default:
-		l_randNum = 0;
+	case 4:
+		l_item = new HealthPack(sf::Vector2f(static_cast<float>(rand() % 800 + 100), -100.0f + -10.0f));
+		AddObject(l_item);
 		break;
 	}
 }
@@ -329,8 +324,43 @@ void SpaceShooter::SpawnItem()
 //Gameplay behaviour to handle how objects spawn in game
 void SpaceShooter::SpawnSystem()
 {
+	if (m_objectSpawnCoolDown <= 0 && m_spawnCountPerLevel > 0)
+	{
+		unsigned int m_objectToSpawnCount = rand() % (3 + m_level) + 1;
+		std::cout << "num of objects to spawn: " << m_objectToSpawnCount << std::endl;
+		for (unsigned int i = 0; i < m_objectToSpawnCount; i++)
+		{
+			unsigned int m_spawnType = rand() % 3;
+			switch (m_spawnType)
+			{
+			case 0:
+				SpawnAI();
+				std::cout << "AI spawned" << std::endl;
+				break;
+			case 1:
+				SpawnDestructibles();
+				std::cout << "Asteroid spawned" << std::endl;
+				break;
+			case 2:
+				std::cout << "Item spawned" << std::endl;
+				SpawnItem();
+				break;
+			}
+		}
+		m_spawnCountPerLevel -= m_objectToSpawnCount;
+		ResetObjectSpawnTimer();
+	}
+	else if (m_spawnCountPerLevel <= 0)
+	{
+		m_level++;
+		std::cout << "Level is: " << m_level << std::endl;
+		ResetSpawnCount();
+	}
+	else
+	{
+		m_objectSpawnCoolDown -= m_windowObj.GetDeltaTime()->asSeconds();
+	}
 	
-
 }
 
 //A Function to loop the background 
@@ -424,7 +454,8 @@ void SpaceShooter::Setup()
 	m_level = 0;
 	m_livesRemaining = 4;
 	m_maxPlayerHealth = 200.0f;
-	ResetSpawnTimer();
+	RespawnPlayer();
+	ResetObjectSpawnTimer();
 	CreateBackground(&m_background, &m_bgTexture, "Sprites/Background/longBGStars.png", sf::Vector2f(0.0f, 0.0f));
 	CreateBackground(&m_background2, &m_bgTexture, "Sprites/Background/longBGStars.png", sf::Vector2f(0.0f, -m_windowObj.GetWindowSize()->y));
 	LoadTexture();

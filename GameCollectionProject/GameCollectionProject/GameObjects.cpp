@@ -15,7 +15,6 @@ GameObjects::GameObjects(const std::string texturePath, const sf::Vector2f& pos)
 //Virtual Destructor
 GameObjects::~GameObjects()
 {
-	std::cout << " Abstract Base Class Game Object's Destructor() is called" << std::endl;
 	delete CollisionSphere;
 }
 

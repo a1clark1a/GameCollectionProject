@@ -1,7 +1,6 @@
 #pragma once
 #include "GameObjects.h"
-#include "Enemy.h"  //Temporary must remove after TEST is removed
-#include "Items.h" //Temporary must remove after TEST is removed
+
 #include "Bullets.h"
 
 /******Forward Class Declaration*******/
@@ -17,10 +16,8 @@ class Player : public GameObjects
 public:
 	Player(const std::string texturePath, const sf::Vector2f & pos)
 		:GameObjects(texturePath, pos) {}								// Initialize a GameObjects texture and pos using the arguments passed to Player constructor
-	virtual ~Player()													// Virtual destructor
-	{
-		std::cout << "Base Player Class's Destructor called " << std::endl;
-	}
+	virtual ~Player() {}												// Virtual destructor
+	
 
 	virtual void Draw(Window* window);									// Virtual Function to call GameObject's Draw using scope resoultion operator and for other drawing
 	virtual void Update(Window* window);								// Virtual Function responsible for updating Player State
@@ -34,6 +31,7 @@ public:
 	const float GetPlayerHealth() const { return m_playerHealth; }
 	float GetInvincibilityCD() { return m_invincibilityCooldown; }
 	sf::Vector2f GetPlayerPos() { return m_pos; }
+	void AddToPlayerHealth(const float & healthVal);
 	
 
 protected:

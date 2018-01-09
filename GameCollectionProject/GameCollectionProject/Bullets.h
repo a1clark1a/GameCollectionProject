@@ -10,7 +10,7 @@ class Bullet : public GameObjects
 {
 public:
 	Bullet(const std::string texturePath, const sf::Vector2f & pos, const float & dmgVal);
-	virtual ~Bullet() { std::cout << "Base Bullet destructor called" << std::endl; };
+	virtual ~Bullet() { };  
 
 	virtual void Update(Window* window);
 	virtual void CollidedWith(GameObjects* object) = 0;
@@ -31,7 +31,7 @@ class FastBullet : public Bullet
 {
 public:
 	FastBullet(const sf::Vector2f & pos, const float & dmgVal, const float & vel);
-	virtual ~FastBullet() { std::cout << "Fast Bullet Destructor Called" << std::endl; }
+	virtual ~FastBullet() {  }  
 
 	virtual void CollidedWith(GameObjects* object);
 	virtual void Update(Window* window);
@@ -45,7 +45,7 @@ class QuadBullets : public Bullet
 {
 public:
 	QuadBullets(const sf::Vector2f & pos, const float & dmgVal);
-	virtual ~QuadBullets() { std::cout << "QuadBullet Destructor Called" << std::endl; }
+	virtual ~QuadBullets() { } 
 	
 	virtual void CollidedWith(GameObjects* object);
 	virtual void Update(Window* window);
@@ -61,7 +61,7 @@ class PowerBomb : public Bullet
 {
 public:
 	PowerBomb(const std::string texturePath, const sf::Vector2f & pos, const float & dmgVal);
-	virtual ~PowerBomb() { std::cout << "PowerBomb Destructor called" << std::endl; }
+	virtual ~PowerBomb() { } 
 
 	virtual void CollidedWith(GameObjects* object);
 	virtual void Destroy();
@@ -74,7 +74,7 @@ class MediumBomb : public PowerBomb
 {
 public:
 	MediumBomb(const sf::Vector2f & pos, const float & dmgVal);
-	virtual ~MediumBomb() { std::cout << "MediumBomb Destructor called" << std::endl; }
+	virtual ~MediumBomb() { }  
 
 	virtual void Update(Window* window);
 	virtual void CollidedWith(GameObjects* object) { PowerBomb::CollidedWith(object); }
@@ -91,7 +91,7 @@ class SmallBomb : public PowerBomb
 {
 public:
 	SmallBomb(const sf::Vector2f & pos, const float & dmgVal);
-	virtual ~SmallBomb() { std::cout << "SmallBomb Destructor called" << std::endl; }
+	virtual ~SmallBomb() { }  
 
 	virtual void Update(Window* window);
 	virtual void CollidedWith(GameObjects* object){ PowerBomb::CollidedWith(object); }
@@ -110,7 +110,7 @@ class EnemyBullet : public Bullet
 public:
 	EnemyBullet(const sf::Vector2f & pos, const float & dmgVal, const float & vel);
 	EnemyBullet(const std::string texutrePath, const sf::Vector2f & pos, const float & dmgVel, const float & vel);
-	virtual ~EnemyBullet() { std::cout << "EnemyBullet Destructor called" << std::endl; }
+	virtual ~EnemyBullet() { } 
 
 	virtual void CollidedWith(GameObjects* object);
 

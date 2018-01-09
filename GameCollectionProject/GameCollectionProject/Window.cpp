@@ -21,7 +21,6 @@ Window::Window(const std::string & winTitle, const sf::Vector2f & winSize)
 //To be called when toggling fullscreen or closing window,
 Window::~Window()
 {
-	std::cout << "Window Destructor is called" << std::endl;
 	Destroy();																		// Upon deletion of window, call Destroy() to close window
 }
 

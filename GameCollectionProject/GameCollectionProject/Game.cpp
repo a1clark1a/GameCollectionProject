@@ -1,7 +1,5 @@
 #include "Game.h"
 
-//TODO Implement Abstract Base class definitions
-
 /*********************************************************************
 **********************ABSTRACT BASE CLASS*****************************
 *********************************************************************/
@@ -15,7 +13,6 @@ Game::Game(const std::string winTitle, const sf::Vector2f winSize)
 
 Game::~Game()
 {
-	std::cout << "BASE CLASS DESTRUCTOR CALLED" << std::endl;
 }
 
 void Game::SetScore(int scoreVal)

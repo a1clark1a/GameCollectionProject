@@ -7,16 +7,17 @@ Item::Item(const std::string texturePath, const sf::Vector2f & pos)
 	:GameObjects(texturePath, pos)
 {
 	Setup();
+	std::cout << m_moveSpd << std::endl;
 }
 
 
 //Item's version Update that decreases item lifetime overtime
 void Item::Update(Window* window)
 {
+	GameObjects::Update(window);
 	m_lifeTime -= window->GetDeltaTime()->asSeconds();
 	SetLinearAccel(m_moveSpd);
 	VelocityLimiter(50.0f);
-	GameObjects::Update(window);
 	if (m_lifeTime <= 0.0f)
 	{
 		Destroy();
@@ -36,7 +37,6 @@ void Item::OutOfBounds(Window* window)
 	}
 	if (m_pos.y < -1.0f)
 	{
-		Destroy();
 	}
 	else if (m_pos.y > window->GetWindowSize()->y + 1.0f)
 	{
@@ -59,7 +59,7 @@ void GoldCoin::CollidedWith(GameObjects* object)
 	Player* l_player = dynamic_cast<Player*>(object);
 	if (l_player)
 	{
-		m_owner->SetScore(m_scoreVal);
+		m_owner->SetScore(m_val);
 		Destroy();
 	}
 }
@@ -67,8 +67,7 @@ void GoldCoin::CollidedWith(GameObjects* object)
 //GoldCoin's version of Setup
 void GoldCoin::Setup()
 {
-	m_lifeTime = 20.0f;
-	m_scoreVal = 500;
+	m_val = 500;
 	m_sprite.setScale(0.5f, 0.5f);
 	m_collisionRadius = 20.0f;
 }
@@ -88,7 +87,7 @@ void SilverCoin::CollidedWith(GameObjects* object)
 	Player* l_player = dynamic_cast<Player*>(object);
 	if (l_player)
 	{
-		m_owner->SetScore(m_scoreVal);
+		m_owner->SetScore(m_val);
 		Destroy();
 	}
 }
@@ -96,10 +95,37 @@ void SilverCoin::CollidedWith(GameObjects* object)
 //SilverCoin's version of Setup
 void SilverCoin::Setup()
 {
-	m_lifeTime = 20.0f;
-	m_scoreVal = 300;
+	m_val = 300;
 	m_sprite.setScale(0.5f, 0.5f);
 	m_collisionRadius = 20.0f;
+}
+
+/*********************************************************************
+****************HEALTHPACK CLASS : DERIVED FROM ITEM******************
+*********************************************************************/
+HealthPack::HealthPack(const sf::Vector2f & pos)
+	:Item("Sprites/Effects/Power-ups/health2.png", pos)
+{
+	Setup();
+}
+
+//HealthPack's version of CollidedWith that adds score points to player
+void HealthPack::CollidedWith(GameObjects* object)
+{
+	SS_Player* l_player = dynamic_cast<SS_Player*>(object);
+	if (l_player)
+	{
+		l_player->AddToPlayerHealth(static_cast<float>(m_val));
+		Destroy();
+	}
+}
+
+//HealthPack's version of Setup
+void HealthPack::Setup()
+{
+	m_val = 20;
+	m_collisionRadius = 10.0f;
+	m_sprite.setScale(0.1f, 0.1f);
 }
 
 /*********************************************************************
@@ -117,7 +143,7 @@ void QuadAmmo::CollidedWith(GameObjects* object)
 	SS_Player* l_player = dynamic_cast<SS_Player*>(object);
 	if (l_player)
 	{
-		l_player->SetQuadAmmo(m_ammoVal);
+		l_player->SetQuadAmmo(m_val);
 		Destroy();
 	}
 }
@@ -125,8 +151,7 @@ void QuadAmmo::CollidedWith(GameObjects* object)
 //QuadAmmo's version of Setup
 void QuadAmmo::Setup()
 {
-	m_lifeTime = 20.0f;
-	m_ammoVal = 20;
+	m_val = 20;
 	m_collisionRadius = 10.0f;
 }
 
@@ -145,7 +170,7 @@ void PowerAmmo::CollidedWith(GameObjects* object)
 	SS_Player* l_player = dynamic_cast<SS_Player*>(object);
 	if (l_player)
 	{
-		l_player->SetPowerAmmo(m_ammoVal);
+		l_player->SetPowerAmmo(m_val);
 		Destroy();
 	}
 }
@@ -153,7 +178,6 @@ void PowerAmmo::CollidedWith(GameObjects* object)
 //PowerAmmo's version of Setup
 void PowerAmmo::Setup()
 {
-	m_lifeTime = 20.0f;
-	m_ammoVal = 1;
+	m_val = 1;
 	m_collisionRadius = 10.0f;
 }

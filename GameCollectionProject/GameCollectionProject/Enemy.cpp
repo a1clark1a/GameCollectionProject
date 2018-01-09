@@ -11,6 +11,7 @@ void Enemy::CollidedWith(GameObjects* object)
 	if (l_player && l_player->GetInvincibilityCD() < 0.0f)
 	{
 		l_player->Destroy();
+		m_owner->SetScore(m_scoreVal);
 		Destroy();
 	}
 }
@@ -65,6 +66,52 @@ void Enemy::OutOfBounds(Window* window)
 	}
 }
 
+//Spawn ammo from killing AI;
+void Enemy::Destroy()
+{
+	bool l_shouldSpawnAmmo = rand() % 2 == 0 ? true : false;
+	if (l_shouldSpawnAmmo)
+	{
+		Item* l_item;
+		int l_randNum = rand() % 2;
+		switch (l_randNum)
+		{
+		case 0:
+			l_item = new QuadAmmo(m_pos);
+			m_owner->AddObject(l_item);
+			break;
+		case 1:
+			l_item = new PowerAmmo(m_pos);
+			m_owner->AddObject(l_item);
+			break;
+		default:
+			l_randNum = 0;
+			break;
+		}
+	}
+	else
+	{
+		Item* l_item;
+		int l_randNum = rand() % 5;					//A chance to spawn a coin
+		switch (l_randNum)
+		{
+		case 0:
+			l_item = new GoldCoin(m_pos);
+			m_owner->AddObject(l_item);
+			break;
+		case 1:
+			l_item = new SilverCoin(m_pos);
+			m_owner->AddObject(l_item);
+			break;
+		case 2:
+			l_item = new HealthPack(m_pos);
+			m_owner->AddObject(l_item);
+			break;
+		}
+	}
+	GameObjects::Destroy();
+}
+
 /*********************************************************************
 ********************AI CLASS : DERIVED FROM ENEMY*********************
 *********************************************************************/
@@ -72,7 +119,6 @@ void Enemy::OutOfBounds(Window* window)
 void AI::Draw(Window* window)
 {
 	GameObjects::Draw(window);
-	//TODO draw health bar here
 	DrawHealthBar(window);
 }
 
@@ -99,31 +145,6 @@ void AI::DrawHealthBar(Window* window)
 	window->DrawThis(m_enemyHealthBar);
 }
 
-void AI::Destroy()
-{
-	bool l_shouldSpawn = rand() % 2 == 0 ? true : false;
-	//Spawn ammo from killing AI;
-	if (l_shouldSpawn)
-	{
-		Item* l_item;
-		int l_randNum = rand() % 2;					
-		switch (l_randNum)
-		{
-		case 0:
-			l_item = new QuadAmmo(m_pos);
-			m_owner->AddObject(l_item);
-			break;
-		case 1:
-			l_item = new PowerAmmo(m_pos);
-			m_owner->AddObject(l_item);
-			break;
-		default:
-			l_randNum = 0;
-			break;
-		}
-	}
-	GameObjects::Destroy();
-}
 
 /*********************************************************************
 *****************NORMALAI CLASS : DERIVED FROM AI*********************
@@ -466,13 +487,11 @@ void Asteroid::Setup()
 LargeAsteroid::LargeAsteroid(const sf::Vector2f & pos)
 	:Asteroid("Sprites/Meteors/meteorBrown_big4.png", pos)
 {
-	
+	Setup();
 }
 
 void LargeAsteroid::Destroy()
 {
-
-	m_owner->SetScore(m_scoreVal);
 	for (int i = 0; i < 3; i++)
 	{
 		MediumAsteroid* mediumAsteroid = new MediumAsteroid(m_pos);
@@ -501,7 +520,6 @@ MediumAsteroid::MediumAsteroid(const sf::Vector2f & pos)
 
 void MediumAsteroid::Destroy()
 {
-	m_owner->SetScore(m_scoreVal);
 	for (int i = 0; i < 3; i++)
 	{
 		SmallAsteroid* smallAsteroid = new SmallAsteroid(m_pos);
@@ -538,6 +556,5 @@ void SmallAsteroid::Setup()
 
 void SmallAsteroid::Destroy()
 {
-
-	GameObjects::Destroy();
+	Enemy::Destroy();
 }

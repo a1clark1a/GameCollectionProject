@@ -26,11 +26,13 @@ public:
 
 	//SpaceShooter Functions
 	void RespawnPlayer();												// Function to spawn player
-	void ResetSpawnTimer() { m_timeUntilRespawn = 3.0f; }
+	void ResetPlayerSpawnTimer() { m_timeUntilRespawn = 3.0f; }
+	void ResetObjectSpawnTimer() { m_objectSpawnCoolDown = static_cast<float>(rand() % 10 + 1); }
+	void ResetSpawnCount() { m_spawnCountPerLevel = rand() % (15 + m_level) + (10 + m_level); }
 	void SpawnAI();														// Function to spawn AI
 	void SpawnDestructibles();											// Function to spawn destructibles
 	void SpawnItem();													// Function to spawn Coins/Ammo/ExtraLife
-	void SpawnSystem();												// Function to set how many AI and destructible to spawn per level
+	void SpawnSystem();													// Function to set how many AI and destructible to spawn per level
 	void LoopBackground();
 	void DrawHealthBarSprite();
 	void DrawBorders();
@@ -56,10 +58,13 @@ private:
 	sf::Texture* m_equippedOFFBorderTex = new sf::Texture;
 	float m_playerCurrentHealth;
 	float m_maxPlayerHealth;
+	float m_timeUntilRespawn;
+	float m_objectSpawnCoolDown;
 	unsigned int m_quadAmmoRemaining;
 	unsigned int m_PowerBombAmmoRemaining;
 	unsigned int m_level;
 	unsigned int m_livesRemaining;
-	unsigned int m_spawnCount;
-
+	unsigned int m_spawnCountPerLevel;
+	
+	
 };
