@@ -147,6 +147,7 @@
     <ClCompile Include="GameObjects.cpp" />
     <ClCompile Include="Items.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="SpaceShooter.cpp" />
@@ -158,6 +159,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObjects.h" />
     <ClInclude Include="Items.h" />
+    <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="SpaceShooter.h" />

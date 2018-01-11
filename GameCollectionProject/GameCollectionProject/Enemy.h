@@ -16,9 +16,11 @@ public:
 	virtual void CollidedWith(GameObjects* object);
 	virtual void OutOfBounds(Window* window);
 	virtual void Destroy();
+	virtual void SetScore() { m_owner->SetScore(m_scoreVal); }
 
 	//Main Functions
 	void TakeDamage(const float dmgVal);
+	
 
 	//helper functions
 	const float GetDmgVal() const { return m_dmgVal; };

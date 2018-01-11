@@ -27,7 +27,7 @@ public:
 	//SpaceShooter Functions
 	void RespawnPlayer();												// Function to spawn player
 	void ResetPlayerSpawnTimer() { m_timeUntilRespawn = 3.0f; }
-	void ResetObjectSpawnTimer() { m_objectSpawnCoolDown = static_cast<float>(rand() % 10 + 1); }
+	void ResetObjectSpawnTimer() { m_objectSpawnCoolDown = static_cast<float>(rand() % 5 + 1); }
 	void ResetSpawnCount() { m_spawnCountPerLevel = rand() % (15 + m_level) + (10 + m_level); }
 	void SpawnAI();														// Function to spawn AI
 	void SpawnDestructibles();											// Function to spawn destructibles
@@ -45,17 +45,17 @@ private:
 
 	SS_Player::WEAPONTYPE m_weaponEquiped;
 	sf::RectangleShape m_background2;
-	sf::RectangleShape* m_playerHealthBar = new sf::RectangleShape;
-	sf::Sprite* m_healthBarSprite = new sf::Sprite;
-	sf::Sprite* m_livesBorderSprite = new sf::Sprite;
-	sf::Sprite* m_equippedBorderSprite1 = new sf::Sprite;
-	sf::Sprite* m_equippedBorderSprite2 = new sf::Sprite;
-	sf::Sprite* m_equippedBorderSprite3 = new sf::Sprite;
-	sf::Texture* m_healthBarTex = new sf::Texture;
-	sf::Texture* m_livesTex = new sf::Texture;
-	sf::Texture* m_livesBorderTex = new sf::Texture;
-	sf::Texture* m_equippedONBorderTex = new sf::Texture;
-	sf::Texture* m_equippedOFFBorderTex = new sf::Texture;
+	sf::RectangleShape m_playerHealthBar;
+	sf::Sprite m_healthBarSprite;
+	sf::Sprite m_livesBorderSprite;
+	sf::Sprite m_equippedBorderSprite1;
+	sf::Sprite m_equippedBorderSprite2;
+	sf::Sprite m_equippedBorderSprite3;
+	sf::Texture m_healthBarTex;
+	sf::Texture m_livesTex;
+	sf::Texture m_livesBorderTex;
+	sf::Texture m_equippedONBorderTex;
+	sf::Texture m_equippedOFFBorderTex;
 	float m_playerCurrentHealth;
 	float m_maxPlayerHealth;
 	float m_timeUntilRespawn;
@@ -65,6 +65,7 @@ private:
 	unsigned int m_level;
 	unsigned int m_livesRemaining;
 	unsigned int m_spawnCountPerLevel;
+	bool m_allEnemyDestroyed;
 	
 	
 };

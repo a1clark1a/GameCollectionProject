@@ -70,7 +70,8 @@ void FastBullet::CollidedWith(GameObjects* object)
 		Asteroid* l_asteroid = dynamic_cast<Asteroid*>(object);
 		if (l_asteroid)
 		{
-			object->Destroy();
+			l_asteroid->Destroy();
+			l_asteroid->SetScore();
 			Destroy();
 		}
 		else
@@ -115,7 +116,8 @@ void QuadBullets::CollidedWith(GameObjects* object)
 		Asteroid* l_asteroid = dynamic_cast<Asteroid*>(object);
 		if (l_asteroid)
 		{
-			object->Destroy();
+			l_asteroid->Destroy();
+			l_asteroid->SetScore();
 			Destroy();
 		}
 		else
@@ -152,7 +154,8 @@ void PowerBomb::CollidedWith(GameObjects* object)
 		Asteroid* l_asteroid = dynamic_cast<Asteroid*>(object);
 		if (l_asteroid)
 		{
-			object->Destroy();
+			l_asteroid->Destroy();
+			l_asteroid->SetScore();
 			Destroy();
 		}
 		else

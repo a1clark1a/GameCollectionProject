@@ -11,7 +11,6 @@ void Enemy::CollidedWith(GameObjects* object)
 	if (l_player && l_player->GetInvincibilityCD() < 0.0f)
 	{
 		l_player->Destroy();
-		m_owner->SetScore(m_scoreVal);
 		Destroy();
 	}
 }
@@ -24,7 +23,7 @@ void Enemy::TakeDamage(const float dmgVal)
 		m_enemyHealth -= dmgVal;
 		if (m_enemyHealth <= 0.0f)
 		{
-			m_owner->SetScore(m_scoreVal);
+			SetScore();
 			Destroy();
 		}
 	}
@@ -73,7 +72,7 @@ void Enemy::Destroy()
 	if (l_shouldSpawnAmmo)
 	{
 		Item* l_item;
-		int l_randNum = rand() % 2;
+		int l_randNum = rand() % 4;
 		switch (l_randNum)
 		{
 		case 0:
@@ -92,7 +91,7 @@ void Enemy::Destroy()
 	else
 	{
 		Item* l_item;
-		int l_randNum = rand() % 5;					//A chance to spawn a coin
+		int l_randNum = rand() % 13;					//A chance to spawn a coin
 		switch (l_randNum)
 		{
 		case 0:

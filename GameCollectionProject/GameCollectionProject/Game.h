@@ -1,5 +1,4 @@
 #pragma once
-#include <SFML\Audio.hpp>
 #include "Window.h"
 #include <vector>
 
@@ -20,14 +19,14 @@ public:
 	virtual ~Game();													// virtual Destructor
 
 	//Virtual Functions
-	virtual void Update() { m_windowObj.Update(); }						// Inline call m_windowObj update function then to be redefined in each respective derived classes
+	virtual void Update(float dt) { m_windowObj.Update(); }				// Inline Call m_windowObj update function then to be redefined in each respective derived classes
 	virtual void Render() = 0;											// Pure Virtual Function to clear, draw and display 
 	virtual void AddObject(GameObjects * object) = 0;					// Pure Virtual Function to be redefined in each respective derived class
 	virtual void SetScore(int scoreVal);								// Function to add Score( maybe redefined to set specific score variable based on game(to be drawn by DrawText())
 	virtual void DrawText() = 0;										// Pure Virtual Function to draw the score text, level text, ammo count etc on window(be called in Render())
 	virtual void GameOver() {};											// Virtual Function to call when game is over, to handle setting of remaining GameObjects' state into destroyed = true
 	virtual void CreateBackground() {};									// Virtual Function to draw the background(be called in Render())
-
+	
 	//Virtual Helper Functions
 	virtual Window* GetWindow()  { return &m_windowObj; }				// Inline helper function to acces a reference to m_windowObj object
 	

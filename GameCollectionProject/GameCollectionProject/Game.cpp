@@ -29,11 +29,13 @@ void Game::SetScore(int scoreVal)
 void Game::Setup()
 {
 	srand(static_cast<unsigned int>(time(0)));
+	m_score = 0;
 	m_isGameOver = false;
 	LoadTexture();
 }
 
 void Game::LoadTexture()
 {
+	
 	m_mainFont.loadFromFile("Sprites/Fonts/Transformers Movie.ttf");
 }

@@ -7,7 +7,6 @@ Item::Item(const std::string texturePath, const sf::Vector2f & pos)
 	:GameObjects(texturePath, pos)
 {
 	Setup();
-	std::cout << m_moveSpd << std::endl;
 }
 
 

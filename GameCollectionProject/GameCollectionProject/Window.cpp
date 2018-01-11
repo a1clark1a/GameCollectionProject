@@ -33,10 +33,9 @@ void Window::Update()
 	sf::Event l_event;																// Event object creation
 	while (m_renderWindow.pollEvent(l_event))
 	{
-		
 		if (l_event.type == sf::Event::Closed)
 		{
-			m_isClosed = true;														// When window is closed set m_isDone to true
+			m_isClosed = true;														// When window is closed set m_isClosed to true
 		}																			// then the while loop playing the game will end
 		//TODO Learn to set Fullscreen without stretching
 		else if (l_event.type == sf::Event::KeyPressed && l_event.key.code == sf::Keyboard::F5)
