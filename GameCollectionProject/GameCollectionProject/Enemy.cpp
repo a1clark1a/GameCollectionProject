@@ -256,9 +256,10 @@ void NormalAI::ShootFunction(const float & dt)
 			{
 				EnemyBullet* l_eBullet = new EnemyBullet(m_pos, m_dmgVal, -200.0f);
 				m_owner->AddObject(l_eBullet);
+				m_owner->GetSound()->PlaySound("Audio/Laser_Shoot4.wav");
 				m_shootingCoolDown = 2.0f;
 			}
-
+			
 		}
 		else
 		{
@@ -375,6 +376,7 @@ void AggroAI::ShootFunction(const float & dt)
 			{
 				EnemyBullet* l_eBullet = new EnemyBullet(m_pos, m_dmgVal, -200.0f);
 				m_owner->AddObject(l_eBullet);
+				m_owner->GetSound()->PlaySound("Audio/Laser_Shoot4.wav");
 				m_shootingCoolDown = 2.0f;
 			}
 
@@ -503,7 +505,7 @@ void LargeAsteroid::Destroy()
 
 void LargeAsteroid::Setup()
 {
-	m_dmgVal = 15.0f;
+	m_dmgVal = 30.0f;
 	m_scoreVal = 10;
 	SetCollisionRadius(50);
 }
@@ -529,9 +531,19 @@ void MediumAsteroid::Destroy()
 	GameObjects::Destroy();
 }
 
+void MediumAsteroid::CollidedWith(GameObjects* object)
+{
+	Player* l_player = dynamic_cast<Player*>(object);
+	if (l_player)
+	{
+		l_player->TakeDmg(m_dmgVal);
+		Destroy();
+	}
+}
+
 void MediumAsteroid::Setup()
 {
-	m_dmgVal = 10.0f;
+	m_dmgVal = 20.0f;
 	m_scoreVal = 50;
 	SetCollisionRadius(20);
 }
@@ -546,9 +558,19 @@ SmallAsteroid::SmallAsteroid(const sf::Vector2f & pos)
 	Setup();
 }
 
+void SmallAsteroid::CollidedWith(GameObjects* object)
+{
+	Player* l_player = dynamic_cast<Player*>(object);
+	if (l_player)
+	{
+		l_player->TakeDmg(m_dmgVal);
+		Destroy();
+	}
+}
+
 void SmallAsteroid::Setup()
 {
-	m_dmgVal = 5.0f;
+	m_dmgVal = 10.0f;
 	m_scoreVal = 100;
 	SetCollisionRadius(10);
 }

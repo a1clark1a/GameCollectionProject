@@ -1,5 +1,6 @@
 #pragma once
 #include "Window.h"
+#include "SoundManager.h"
 #include <vector>
 
 /******Forward Class Declaration*******/
@@ -29,11 +30,14 @@ public:
 	
 	//Virtual Helper Functions
 	virtual Window* GetWindow()  { return &m_windowObj; }				// Inline helper function to acces a reference to m_windowObj object
+	virtual SoundManager* GetSound() { return &m_sound; }
 	
 	//REMINDER Members in this section are public ONLY INSIDE a derived class otherwise PRIVATE
 protected:
 	virtual void Setup();
 	virtual void LoadTexture();
+
+	SoundManager m_sound;
 	Window m_windowObj ;													// Object used to access Window members
 	std::vector<GameObjects*> m_gameObjects;								// A vector container of pointers to a gameobject. 
 	sf::Font m_mainFont;													// Use one type of font for all games(for now) to be initialized in constructor

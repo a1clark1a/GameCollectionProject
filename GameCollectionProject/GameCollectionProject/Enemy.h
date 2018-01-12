@@ -172,8 +172,10 @@ class MediumAsteroid : public Asteroid
 public:
 	MediumAsteroid(const sf::Vector2f & pos);
 	virtual ~MediumAsteroid() {  }  
+	virtual void CollidedWith(GameObjects* object);
 	virtual void Destroy();
 	virtual void ApplyDrag(float dt) {};
+	
 
 protected:
 	virtual void Setup();
@@ -184,8 +186,9 @@ class SmallAsteroid : public Asteroid
 public:
 	SmallAsteroid(const sf::Vector2f & pos);
 	virtual ~SmallAsteroid() {  }  
-	virtual void ApplyDrag(float dt) {};
+	virtual void CollidedWith(GameObjects* object);
 	virtual void Destroy();
+	virtual void ApplyDrag(float dt) {};
 
 protected:
 	virtual void Setup();

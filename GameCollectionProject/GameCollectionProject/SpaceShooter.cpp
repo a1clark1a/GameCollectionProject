@@ -200,8 +200,6 @@ void SpaceShooter::UpdateGameObj()
 			delete l_current;
 			m_gameObjects.erase(m_gameObjects.begin() + i);
 		}
-		
-
 	}
 
 	//Loop through m_gameObjects vector to check if any GameObjects object is colliding with another
@@ -270,15 +268,15 @@ void SpaceShooter::SpawnAI()
 	switch (l_randNum)
 	{
 	case 0:
-		l_ai = new NormalAI(sf::Vector2f(static_cast<float>(rand() % 900 + 200), -200.0f + 10.0f));
+		l_ai = new NormalAI(sf::Vector2f(static_cast<float>(rand() % 900 + 200), -10.0f + 1.0f));
 		AddObject(l_ai);
 		break;
 	case 1:
-		l_ai = new AggroAI(sf::Vector2f(static_cast<float>(rand() % 900 + 200), -200.0f + 10.0f));
+		l_ai = new AggroAI(sf::Vector2f(static_cast<float>(rand() % 900 + 200), -10.0f + 1.0f));
 		AddObject(l_ai);
 		break;
 	case 2:
-		l_ai = new ChaserAI(sf::Vector2f(static_cast<float>(rand() % 900 + 200), -200.0f + 10.0f));
+		l_ai = new ChaserAI(sf::Vector2f(static_cast<float>(rand() % 900 + 200), -10.0f + 1.0f));
 		AddObject(l_ai);
 		break;
 	}
@@ -308,23 +306,23 @@ void SpaceShooter::SpawnItem()
 	switch (l_randNum)
 	{
 	case 0:
-		 l_item = new GoldCoin(sf::Vector2f(static_cast<float>(rand() % 800 + 100), -100.0f + -10.0f));
+		 l_item = new GoldCoin(sf::Vector2f(static_cast<float>(rand() % 800 + 100), -10.0f + -1.0f));
 		AddObject(l_item);
 		break;
 	case 1:
-		l_item= new SilverCoin(sf::Vector2f(static_cast<float>(rand() % 800 + 100), -100.0f + -10.0f));
+		l_item= new SilverCoin(sf::Vector2f(static_cast<float>(rand() % 800 + 100), -10.0f + -1.0f));
 		AddObject(l_item);
 		break;
 	case 2:
-		l_item = new QuadAmmo(sf::Vector2f(static_cast<float>(rand() % 800 + 100), -100.0f + -10.0f));
+		l_item = new QuadAmmo(sf::Vector2f(static_cast<float>(rand() % 800 + 100), -10.0f + -1.0f));
 		AddObject(l_item);
 		break;
 	case 3:
-		l_item = new PowerAmmo(sf::Vector2f(static_cast<float>(rand() % 800 + 100), -100.0f + -10.0f));
+		l_item = new PowerAmmo(sf::Vector2f(static_cast<float>(rand() % 800 + 100), -100.0f + -1.0f));
 		AddObject(l_item);
 		break;
 	case 4:
-		l_item = new HealthPack(sf::Vector2f(static_cast<float>(rand() % 800 + 100), -100.0f + -10.0f));
+		l_item = new HealthPack(sf::Vector2f(static_cast<float>(rand() % 800 + 100), -10.0f + -1.0f));
 		AddObject(l_item);
 		break;
 	}
@@ -477,6 +475,7 @@ void SpaceShooter::Setup()
 	ResetSpawnCount();
 	CreateBackground(&m_background, &m_bgTexture, "Sprites/Background/longBGStars.png", sf::Vector2f(0.0f, 0.0f));
 	CreateBackground(&m_background2, &m_bgTexture, "Sprites/Background/longBGStars.png", sf::Vector2f(0.0f, -m_windowObj.GetWindowSize()->y));
+	GetSound()->PlayBackgroundMusic("Audio/Donic_-_Donic_-_Rubik_039_s_Cube_Original_Mix_.wav");
 	LoadTexture();
 }
 

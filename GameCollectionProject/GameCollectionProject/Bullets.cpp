@@ -34,7 +34,7 @@ void Bullet::OutOfBounds(Window* window)
 	{
 		Destroy();
 	}
-	if (m_pos.y < -1.0f)
+	if (m_pos.y < 10.0f)
 	{
 		Destroy();
 	}
@@ -175,6 +175,7 @@ void PowerBomb::Destroy()
 		l_mediumBomb->SetVelocity(200.0f);
 		m_owner->AddObject(l_mediumBomb);
 	}
+	m_owner->GetSound()->PlaySound("Audio/Explosion.wav");
 	GameObjects::Destroy();
 }
 

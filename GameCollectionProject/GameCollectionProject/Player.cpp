@@ -187,22 +187,25 @@ void SS_Player::PlayerControls(Window* window)
 		m_shooting = true;
 		ShootFunction(window->GetDeltaTime()->asSeconds());
 	}
-	else
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
 	{
-		ApplyDrag(window->GetDeltaTime()->asSeconds(), 10.0f);
-		m_shooting = false;
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
-	{
+		m_shootCooldown = 0.0f;
 		m_currentWeap = WEAPONTYPE::Fast;
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2))
 	{
 		m_currentWeap = WEAPONTYPE::QuadBlaster;
+		m_shootCooldown = 0.0f;
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3))
 	{
 		m_currentWeap = WEAPONTYPE::Power;
+		m_shootCooldown = 0.0f;
+	}
+	else
+	{
+		ApplyDrag(window->GetDeltaTime()->asSeconds(), 10.0f);
+		m_shooting = false;
 	}
 }
 
@@ -218,8 +221,9 @@ void SS_Player::ShootFunction(const float  & dt)
 			{
 				FastBullet* l_fastBullet = new FastBullet(sf::Vector2f(m_pos.x + ( i < 1 ? 15.0f : -15.0f), m_pos.y - 20), 10.0f, 700.0f);
 				m_owner->AddObject(l_fastBullet);
-				m_shootCooldown = 0.1f;
 			}
+			m_owner->GetSound()->PlaySound("Audio/Laser_Shoot.wav");
+			m_shootCooldown = 0.1f;
 		}
 		break;
 	case WEAPONTYPE::QuadBlaster:
@@ -231,9 +235,10 @@ void SS_Player::ShootFunction(const float  & dt)
 				l_quadBullets->SetAngle(m_angle - 15.0f + (i < 2 ? -15.0f : 15.0f) * i);
 				l_quadBullets->SetVelocity(800.0f);
 				m_owner->AddObject(l_quadBullets);
-				m_shootCooldown = 0.5f;
 				m_quadAmmo--;
 			}
+			m_owner->GetSound()->PlaySound("Audio/QuadBomb.wav");
+			m_shootCooldown = 0.3f;
 		}
 		break;
 	case WEAPONTYPE::Power:
@@ -242,6 +247,7 @@ void SS_Player::ShootFunction(const float  & dt)
 			PowerBomb* l_PowerBomb = new PowerBomb("Sprites/Effects/Lasers/blueflame_big.png", sf::Vector2f(m_pos.x, m_pos.y - 30.0f), 100.0f);
 			l_PowerBomb->SetLinearAccel(100.0f);
 			m_owner->AddObject(l_PowerBomb);
+			m_owner->GetSound()->PlaySound("Audio/PowerBomb.wav");
 			m_shootCooldown = 5.0f;
 			m_PowerAmmo--;
 		}

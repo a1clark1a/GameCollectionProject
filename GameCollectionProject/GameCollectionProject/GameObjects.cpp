@@ -42,7 +42,7 @@ void GameObjects::Draw(Window* window)
 	CollisionSphere->setPosition(m_pos);
 	CollisionSphere->setOrigin(m_collisionRadius, m_collisionRadius);
 	CollisionSphere->setOutlineColor(sf::Color::Red);
-	window->DrawThis(CollisionSphere);							//Comment out
+	//window->DrawThis(CollisionSphere);							//Comment out
 	window->DrawThis(&m_sprite);
 
 }

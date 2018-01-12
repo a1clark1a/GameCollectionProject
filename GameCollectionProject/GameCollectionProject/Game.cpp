@@ -36,6 +36,5 @@ void Game::Setup()
 
 void Game::LoadTexture()
 {
-	
 	m_mainFont.loadFromFile("Sprites/Fonts/Transformers Movie.ttf");
 }
