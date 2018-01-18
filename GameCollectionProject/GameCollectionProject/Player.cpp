@@ -32,12 +32,6 @@ void Player::TakeDmg(const float & dmgVal)
 	}
 }
 
-//Player version reset invulnerability
-void Player::MakeInvulnerable()
-{
-	m_invincibilityCooldown = 2.0f;
-}
-
 //Player version create and draw invincibility shield
 void Player::DrawShield(Window* window)
 {
@@ -103,7 +97,6 @@ void SS_Player::Setup()
 	m_quadAmmo = 60;
 	m_PowerAmmo = 1;
 	m_shootCooldown = 0.2f;
-	m_shooting = false;
 	SetCollisionRadius(40.0f);
 	m_sprite.setScale(0.1f, 0.1f);
 	m_sprite.setOrigin(m_sprite.getTextureRect().width * 0.5f, m_sprite.getTextureRect().height * 0.5f);
@@ -129,7 +122,7 @@ void SS_Player::Update(Window* window)
 void SS_Player::Destroy()
 {
 	GameObjects::Destroy();
-	//m_owner->ResetSpawnTimer();
+	m_owner->GetSound()->PlaySound("Audio/Explosion3.wav");
 }
 
 //SS_Player version that checks if an enemy collides to player then destroy if health < enemy dmg
@@ -184,7 +177,6 @@ void SS_Player::PlayerControls(Window* window)
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
 	{
-		m_shooting = true;
 		ShootFunction(window->GetDeltaTime()->asSeconds());
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
@@ -205,7 +197,6 @@ void SS_Player::PlayerControls(Window* window)
 	else
 	{
 		ApplyDrag(window->GetDeltaTime()->asSeconds(), 10.0f);
-		m_shooting = false;
 	}
 }
 
@@ -215,11 +206,11 @@ void SS_Player::ShootFunction(const float  & dt)
 	switch (m_currentWeap)
 	{
 	case WEAPONTYPE::Fast:
-		if (m_shooting && m_shootCooldown <= 0.0f)
+		if (m_shootCooldown <= 0.0f && m_invincibilityCooldown <= 0.0f)
 		{
 			for (int i = 0; i < 2; i++)
 			{
-				FastBullet* l_fastBullet = new FastBullet(sf::Vector2f(m_pos.x + ( i < 1 ? 15.0f : -15.0f), m_pos.y - 20), 10.0f, 700.0f);
+				FastBullet* l_fastBullet = new FastBullet("Sprites/Effects/Lasers/laserBlue01.png",sf::Vector2f(m_pos.x + ( i < 1 ? 15.0f : -15.0f), m_pos.y - 20), 10.0f, 700.0f);
 				m_owner->AddObject(l_fastBullet);
 			}
 			m_owner->GetSound()->PlaySound("Audio/Laser_Shoot.wav");
@@ -227,7 +218,7 @@ void SS_Player::ShootFunction(const float  & dt)
 		}
 		break;
 	case WEAPONTYPE::QuadBlaster:
-		if (m_shooting && m_shootCooldown <= 0.0f && m_quadAmmo > 0)
+		if (m_shootCooldown <= 0.0f && m_quadAmmo > 0 && m_invincibilityCooldown <= 0.0f)
 		{
 			for (int i = 0; i < 4; i++)
 			{
@@ -242,7 +233,7 @@ void SS_Player::ShootFunction(const float  & dt)
 		}
 		break;
 	case WEAPONTYPE::Power:
-		if (m_shooting && m_shootCooldown <= 0.0f && m_PowerAmmo > 0)
+		if (m_shootCooldown <= 0.0f && m_PowerAmmo > 0 && m_invincibilityCooldown <= 0.0f)
 		{
 			PowerBomb* l_PowerBomb = new PowerBomb("Sprites/Effects/Lasers/blueflame_big.png", sf::Vector2f(m_pos.x, m_pos.y - 30.0f), 100.0f);
 			l_PowerBomb->SetLinearAccel(100.0f);
@@ -255,3 +246,108 @@ void SS_Player::ShootFunction(const float  & dt)
 	}
 }
 
+/*********************************************************************
+***************AST_PLAYER CLASS : DERIVED FROM PLAYER******************
+*********************************************************************/
+
+//Ast_Player Constructor 
+//Needs texture address and initial position to initialize player sprite
+Ast_Player::Ast_Player()
+	:Player("Sprites/TopDownShips/Player01.png", sf::Vector2f(700.0f, 350.0f))
+{
+	Setup();
+}
+
+//Ast_Player virtual destructor
+Ast_Player::~Ast_Player()
+{
+	std::cout << "Ast_Player's Destructor called" << std::endl;
+}
+
+void Ast_Player::Setup()
+{
+	m_invincibilityCooldown = 2.0f;
+	m_playerHealth = 1.0f;
+	m_specialAmmo = 60;
+	m_shootCooldown = 0.2f;
+	SetCollisionRadius(40.0f);
+	m_sprite.setScale(0.1f, 0.1f);
+	m_sprite.setOrigin(m_sprite.getTextureRect().width * 0.5f, m_sprite.getTextureRect().height * 0.5f);
+}
+
+void Ast_Player::Draw(Window* window)
+{
+	DrawShield(window);
+	Player::Draw(window);
+}
+
+void Ast_Player::Update(Window* window)
+{
+	Player::Update(window);
+	OutOfBounds(window);
+	PlayerControls(window);
+}
+
+void Ast_Player::Destroy()
+{
+	GameObjects::Destroy();
+	m_owner->GetSound()->PlaySound("Audio/Explosion3.wav");
+}
+
+void Ast_Player::CollidedWith(GameObjects* object)
+{
+
+}
+
+void Ast_Player::PlayerControls(Window* window)
+{
+	m_shootCooldown -= window->GetDeltaTime()->asSeconds();
+	SetAccel(0.0f);
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+	{
+		SetAngle(GetAngle() + 180 * window->GetDeltaTime()->asSeconds());
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+	{
+		SetAngle(GetAngle() - 180 * window->GetDeltaTime()->asSeconds());
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+	{
+		SetAccel(400.0f);
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) || sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+	{
+
+		ShootFunction(window->GetDeltaTime()->asSeconds());
+	}
+}
+
+void Ast_Player::ShootFunction(const float & dt)
+{
+	if (m_shootCooldown <= 0.0f  && m_invincibilityCooldown <= 0.0f)
+	{
+		bool l_tripleShot = sf::Keyboard::isKeyPressed(sf::Keyboard::LControl);
+		m_shootCooldown = l_tripleShot ? 0.5f : 0.2f;
+
+		if (l_tripleShot && m_specialAmmo > 0)
+		{
+			for (int i = 0; i < 3; i++)
+			{
+				FastBullet* l_bullet = new FastBullet("Sprites/Effects/Lasers/laserBlue08.png",m_pos,10.0f, 0.0f);
+				l_bullet->SetAngle(m_angle - 15.0f + i * 15.0f);
+				l_bullet->SetVelocity(500.0f);
+				m_owner->AddObject(l_bullet);
+				m_specialAmmo--;
+			}
+			m_owner->GetSound()->PlaySound("Audio/QuadBomb.wav");
+		}
+		else
+		{
+			FastBullet* l_bullet = new FastBullet("Sprites/Effects/Lasers/laserBlue08.png",m_pos,10.0f,0.0f);
+			l_bullet->SetAngle(m_angle);
+			l_bullet->SetVelocity(500.0f);
+			m_owner->AddObject(l_bullet);
+			m_owner->GetSound()->PlaySound("Audio/Laser_Shoot1.wav");
+		}
+	}
+}

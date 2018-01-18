@@ -1,13 +1,11 @@
 #pragma once
 #include "Window.h"
-#include "Game.h"
 #include "math.h"
 #define DEG_TO_RAD (0.0174532925f)
 
 
 /******Forward Class Declaration*******/	
-class SS_Player;
-
+class Game;
 /*****************************************************************
 ***********************ABSTRACT BASE CLASS************************
 *****************************************************************/
@@ -44,7 +42,7 @@ public:
 	float GetAngle() const { return m_angle; }								// Getter function to get a GameObject objects m_angle;
 	float GetDistance(const sf::Vector2f & otherVector) const;				// Uses Distance Formula
 	bool IsColliding(const GameObjects* otherObj);							// Function to check if *this GameObject object collides with another GameObject object
-
+	
 	//Public memmber variables
 												
 

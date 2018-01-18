@@ -15,16 +15,17 @@ Game::~Game()
 {
 }
 
-void Game::SetScore(int scoreVal)
+void Game::SetScore(const int & scoreVal)
 {
 	m_score += scoreVal;
 	if (m_score > m_highScore)
 	{
-		m_highScore = m_score;
+		SetScoreOnFile(m_highScore);
 	}
 	//TODO allow to save Highscore unto text file
 	
 }
+
 
 void Game::Setup()
 {

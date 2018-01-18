@@ -1,3 +1,16 @@
 ﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(392,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (BaseSFMLProject.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  Window.cpp
+  SpaceShooter.cpp
+  SoundManager.cpp
+  Player.cpp
+  MainMenu.cpp
+  Main.cpp
+  Items.cpp
+  GameObjects.cpp
+  Game.cpp
+  Enemy.cpp
+  Bullets.cpp
+  Asteroid.cpp
+  Generating Code...
   GameCollectionProject.vcxproj -> C:\Users\a1cla\Desktop\KrakenFiles\GameCollectionProject\GameCollectionProject\x64\Debug\GameCollectionProject.exe
   GameCollectionProject.vcxproj -> C:\Users\a1cla\Desktop\KrakenFiles\GameCollectionProject\GameCollectionProject\x64\Debug\GameCollectionProject.pdb (Partial PDB)

@@ -15,9 +15,11 @@ SpaceShooter::~SpaceShooter()
 {
 }
 
+							/***************************
+							******Virtual Functions*****
+							***************************/
 
-//SpaceShooter Virtual Functions
-
+//Spaceshooter Update function
 void SpaceShooter::Update(float dt)
 {
 	Game::Update(dt);									//Call Base Game Update using scope resolution operator
@@ -82,6 +84,14 @@ void SpaceShooter::DrawText()
 	l_scoreText.setPosition(m_windowObj.GetWindowSize()->x - 150.0f,m_windowObj.GetWindowSize()->y - 100.0f);
 	m_windowObj.DrawThis(&l_scoreText);
 
+	sf::Text l_highScoreText;
+	l_highScoreText.setFont(m_mainFont);
+	l_highScoreText.setString("Highscore: " + std::to_string(m_highScore));
+	l_highScoreText.setCharacterSize(30);
+	l_highScoreText.setOrigin(l_highScoreText.getGlobalBounds().width * 0.5f, l_highScoreText.getGlobalBounds().height * 0.5f);
+	l_highScoreText.setPosition(m_windowObj.GetWindowSize()->x - 150.0f, m_windowObj.GetWindowSize()->y - 150.0f);
+	m_windowObj.DrawThis(&l_highScoreText);
+
 	sf::Text l_levelText;
 	l_levelText.setFont(m_mainFont);
 	l_levelText.setString("Level: "+ std::to_string(m_level));
@@ -130,6 +140,16 @@ void SpaceShooter::DrawText()
 	l_powerAmmoText.setPosition(m_equippedBorderSprite3.getPosition().x, m_equippedBorderSprite3.getPosition().y - 38.5f);
 	m_windowObj.DrawThis(&l_powerAmmoText);
 
+	if (m_isGameOver)
+	{
+		sf::Text l_gameOverText;
+		l_gameOverText.setFont(m_mainFont);
+		l_gameOverText.setString("GAME OVER!");
+		l_gameOverText.setCharacterSize(110);
+		l_gameOverText.setOrigin(l_gameOverText.getGlobalBounds().width * 0.5f, l_gameOverText.getGlobalBounds().height * 0.5f);
+		l_gameOverText.setPosition(m_windowObj.GetWindowSize()->x * 0.5f, m_windowObj.GetWindowSize()->y * 0.5f);
+		m_windowObj.DrawThis(&l_gameOverText);
+	}
 }
 
 //Create a background 
@@ -183,10 +203,15 @@ void SpaceShooter::UpdateGameObj()
 	for (int i = 0; i < m_gameObjects.size(); i++)
 	{
 		GameObjects* l_current = m_gameObjects[i];
+		//Check for an asteroid object to make it move forward
+		Asteroid* l_asteroid = dynamic_cast<Asteroid*>(l_current);
+		if (l_asteroid)
+		{
+			l_asteroid->SetLinearAccel(-10.0f);
+		}
 		l_current->Update(&m_windowObj);
 	}
-
-	//Loop through m_gameObjects vector to check if each GameObjects destroy state is true, 
+	//Loop through m_gameObjects vector to check if each GameObjects destroy state is true, delete it 
 	for (int i = int(m_gameObjects.size()) - 1; i >= 0; i--)
 	{
 		GameObjects* l_current = m_gameObjects[i];
@@ -195,13 +220,14 @@ void SpaceShooter::UpdateGameObj()
 			SS_Player* l_player = dynamic_cast<SS_Player*>(l_current);
 			if (l_player)
 			{
+				GetSound()->PlaySound("Audio/Explosion.wav");
 				ResetPlayerSpawnTimer();
 			}
 			delete l_current;
 			m_gameObjects.erase(m_gameObjects.begin() + i);
 		}
 	}
-
+	
 	//Loop through m_gameObjects vector to check if any GameObjects object is colliding with another
 	for (int i = 0; i < m_gameObjects.size(); i++)
 	{
@@ -229,7 +255,6 @@ void SpaceShooter::UpdateGameObj()
 			}
 		}
 	}
-
 }
 
 //Set m_isGameOver state to true then call Destroy() on all GameObjects
@@ -241,6 +266,31 @@ void SpaceShooter::GameOver()
 		GameObjects* l_current = m_gameObjects[i];
 		l_current->Destroy();
 	}
+}
+
+void SpaceShooter::SetScoreOnFile(const int & scoreVal)
+{
+	m_highScore = m_score;
+	std::ofstream myfile("HighScores/H_SpaceShooter.txt");
+	if (myfile.is_open())
+	{
+		myfile << scoreVal << std::endl;
+	}
+	else std::cout << "Unable to open file" << std::endl;
+}
+
+unsigned int SpaceShooter::ExtractHighsScoreFromFile()
+{
+	std::string l_line;
+	unsigned int l_score;
+	std::ifstream myfile("HighScores/H_SpaceShooter.txt");
+	if (myfile.is_open())
+	{
+		std::getline(myfile, l_line);
+		l_score = std::stoi(l_line);
+		myfile.close();
+	}
+	return l_score;
 }
 
 //SPACESHOOTER MAIN FUNCTIONS
@@ -258,14 +308,14 @@ void SpaceShooter::RespawnPlayer()
 	{
 		GameOver();
 	}
+	
 }
 
 //Function to create AI 
 void SpaceShooter::SpawnAI()
 {
-	int l_randNum = rand() % 3;
 	AI *l_ai;
-	switch (l_randNum)
+	switch (rand() % 3)
 	{
 	case 0:
 		l_ai = new NormalAI(sf::Vector2f(static_cast<float>(rand() % 900 + 200), -10.0f + 1.0f));
@@ -285,9 +335,8 @@ void SpaceShooter::SpawnAI()
 //Function to spawn destructible objects( Can Call Spawn Item)
 void SpaceShooter::SpawnDestructibles()
 {
-	int l_randNum = rand() % 2;										//local randomizer
 	Asteroid* l_asteroid;
-	switch(l_randNum)
+	switch(rand() % 2)
 	{
 	case 0:
 		l_asteroid = new MediumAsteroid(sf::Vector2f(static_cast<float>(rand() % 900 + 100), -200.0f));
@@ -296,14 +345,14 @@ void SpaceShooter::SpawnDestructibles()
 	case 1:
 		l_asteroid = new LargeAsteroid(sf::Vector2f(static_cast<float>(rand() % 900 + 100), -200.0f));
 		AddObject(l_asteroid);
+		break;
 	}
 }
 
 void SpaceShooter::SpawnItem()
 {
-	int l_randNum = rand() % 5;										//local randomizer
 	Item* l_item;
-	switch (l_randNum)
+	switch (rand() % 5)
 	{
 	case 0:
 		 l_item = new GoldCoin(sf::Vector2f(static_cast<float>(rand() % 800 + 100), -10.0f + -1.0f));
@@ -334,8 +383,7 @@ void SpaceShooter::SpawnSystem()
 	m_objectSpawnCoolDown -= m_windowObj.GetDeltaTime()->asSeconds();
 	for (unsigned int i = m_spawnCountPerLevel; i > 0; i--)
 	{
-		unsigned int m_spawnType = rand() % 4;
-		switch (m_spawnType)
+		switch (rand() % 6)
 		{
 		case 0:
 			if (m_objectSpawnCoolDown <= 0 && m_spawnCountPerLevel > 0)
@@ -476,6 +524,7 @@ void SpaceShooter::Setup()
 	CreateBackground(&m_background, &m_bgTexture, "Sprites/Background/longBGStars.png", sf::Vector2f(0.0f, 0.0f));
 	CreateBackground(&m_background2, &m_bgTexture, "Sprites/Background/longBGStars.png", sf::Vector2f(0.0f, -m_windowObj.GetWindowSize()->y));
 	GetSound()->PlayBackgroundMusic("Audio/Donic_-_Donic_-_Rubik_039_s_Cube_Original_Mix_.wav");
+	m_highScore = ExtractHighsScoreFromFile();
 	LoadTexture();
 }
 

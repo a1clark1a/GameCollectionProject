@@ -47,8 +47,8 @@ void Bullet::OutOfBounds(Window* window)
 /*********************************************************************
 ***************FASTBULLET CLASS : DERIVED FROM BULLET*****************
 *********************************************************************/
-FastBullet::FastBullet(const sf::Vector2f & pos, const float & dmgVal, const float & vel)
-	:Bullet("Sprites/Effects/Lasers/laserBlue01.png", pos, dmgVal)
+FastBullet::FastBullet(const std::string texturePath, sf::Vector2f & pos, const float & dmgVal, const float & vel)
+	:Bullet(texturePath, pos, dmgVal)
 
 {
 	SetVelocity(vel);

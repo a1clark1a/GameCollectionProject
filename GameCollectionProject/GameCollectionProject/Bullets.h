@@ -1,6 +1,8 @@
 #pragma once
+#include "Game.h"
 #include "Enemy.h"
-#include "Player.h"
+#include "GameObjects.h"
+
 
 
 /**************BASE BULLET CLASS:: DERIVED FROM GAMEOBJECTS**********/
@@ -30,7 +32,7 @@ protected:
 class FastBullet : public Bullet
 {
 public:
-	FastBullet(const sf::Vector2f & pos, const float & dmgVal, const float & vel);
+	FastBullet(const std::string texturePath, sf::Vector2f & pos, const float & dmgVal, const float & vel);
 	virtual ~FastBullet() {  }  
 
 	virtual void CollidedWith(GameObjects* object);

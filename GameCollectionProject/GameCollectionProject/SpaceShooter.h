@@ -1,5 +1,5 @@
 #pragma once
-#include "Player.h"
+#include "Game.h"
 #include "Enemy.h"
 /**************************************************************************************
 **************************SPACESHOOTER : DERIVED FROM GAME*****************************
@@ -23,12 +23,14 @@ public:
 	virtual void GameOver();
 	virtual void CreateBackground
 	(sf::RectangleShape* bg, sf::Texture* bgText, const std::string texturePath, const sf::Vector2f Position);
+	virtual void SetScoreOnFile(const int & scoreVal);
+	virtual unsigned int ExtractHighsScoreFromFile();
 
 	//SpaceShooter Functions
 	void RespawnPlayer();												// Function to spawn player
 	void ResetPlayerSpawnTimer() { m_timeUntilRespawn = 3.0f; }
-	void ResetObjectSpawnTimer() { m_objectSpawnCoolDown = static_cast<float>(rand() % 5 + 1); }
-	void ResetSpawnCount() { m_spawnCountPerLevel = rand() % (15 + m_level) + (10 + m_level); }
+	void ResetObjectSpawnTimer() { m_objectSpawnCoolDown = static_cast<float>(rand() % 2 + 0.5); }
+	void ResetSpawnCount() { m_spawnCountPerLevel = rand() % (20 + m_level) + (15 + m_level); }
 	void SpawnAI();														// Function to spawn AI
 	void SpawnDestructibles();											// Function to spawn destructibles
 	void SpawnItem();													// Function to spawn Coins/Ammo/ExtraLife

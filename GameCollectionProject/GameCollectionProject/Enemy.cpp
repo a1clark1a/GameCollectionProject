@@ -72,8 +72,7 @@ void Enemy::Destroy()
 	if (l_shouldSpawnAmmo)
 	{
 		Item* l_item;
-		int l_randNum = rand() % 4;
-		switch (l_randNum)
+		switch (rand() % 4)	
 		{
 		case 0:
 			l_item = new QuadAmmo(m_pos);
@@ -83,16 +82,12 @@ void Enemy::Destroy()
 			l_item = new PowerAmmo(m_pos);
 			m_owner->AddObject(l_item);
 			break;
-		default:
-			l_randNum = 0;
-			break;
 		}
 	}
 	else
 	{
 		Item* l_item;
-		int l_randNum = rand() % 13;					//A chance to spawn a coin
-		switch (l_randNum)
+		switch (rand() % 19)
 		{
 		case 0:
 			l_item = new GoldCoin(m_pos);
@@ -292,7 +287,7 @@ void AggroAI::Setup()
 void AggroAI::Update(Window* window)
 {
 	GameObjects::Update(window);
-	VelocityLimiter(100.0f);
+	VelocityLimiter(200.0f);
 	Behavior(window->GetDeltaTime()->asSeconds());
 	OutOfBounds(window);
 }
@@ -345,20 +340,20 @@ void AggroAI::Move(const float & dt)
 	switch (m_moveStates)
 	{
 	case MOVESTATES::Left:
-		SetLinearAccel(-15.0f, -5.0f);
+		SetLinearAccel(-30.0f, -10.0f);
 		break;
 	case MOVESTATES::Right:
-		SetLinearAccel(15.0f, -5.0f);
+		SetLinearAccel(30.0f, -10.0f);
 		break;
 	case MOVESTATES::Pause:
-		m_pauseTimer = 3.0f;
+		m_pauseTimer = 2.0f;
 		m_vel = (sf::Vector2f(0.0f, 0.0f));
 		SetLinearAccel(0.0f, 0.0f);
 		m_aiStates = AISTATES::Shooting;
 		m_moveInterval = 2.0f;
 		break;
 	case MOVESTATES::Forward:
-		SetLinearAccel(15.0f * m_toggle, -5.0f);
+		SetLinearAccel(30.0f * m_toggle, -10.0f);
 		break;
 
 	}
@@ -419,7 +414,7 @@ void ChaserAI::Update(Window* window)
 {
 	m_angle += m_rotationRate * window->GetDeltaTime()->asSeconds();
 	GameObjects::Update(window);
-	VelocityLimiter(200.0f);
+	VelocityLimiter(500.0f);
 	OutOfBounds(window);
 }
 
@@ -446,7 +441,7 @@ void ChaserAI::OutOfBounds(Window* window)
 void ChaserAI::SetTarget(SS_Player* player)
 {
 
-	float l_speed = 100.0f;
+	float l_speed = 200.0f;
 	sf::Vector2f l_vecDiff = player->GetPlayerPos() - m_pos;
 	float l_dist = sqrt(l_vecDiff.x * l_vecDiff.x + l_vecDiff.y * l_vecDiff.y);
 	sf::Vector2f l_direction = sf::Vector2f(l_vecDiff.x / l_dist, l_vecDiff.y / l_dist);
@@ -468,8 +463,8 @@ void Asteroid::Update(Window* window)
 {
 	m_angle += m_rotationRate * window->GetDeltaTime()->asSeconds();	//continously rotate an asteroid by rotation rate * time
 	GameObjects::Update(window);
-	Enemy::OutOfBounds(window);
-	VelocityLimiter(500);
+	GameObjects::OutOfBounds(window);
+	VelocityLimiter(100);
 
 }
 
@@ -478,7 +473,6 @@ void Asteroid::Setup()
 	m_destroyDelay = 2.0f;
 	m_rotationRate = static_cast<float>(rand() % 45 + 45);				// between 45 - 90
 	m_rotationRate *= rand() % 2 == 0 ? 1 : -1;							// chooses if its negative or positive
-	SetLinearAccel(-10.0f);
 }
 
 /*********************************************************************
@@ -501,6 +495,7 @@ void LargeAsteroid::Destroy()
 		m_owner->AddObject(mediumAsteroid);
 	}
 	GameObjects::Destroy();
+
 }
 
 void LargeAsteroid::Setup()
@@ -534,7 +529,7 @@ void MediumAsteroid::Destroy()
 void MediumAsteroid::CollidedWith(GameObjects* object)
 {
 	Player* l_player = dynamic_cast<Player*>(object);
-	if (l_player)
+	if (l_player && l_player->GetInvincibilityCD() <= 0.0f)
 	{
 		l_player->TakeDmg(m_dmgVal);
 		Destroy();
@@ -561,7 +556,7 @@ SmallAsteroid::SmallAsteroid(const sf::Vector2f & pos)
 void SmallAsteroid::CollidedWith(GameObjects* object)
 {
 	Player* l_player = dynamic_cast<Player*>(object);
-	if (l_player)
+	if (l_player && l_player->GetInvincibilityCD() <= 0.0f)
 	{
 		l_player->TakeDmg(m_dmgVal);
 		Destroy();

@@ -1,6 +1,5 @@
 #pragma once
 #include "GameObjects.h"
-
 #include "Bullets.h"
 
 /******Forward Class Declaration*******/
@@ -24,7 +23,7 @@ public:
 	virtual void CollidedWith(GameObjects* object) = 0;					// Virtual Function to call when this object collides with an GameObjects object
 	virtual void PlayerControls(Window* window) {};						// Virtual Function to handle player input
 	virtual void TakeDmg(const float & dmgVal);
-	virtual void MakeInvulnerable();
+	virtual void MakeInvulnerable() { m_invincibilityCooldown = 2.0f;}	//Player version reset invulnerability
 	virtual void DrawShield(Window* window);
 
 	//Helper/Getter Functions
@@ -35,8 +34,7 @@ public:
 	
 
 protected:
-	virtual void Setup() = 0;
-	bool m_shooting;													// A player's shooting state	
+	virtual void Setup() = 0;													
 	float m_invincibilityCooldown;										// A player's invincibility cooldown value
 	float m_shootCooldown;												// A player's shooting cooldown value
 	float m_playerHealth;
@@ -74,4 +72,30 @@ private:
 	unsigned int m_quadAmmo;
 	unsigned int m_PowerAmmo;
 
+};
+
+/***********PLAYER FOR ASTEROIDGAME :: DERIVED FROM PLAYER CLASS**********/
+class Ast_Player : public Player
+{
+public:
+	Ast_Player();
+	virtual ~Ast_Player();
+
+
+	virtual void Draw(Window* window);
+	virtual void Update(Window* window);
+	virtual void Destroy();
+	virtual void CollidedWith(GameObjects* object);
+	virtual void PlayerControls(Window* window);
+	virtual void ShootFunction(const float  & dt);
+
+	//Getter Functions/Helper
+	const unsigned int GetSpecialAmmo() const { return m_specialAmmo; }
+	void SetSpecialAmmo(unsigned int val) { m_specialAmmo += val; }
+	
+protected:
+	virtual void Setup();
+
+private:
+	unsigned int m_specialAmmo;
 };

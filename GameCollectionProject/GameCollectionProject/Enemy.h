@@ -1,8 +1,7 @@
 #pragma once
-#include "Player.h"
 #include "Items.h"
 
-
+class SS_Player;
 /**************ABSTRACT BASE ENEMY CLASS:: DERIVED FROM GAMEOBJECTS**********/
 class Enemy : public GameObjects										
 {

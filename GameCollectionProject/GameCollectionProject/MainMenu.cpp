@@ -60,7 +60,7 @@ void MainMenu::CreateText()
 
 	sf::Text l_asteroidText;
 	l_asteroidText.setFont(m_mainFont);
-	l_asteroidText.setString("2: Asteroid(In Progress)");
+	l_asteroidText.setString("2: Asteroid");
 	l_asteroidText.setCharacterSize(20);
 	l_asteroidText.setOrigin(l_asteroidText.getGlobalBounds().width * 0.5f, l_asteroidText.getGlobalBounds().height * 0.5f);
 	l_asteroidText.setPosition(m_border03.getPosition().x, m_border03.getPosition().y);
@@ -151,8 +151,8 @@ void MainMenu::ChooseGameControls()
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2))
 	{
-		//Create asteroid
-		//CloseMenu();
+		m_game = new AsteroidGame();
+		CloseMenu();
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3))
 	{

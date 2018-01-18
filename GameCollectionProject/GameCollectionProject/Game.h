@@ -2,6 +2,7 @@
 #include "Window.h"
 #include "SoundManager.h"
 #include <vector>
+#include <fstream>
 
 /******Forward Class Declaration*******/
 class GameObjects;
@@ -23,7 +24,9 @@ public:
 	virtual void Update(float dt) { m_windowObj.Update(); }				// Inline Call m_windowObj update function then to be redefined in each respective derived classes
 	virtual void Render() = 0;											// Pure Virtual Function to clear, draw and display 
 	virtual void AddObject(GameObjects * object) = 0;					// Pure Virtual Function to be redefined in each respective derived class
-	virtual void SetScore(int scoreVal);								// Function to add Score( maybe redefined to set specific score variable based on game(to be drawn by DrawText())
+	virtual void SetScore(const int & scoreVal);						// Function to add Score
+	virtual void SetScoreOnFile(const int & scoreVal) = 0;				// Function to write Highscore on a text file
+	virtual unsigned int ExtractHighsScoreFromFile() = 0;
 	virtual void DrawText() = 0;										// Pure Virtual Function to draw the score text, level text, ammo count etc on window(be called in Render())
 	virtual void GameOver() {};											// Virtual Function to call when game is over, to handle setting of remaining GameObjects' state into destroyed = true
 	virtual void CreateBackground() {};									// Virtual Function to draw the background(be called in Render())
@@ -36,16 +39,15 @@ public:
 protected:
 	virtual void Setup();
 	virtual void LoadTexture();
-
 	SoundManager m_sound;
-	Window m_windowObj ;													// Object used to access Window members
-	std::vector<GameObjects*> m_gameObjects;								// A vector container of pointers to a gameobject. 
-	sf::Font m_mainFont;													// Use one type of font for all games(for now) to be initialized in constructor
+	Window m_windowObj ;												// Object used to access Window members
+	std::vector<GameObjects*> m_gameObjects;							// A vector container of pointers to a gameobject. 
+	sf::Font m_mainFont;												// Use one type of font for all games(for now) to be initialized in constructor
 	sf::RectangleShape m_background;
 	sf::Texture m_bgTexture;
-	unsigned int m_score;													// Game score variable
-	unsigned int m_highScore;												// Highscore variable 
-	bool m_isGameOver;														// A Game's gameover state
+	unsigned int m_score;												// Game score variable
+	unsigned int m_highScore;											// Highscore variable 
+	bool m_isGameOver;													// A Game's gameover state
 	
 	
 
@@ -55,23 +57,6 @@ private:
 	
 };
 
-/*************************ASTEROID***************************/
-
-class AsteroidGame : public Game
-{
-public:
-	AsteroidGame();
-	virtual ~AsteroidGame();
-
-	//Redefined Virtual Functions
-	virtual void Update();
-	virtual void Render();
-	virtual void AddObject(GameObjects * object);
-
-private:
-
-
-};
 
 /*************************TETRIS***************************/
 

@@ -2,6 +2,7 @@
 #include "Window.h"
 #include "Game.h"
 #include "SpaceShooter.h"
+#include "Asteroid.h"
 
 /*********************************************************************
 **********************MAIN MENU CLASS********************************
