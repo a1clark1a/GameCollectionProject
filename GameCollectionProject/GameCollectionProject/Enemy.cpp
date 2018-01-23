@@ -572,5 +572,5 @@ void SmallAsteroid::Setup()
 
 void SmallAsteroid::Destroy()
 {
-	Enemy::Destroy();
+	GameObjects::Destroy();
 }
